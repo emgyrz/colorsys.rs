@@ -103,3 +103,7 @@ pub fn as_rounded_hsl_tuple(t: &HslTuple) -> (u16, u16, u16) {
   let (h, s, l) = *t;
   (h.round() as u16, ratio_as_percent(s), ratio_as_percent(l))
 }
+
+pub fn round_ratio(r: f32) -> f32 {
+  (r * 100.0).round() / 100.0
+}

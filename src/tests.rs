@@ -1,7 +1,7 @@
 use super::converters::{
   as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, ratio_as_percent, rgb_to_hex, rgb_to_hsl,
 };
-use super::{Color, Hsl, Rgb, RgbColor};
+use super::{Color, Hex, Hsl, Hsla, Rgb, RgbColor, Rgba};
 
 #[test]
 fn hsl_to_rgb_test() {
@@ -102,4 +102,16 @@ fn adjust_color_test() {
     let mutated = hsl.adjust_color(col_name, col_val);
     assert_eq!(as_rounded_rgb_tuple(&mutated.to_rgb().as_tuple()), result);
   }
+}
+
+#[test]
+fn to_css_test() {
+  let rgb = Rgb::from_tuple((255.1, 203.7, 0.47));
+  assert_eq!(&rgb.to_css(), "rgb(255,204,0)");
+  assert_eq!(&rgb.to_rgba().to_css(), "rgba(255,204,0,1)");
+  assert_eq!(&rgb.to_hex().to_css(), "#ffcc00");
+
+  let rgb = Rgb::from_tuple((137.0, 193.0, 31.0));
+  assert_eq!(&rgb.to_hsl().to_css(), "hsl(81,72%,44%)");
+  assert_eq!(&rgb.to_hsla().to_css(), "hsla(81,72%,44%,1)");
 }

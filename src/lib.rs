@@ -4,7 +4,9 @@ mod normalize;
 #[cfg(test)]
 mod tests;
 
-use converters::{as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, rgb_to_hex, rgb_to_hsl};
+use converters::{
+  as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, rgb_to_hex, rgb_to_hsl, round_ratio,
+};
 use normalize::{normalize_hsl, normalize_hue, normalize_ratio, normalize_rgb, normalize_rgb_unit};
 
 pub trait Color {
@@ -64,7 +66,8 @@ impl Color for Rgb {
     self.to_hsl().to_hsla()
   }
   fn to_css(&self) -> String {
-    format!("rgb({},{},{})", self.r, self.g, self.b)
+    let (r, g, b) = as_rounded_rgb_tuple(&self.as_tuple());
+    format!("rgb({},{},{})", r, g, b)
   }
 
   fn from_tuple(t: RgbTuple) -> Rgb {
@@ -128,8 +131,8 @@ impl Color for Rgba {
   }
 
   fn to_css(&self) -> String {
-    let (r, g, b) = &self.rgb.as_tuple();
-    format!("rgba({},{},{}, {})", r, g, b, self.alpha)
+    let (r, g, b) = as_rounded_rgb_tuple(&self.rgb.as_tuple());
+    format!("rgba({},{},{},{})", r, g, b, round_ratio(self.alpha))
   }
 
   fn from_tuple(t: RgbaTuple) -> Rgba {
@@ -246,7 +249,7 @@ impl Color for Hsl {
 
   fn to_css(&self) -> String {
     let (h, s, l) = as_rounded_hsl_tuple(&self.as_tuple());
-    format!("hsl({},{},{})", h, s, l)
+    format!("hsl({},{}%,{}%)", h, s, l)
   }
 
   fn from_tuple(t: HslTuple) -> Hsl {
@@ -263,7 +266,7 @@ impl Color for Hsl {
     Hsl { h: self.h, s: normalize_ratio(self.s + amt), l: self.l }
   }
   fn adjust_hue(&self, hue: f32) -> Hsl {
-    Hsl { h: normalize_hue((self.h + hue)), s: self.s, l: self.l }
+    Hsl { h: normalize_hue(self.h + hue), s: self.s, l: self.l }
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsl {
     self.to_rgb().adjust_color(name, val).to_hsl()
@@ -304,7 +307,7 @@ impl Color for Hsla {
 
   fn to_css(&self) -> String {
     let (h, s, l) = as_rounded_hsl_tuple(&self.hsl.as_tuple());
-    format!("hsla({},{},{},{})", h, s, l, self.alpha)
+    format!("hsla({},{}%,{}%,{})", h, s, l, round_ratio(self.alpha))
   }
 
   fn from_tuple(t: HslaTuple) -> Hsla {
