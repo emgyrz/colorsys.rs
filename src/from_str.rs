@@ -1,12 +1,9 @@
 use super::converters::hex_num_to_rgb;
 use super::error::{
-  make_def_parse_err, make_hex_parse_err, make_hsl_parse_err, make_hsla_parse_err, make_parse_err,
+  make_def_parse_err, make_hex_parse_err, make_hsl_parse_err, make_hsla_parse_err,
   make_rgb_parse_err, make_rgba_parse_err, ParseError,
 };
-use super::{ColorTuple, ColorTupleA, Hex, Hsl, Rgb, Rgba};
-
-static COMMA: char = ',';
-static DOT: char = '.';
+use super::{ColorTuple, ColorTupleA};
 
 pub fn hex(s: &str) -> Result<ColorTuple, ParseError> {
   let mut hex = s.replace("#", "").to_lowercase();
@@ -33,7 +30,7 @@ fn clear_str(s: &str) -> String {
 }
 
 fn collect_vec_and_parse(s: &str) -> Result<Vec<f32>, std::num::ParseFloatError> {
-  let v = s.split(COMMA).map(|c| c.to_string()).collect::<Vec<String>>();
+  let v = s.split(',').map(|c| c.to_string()).collect::<Vec<String>>();
 
   let mut units = Vec::new();
 
