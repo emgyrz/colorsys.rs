@@ -1,4 +1,5 @@
 mod converters;
+mod misc;
 mod normalize;
 
 #[cfg(test)]
@@ -8,6 +9,8 @@ use converters::{
   as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, rgb_to_hex, rgb_to_hsl, round_ratio,
 };
 use normalize::{normalize_hsl, normalize_hue, normalize_ratio, normalize_rgb, normalize_rgb_unit};
+
+use misc::get_unit;
 
 pub trait Color {
   type Tuple;
@@ -23,6 +26,12 @@ pub trait Color {
   fn saturate(&self, amt: f32) -> Self;
   fn adjust_hue(&self, amt: f32) -> Self;
   fn adjust_color(&self, col_name: RgbColor, val: f32) -> Self;
+  fn get_unit(&self, unit: ColorUnit) -> f32;
+}
+
+pub trait AlphaColor {
+  fn opacify(&self, o: f32) -> Self;
+  fn get_alpha(&self) -> f32;
 }
 
 #[derive(Clone, Copy)]
@@ -30,6 +39,15 @@ pub enum RgbColor {
   Red,
   Green,
   Blue,
+}
+
+pub enum ColorUnit {
+  Red,
+  Green,
+  Blue,
+  Hue,
+  Saturation,
+  Lightness,
 }
 
 //
@@ -96,6 +114,9 @@ impl Color for Rgb {
     }
     Rgb::from_tuple((r, g, b))
   }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    get_unit(*self, unit)
+  }
 }
 
 //
@@ -109,6 +130,16 @@ pub type RgbaTuple = (f32, f32, f32, f32);
 pub struct Rgba {
   rgb: Rgb,
   alpha: f32,
+}
+
+impl AlphaColor for Rgba {
+  fn opacify(&self, alpha: f32) -> Rgba {
+    let (r, g, b, a) = self.as_tuple();
+    Rgba { rgb: Rgb::from_tuple((r, g, b)), alpha: normalize_ratio(a + alpha) }
+  }
+  fn get_alpha(&self) -> f32 {
+    self.alpha
+  }
 }
 
 impl Color for Rgba {
@@ -154,6 +185,9 @@ impl Color for Rgba {
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Rgba {
     Rgba { rgb: self.rgb.adjust_color(name, val), alpha: self.alpha }
+  }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    get_unit(*self, unit)
   }
 }
 
@@ -211,6 +245,9 @@ impl Color for Hex {
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hex {
     Hex { rgb: self.rgb.adjust_color(name, val) }
+  }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    get_unit(*self, unit)
   }
 }
 
@@ -271,6 +308,9 @@ impl Color for Hsl {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsl {
     self.to_rgb().adjust_color(name, val).to_hsl()
   }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    get_unit(*self, unit)
+  }
 }
 
 //
@@ -284,6 +324,16 @@ pub type HslaTuple = (f32, f32, f32, f32);
 pub struct Hsla {
   hsl: Hsl,
   alpha: f32,
+}
+
+impl AlphaColor for Hsla {
+  fn opacify(&self, alpha: f32) -> Hsla {
+    let (h, s, l, a) = self.as_tuple();
+    Hsla { hsl: Hsl::from_tuple((h, s, l)), alpha: normalize_ratio(a + alpha) }
+  }
+  fn get_alpha(&self) -> f32 {
+    self.alpha
+  }
 }
 
 impl Color for Hsla {
@@ -329,5 +379,8 @@ impl Color for Hsla {
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsla {
     Hsla { hsl: self.hsl.adjust_color(name, val), alpha: self.alpha }
+  }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    get_unit(*self, unit)
   }
 }
