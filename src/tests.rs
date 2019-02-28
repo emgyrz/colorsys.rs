@@ -1,7 +1,7 @@
 use super::converters::{
   as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, ratio_as_percent, rgb_to_hex, rgb_to_hsl,
 };
-use super::{Color, Hex, Hsl, Hsla, Rgb, RgbColor, Rgba};
+use super::{Color, Hex, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
 
 #[test]
 fn hsl_to_rgb_test() {
@@ -114,4 +114,59 @@ fn to_css_test() {
   let rgb = Rgb::from_tuple((137.0, 193.0, 31.0));
   assert_eq!(&rgb.to_hsl().to_css(), "hsl(81,72%,44%)");
   assert_eq!(&rgb.to_hsla().to_css(), "hsla(81,72%,44%,1)");
+}
+
+#[test]
+fn hex_from_str_test() {
+  fn parse_hex(s: &str) -> Result<Hex, ParseError> {
+    s.parse::<Hex>()
+  }
+  assert_eq!(parse_hex("#ffcc00").unwrap().to_css(), "#ffcc00");
+  assert_eq!(parse_hex("#FA1CBE").unwrap().to_css(), "#fa1cbe");
+  assert_eq!(parse_hex("#fc0").unwrap().to_css(), "#ffcc00");
+  assert_eq!(parse_hex("fc0").unwrap().to_css(), "#ffcc00");
+  assert!(parse_hex("").is_err());
+  assert!(parse_hex("ffcc0g").is_err());
+  assert!(parse_hex("zxc.@0").is_err());
+  assert!(parse_hex("鐵").is_err());
+  assert!(parse_hex("中鏽鏽").is_err());
+}
+
+#[test]
+fn rgb_from_str_test() {
+  fn parse_rgb(s: &str) -> Result<Rgb, ParseError> {
+    s.parse::<Rgb>()
+  }
+  assert_eq!(parse_rgb("Rgb(134,11,251)").unwrap().to_css(), "rgb(134,11,251)");
+  assert_eq!(parse_rgb("Rgb(134.9,11.1,250.55)").unwrap().to_css(), "rgb(135,11,251)");
+  assert_eq!(parse_rgb("(0,0,0)").unwrap().to_css(), "rgb(0,0,0)");
+  assert!(parse_rgb("").is_err());
+  assert!(parse_rgb("ffcc0g").is_err());
+}
+
+#[test]
+fn rgba_from_str_test() {
+  fn parse_rgba(s: &str) -> Result<Rgba, ParseError> {
+    s.parse::<Rgba>()
+  }
+  assert_eq!(parse_rgba("Rgba(134, 11, 251,0.67)").unwrap().to_css(), "rgba(134,11,251,0.67)");
+  assert_eq!(
+    parse_rgba("rgba( 134.9, 11.1, 250.55,0.3 )").unwrap().to_css(),
+    "rgba(135,11,251,0.3)"
+  );
+  assert_eq!(parse_rgba("(0,0,0,0.1)").unwrap().to_css(), "rgba(0,0,0,0.1)");
+  assert!(parse_rgba("asd234,234rgba").is_err());
+  assert!(parse_rgba("ffcc0g").is_err());
+}
+
+#[test]
+fn hsl_from_str_test() {
+  fn parse_hsl(s: &str) -> Result<Hsl, ParseError> {
+    s.parse::<Hsl>()
+  }
+
+  assert_eq!(
+    parse_hsl("hsl(37, 0.12, 0.75%)").unwrap().to_rgb().to_css(),
+    "rgb(199,193,184)".parse::<Rgb>().unwrap().to_css()
+  );
 }

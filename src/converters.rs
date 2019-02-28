@@ -1,5 +1,5 @@
 use super::normalize::bound_ratio;
-use super::{HexTuple, HslTuple, RgbTuple};
+use super::{ColorTuple, HexTuple};
 
 fn get_min(rgb: &[f32]) -> f32 {
   rgb.iter().fold(std::f32::MAX, |a, &b| a.min(b))
@@ -9,7 +9,7 @@ fn get_max(rgb: &[f32]) -> f32 {
   rgb.iter().fold(std::f32::MIN, |a, &b| a.max(b))
 }
 
-pub fn rgb_to_hex(rgb: &RgbTuple) -> HexTuple {
+pub fn rgb_to_hex(rgb: &ColorTuple) -> HexTuple {
   fn to_hex(n: f32) -> String {
     let s = format!("{:x}", n.round() as i32);
     if s.len() == 1 {
@@ -23,7 +23,7 @@ pub fn rgb_to_hex(rgb: &RgbTuple) -> HexTuple {
   (to_hex(r), to_hex(g), to_hex(b))
 }
 
-pub fn rgb_to_hsl(rgb: &RgbTuple) -> HslTuple {
+pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
   let (r, g, b) = *rgb;
   let rgb_arr: Vec<f32> = [r, g, b].iter().map(|p| p / 255.0).collect();
   let max = get_max(&rgb_arr);
@@ -67,7 +67,7 @@ fn calc_rgb_unit(unit: f32, temp1: f32, temp2: f32) -> f32 {
   }
   result * 255.0
 }
-pub fn hsl_to_rgb(hsl: &HslTuple) -> RgbTuple {
+pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
   let (h, s, l) = *hsl;
   if s == 0.0 {
     let unit = 255.0 * l;
@@ -90,7 +90,15 @@ pub fn hsl_to_rgb(hsl: &HslTuple) -> RgbTuple {
   (r, g, b)
 }
 
-pub fn as_rounded_rgb_tuple(t: &RgbTuple) -> (u16, u16, u16) {
+pub fn hex_num_to_rgb(num: usize) -> ColorTuple {
+  let r = (num >> 16) as f32;
+  let g = ((num >> 8) & 0x00FF) as f32;
+  let b = (num & 0x0000_00FF) as f32;
+
+  (r, g, b)
+}
+
+pub fn as_rounded_rgb_tuple(t: &ColorTuple) -> (u16, u16, u16) {
   let (r, g, b) = *t;
   (r.round() as u16, g.round() as u16, b.round() as u16)
 }
@@ -99,7 +107,7 @@ pub fn ratio_as_percent(r: f32) -> u16 {
   (r * 100.0).round() as u16
 }
 
-pub fn as_rounded_hsl_tuple(t: &HslTuple) -> (u16, u16, u16) {
+pub fn as_rounded_hsl_tuple(t: &ColorTuple) -> (u16, u16, u16) {
   let (h, s, l) = *t;
   (h.round() as u16, ratio_as_percent(s), ratio_as_percent(l))
 }

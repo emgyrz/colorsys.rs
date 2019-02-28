@@ -1,4 +1,6 @@
 mod converters;
+mod error;
+mod from_str;
 mod misc;
 mod normalize;
 
@@ -11,6 +13,11 @@ use converters::{
 use normalize::{normalize_hsl, normalize_hue, normalize_ratio, normalize_rgb, normalize_rgb_unit};
 
 use misc::get_unit;
+
+pub use error::ParseError;
+
+pub type ColorTuple = (f32, f32, f32);
+pub type ColorTupleA = (f32, f32, f32, f32);
 
 pub trait Color {
   type Tuple;
@@ -55,8 +62,6 @@ pub enum ColorUnit {
 // RGB
 //
 //
-pub type RgbTuple = (f32, f32, f32);
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Rgb {
   r: f32,
@@ -64,8 +69,19 @@ pub struct Rgb {
   b: f32,
 }
 
+impl std::str::FromStr for Rgb {
+  type Err = ParseError;
+
+  fn from_str(s: &str) -> Result<Rgb, ParseError> {
+    match from_str::rgb(s) {
+      Ok(rgb_tuple) => Ok(Rgb::from_tuple(rgb_tuple)),
+      Err(err) => Err(err),
+    }
+  }
+}
+
 impl Color for Rgb {
-  type Tuple = RgbTuple;
+  type Tuple = ColorTuple;
 
   fn to_rgb(&self) -> Rgb {
     *self
@@ -88,11 +104,11 @@ impl Color for Rgb {
     format!("rgb({},{},{})", r, g, b)
   }
 
-  fn from_tuple(t: RgbTuple) -> Rgb {
+  fn from_tuple(t: ColorTuple) -> Rgb {
     let (r, g, b) = normalize_rgb(&t);
     Rgb { r, g, b }
   }
-  fn as_tuple(&self) -> RgbTuple {
+  fn as_tuple(&self) -> ColorTuple {
     (self.r, self.g, self.b)
   }
 
@@ -124,12 +140,21 @@ impl Color for Rgb {
 // RGBA
 //
 //
-pub type RgbaTuple = (f32, f32, f32, f32);
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Rgba {
   rgb: Rgb,
   alpha: f32,
+}
+
+impl std::str::FromStr for Rgba {
+  type Err = ParseError;
+
+  fn from_str(s: &str) -> Result<Rgba, ParseError> {
+    match from_str::rgba(s) {
+      Ok(rgba_tuple) => Ok(Rgba::from_tuple(rgba_tuple)),
+      Err(err) => Err(err),
+    }
+  }
 }
 
 impl AlphaColor for Rgba {
@@ -143,7 +168,7 @@ impl AlphaColor for Rgba {
 }
 
 impl Color for Rgba {
-  type Tuple = RgbaTuple;
+  type Tuple = ColorTupleA;
 
   fn to_rgb(&self) -> Rgb {
     self.rgb
@@ -166,11 +191,11 @@ impl Color for Rgba {
     format!("rgba({},{},{},{})", r, g, b, round_ratio(self.alpha))
   }
 
-  fn from_tuple(t: RgbaTuple) -> Rgba {
+  fn from_tuple(t: ColorTupleA) -> Rgba {
     let (r, g, b, a) = t;
     Rgba { rgb: Rgb::from_tuple((r, g, b)), alpha: normalize_ratio(a) }
   }
-  fn as_tuple(&self) -> RgbaTuple {
+  fn as_tuple(&self) -> ColorTupleA {
     let (r, g, b) = self.rgb.as_tuple();
     (r, g, b, self.alpha)
   }
@@ -201,6 +226,17 @@ pub type HexTuple = (String, String, String);
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Hex {
   rgb: Rgb,
+}
+
+impl std::str::FromStr for Hex {
+  type Err = ParseError;
+
+  fn from_str(s: &str) -> Result<Hex, ParseError> {
+    match from_str::hex(s) {
+      Ok(rgb_tuple) => Ok(Hex { rgb: Rgb::from_tuple(rgb_tuple) }),
+      Err(err) => Err(err),
+    }
+  }
 }
 
 impl Color for Hex {
@@ -256,8 +292,6 @@ impl Color for Hex {
 // HSL
 //
 //
-pub type HslTuple = (f32, f32, f32);
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Hsl {
   h: f32,
@@ -265,8 +299,19 @@ pub struct Hsl {
   l: f32,
 }
 
+impl std::str::FromStr for Hsl {
+  type Err = ParseError;
+
+  fn from_str(s: &str) -> Result<Hsl, ParseError> {
+    match from_str::hsl(s) {
+      Ok(hsl_tuple) => Ok(Hsl::from_tuple(hsl_tuple)),
+      Err(err) => Err(err),
+    }
+  }
+}
+
 impl Color for Hsl {
-  type Tuple = HslTuple;
+  type Tuple = ColorTuple;
 
   fn to_rgb(&self) -> Rgb {
     Rgb::from_tuple(hsl_to_rgb(&self.as_tuple()))
@@ -289,11 +334,11 @@ impl Color for Hsl {
     format!("hsl({},{}%,{}%)", h, s, l)
   }
 
-  fn from_tuple(t: HslTuple) -> Hsl {
+  fn from_tuple(t: ColorTuple) -> Hsl {
     let (h, s, l) = normalize_hsl(&t);
     Hsl { h, s, l }
   }
-  fn as_tuple(&self) -> HslTuple {
+  fn as_tuple(&self) -> ColorTuple {
     (self.h, self.s, self.l)
   }
   fn lighten(&self, amt: f32) -> Hsl {
@@ -318,7 +363,6 @@ impl Color for Hsl {
 // HSLA
 //
 //
-pub type HslaTuple = (f32, f32, f32, f32);
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Hsla {
@@ -326,6 +370,16 @@ pub struct Hsla {
   alpha: f32,
 }
 
+impl std::str::FromStr for Hsla {
+  type Err = ParseError;
+
+  fn from_str(s: &str) -> Result<Hsla, ParseError> {
+    match from_str::hsla(s) {
+      Ok(hsla_tuple) => Ok(Hsla::from_tuple(hsla_tuple)),
+      Err(err) => Err(err),
+    }
+  }
+}
 impl AlphaColor for Hsla {
   fn opacify(&self, alpha: f32) -> Hsla {
     let (h, s, l, a) = self.as_tuple();
@@ -337,7 +391,7 @@ impl AlphaColor for Hsla {
 }
 
 impl Color for Hsla {
-  type Tuple = HslaTuple;
+  type Tuple = ColorTupleA;
 
   fn to_rgb(&self) -> Rgb {
     self.hsl.to_rgb()
@@ -360,11 +414,11 @@ impl Color for Hsla {
     format!("hsla({},{}%,{}%,{})", h, s, l, round_ratio(self.alpha))
   }
 
-  fn from_tuple(t: HslaTuple) -> Hsla {
+  fn from_tuple(t: ColorTupleA) -> Hsla {
     let (h, s, l, a) = t;
     Hsla { hsl: Hsl::from_tuple((h, s, l)), alpha: normalize_ratio(a) }
   }
-  fn as_tuple(&self) -> HslaTuple {
+  fn as_tuple(&self) -> ColorTupleA {
     let (h, s, l) = self.hsl.as_tuple();
     (h, s, l, self.alpha)
   }

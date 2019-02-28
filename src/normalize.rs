@@ -1,4 +1,4 @@
-use super::{HslTuple, RgbTuple};
+use super::ColorTuple;
 use std::f32::EPSILON;
 
 struct NormalizeArg<T> {
@@ -35,12 +35,12 @@ pub fn normalize_hue(h: f32) -> f32 {
   }
 }
 
-pub fn normalize_hsl(hsl_tuple: &HslTuple) -> HslTuple {
+pub fn normalize_hsl(hsl_tuple: &ColorTuple) -> ColorTuple {
   let (h, s, l) = hsl_tuple;
   (normalize_hue(*h), normalize_ratio(*s), normalize_ratio(*l))
 }
 
-pub fn normalize_rgb(rgb_tuple: &RgbTuple) -> RgbTuple {
+pub fn normalize_rgb(rgb_tuple: &ColorTuple) -> ColorTuple {
   let (r, g, b) = rgb_tuple;
   (normalize_rgb_unit(*r), normalize_rgb_unit(*g), normalize_rgb_unit(*b))
 }
