@@ -1,7 +1,20 @@
+//! All color units is f32. Here are their ranges:
+//! - red - 0.0 .. 255.0
+//! - green - 0.0 .. 255.0
+//! - blue - 0.0 .. 255.0
+//! - hue - 0.0 .. 360.0
+//! - saturation - 0.0 .. 100.0
+//! - lightness - 0.0 .. 100.0
+//! - alpha - 0.0 .. 1.0
+//!
+//! If you specify a value that does not fit within these ranges, they are replaced with a minimum or maximum value.
 mod converters;
 mod error;
 mod from_str;
 mod normalize;
+
+// mod colors;
+// pub use colors::rgb::{Rgb,RgbColor};
 
 #[cfg(test)]
 mod tests;
@@ -19,8 +32,10 @@ pub use error::ParseError;
 pub type ColorTuple = (f32, f32, f32);
 pub type ColorTupleA = (f32, f32, f32, f32);
 
+/// Common to all trait
 pub trait Color {
   type Tuple;
+  fn new() -> Self;
   fn to_rgb(&self) -> Rgb;
   fn to_rgba(&self) -> Rgba;
   fn to_hsl(&self) -> Hsl;
@@ -28,14 +43,15 @@ pub trait Color {
   fn to_css_string(&self) -> String;
   fn from_tuple(tuple: Self::Tuple) -> Self;
   fn as_tuple(&self) -> Self::Tuple;
+  fn adjust_hue(&self, amt: f32) -> Self;
   fn lighten(&self, amt: f32) -> Self;
   fn saturate(&self, amt: f32) -> Self;
-  fn adjust_hue(&self, amt: f32) -> Self;
   fn adjust_color(&self, col_name: RgbColor, val: f32) -> Self;
   fn get_unit(&self, unit: ColorUnit) -> f32;
   fn set_unit(&self, unit: ColorUnit, val: f32) -> Self;
 }
 
+/// Some methods for working with alpha channel for Rgba & Hsla
 pub trait AlphaColor {
   fn get_alpha(&self) -> f32;
   fn set_alpha(&self, a: f32) -> Self;
@@ -71,12 +87,32 @@ pub struct Rgb {
 }
 
 impl Rgb {
+  /// Try to parse string as hex color
+  /// # Example
+  /// ```
+  /// use colors_transform::{Rgb,Color};
+  ///
+  /// assert_eq!(Rgb::from_hex_str("#e76B2c").unwrap(),Rgb::from_tuple((231.0,107.0,44.0)));
+  /// assert_eq!(Rgb::from_hex_str("fc0").unwrap(),Rgb::from_tuple((255.0,204.0,0.0)));
+  /// assert!(Rgb::from_hex_str("cyan").is_err());
+  /// ```
   pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
     match from_str::hex(s) {
       Ok(rgb_tuple) => Ok(Rgb::from_tuple(rgb_tuple)),
       Err(err) => Err(err),
     }
   }
+  /// Returns hexadecimal color string like in css. In lowercase with no reductions
+  /// # Example
+  /// ```
+  /// use colors_transform::{Rgb,Color};
+  ///
+  /// let rgb1 = Rgb::from_tuple((231.0,107.0,44.0));
+  /// assert_eq!(rgb1.to_css_hex_string(),"#e76b2c");
+  ///
+  /// let rgb2 = Rgb::from_hex_str("#0C7").unwrap();
+  /// assert_eq!(rgb2.to_css_hex_string(),"#00cc77");
+  /// ```
   pub fn to_css_hex_string(&self) -> String {
     let (r, g, b) = rgb_to_hex(&self.as_tuple());
     format!("#{}{}{}", r, g, b)
@@ -106,6 +142,10 @@ impl std::str::FromStr for Rgb {
 
 impl Color for Rgb {
   type Tuple = ColorTuple;
+
+  fn new() -> Rgb {
+    Rgb { r: 0.0, g: 0.0, b: 0.0 }
+  }
 
   fn to_rgb(&self) -> Rgb {
     *self
@@ -218,6 +258,9 @@ impl AlphaColor for Rgba {
 impl Color for Rgba {
   type Tuple = ColorTupleA;
 
+  fn new() -> Rgba {
+    Rgba { rgb: Rgb::new(), alpha: 1.0 }
+  }
   fn to_rgb(&self) -> Rgb {
     self.rgb
   }
@@ -300,7 +343,9 @@ impl std::str::FromStr for Hsl {
 
 impl Color for Hsl {
   type Tuple = ColorTuple;
-
+  fn new() -> Hsl {
+    Hsl { h: 0.0, s: 0.0, l: 0.0 }
+  }
   fn to_rgb(&self) -> Rgb {
     Rgb::from_tuple(hsl_to_rgb(&self.as_tuple()))
   }
@@ -396,6 +441,10 @@ impl AlphaColor for Hsla {
 
 impl Color for Hsla {
   type Tuple = ColorTupleA;
+
+  fn new() -> Hsla {
+    Hsla { hsl: Hsl::new(), alpha: 1.0 }
+  }
 
   fn to_rgb(&self) -> Rgb {
     self.hsl.to_rgb()
