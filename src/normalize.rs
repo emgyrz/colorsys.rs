@@ -22,6 +22,10 @@ pub fn normalize_ratio(r: f32) -> f32 {
   normalize(NormalizeArg { val: r, max: 1.0, min: 0.0 })
 }
 
+pub fn normalize_percent(r: f32) -> f32 {
+  normalize(NormalizeArg { val: r, max: 100.0, min: 0.0 })
+}
+
 pub fn normalize_rgb_unit(u: f32) -> f32 {
   normalize(NormalizeArg { val: u, max: 255.0, min: 0.0 })
 }
@@ -37,7 +41,7 @@ pub fn normalize_hue(h: f32) -> f32 {
 
 pub fn normalize_hsl(hsl_tuple: &ColorTuple) -> ColorTuple {
   let (h, s, l) = hsl_tuple;
-  (normalize_hue(*h), normalize_ratio(*s), normalize_ratio(*l))
+  (normalize_hue(*h), normalize_percent(*s), normalize_percent(*l))
 }
 
 pub fn normalize_rgb(rgb_tuple: &ColorTuple) -> ColorTuple {

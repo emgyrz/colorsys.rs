@@ -1,29 +1,29 @@
 use super::converters::{
-  as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, ratio_as_percent, rgb_to_hex, rgb_to_hsl,
+  as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, rgb_to_hex, rgb_to_hsl,
 };
 use super::{Color, ColorUnit, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
 
-#[test]
-fn speed_test() {
-  use std::time::Duration;
-  let count = 10000;
-  let start = std::time::Instant::now();
-  let rgb = Rgb::from_tuple((255.0, 255.0, 255.0));
-  let mut tmp = Vec::new();
-  for _ in 0..count {
-    tmp.push(rgb.to_hsl());
-  }
+// #[test]
+// fn speed_test() {
+//   use std::time::Duration;
+//   let count = 10000;
+//   let start = std::time::Instant::now();
+//   let rgb = Rgb::from_tuple((255.0, 255.0, 255.0));
+//   let mut tmp = Vec::new();
+//   for _ in 0..count {
+//     tmp.push(rgb.to_hsl());
+//   }
 
-  println!("Elapsed {:?} for {} times", start.elapsed(), tmp.len());
-}
+//   println!("Elapsed {:?} for {} times", start.elapsed(), tmp.len());
+// }
 
 #[test]
 fn hsl_to_rgb_test() {
   let asserts = [
-    ((200.0, 1.0, 0.3), (0, 102, 153)),
-    ((192.0, 0.67, 0.28), (24, 100, 119)),
-    ((48.0, 0.7, 0.5), (217, 181, 38)),
-    ((359.0, 0.33, 0.77), (216, 177, 178)),
+    ((200.0, 100.0, 30.0), (0, 102, 153)),
+    ((192.0, 67.0, 28.0), (24, 100, 119)),
+    ((48.0, 70.0, 50.0), (217, 181, 38)),
+    ((359.0, 33.0, 77.0), (216, 177, 178)),
   ];
 
   for (hsl, rgb) in asserts.iter() {
@@ -50,12 +50,12 @@ fn rgb_to_hsl_test() {
 #[test]
 fn lighten_darken_test() {
   let asserts = [
-    ((30.0, 108.0, 77.0), 0.2, (52, 188, 134)),
-    ((30.0, 108.0, 77.0), 0.9, (255, 255, 255)),
-    ((30.0, 108.0, 77.0), -0.2, (8, 28, 20)),
-    ((0.0, 0.0, 0.0), 0.5, (128, 128, 128)),
-    ((0.0, 0.0, 0.0), -0.5, (0, 0, 0)),
-    ((0.0, 0.0, 0.0), 30.5, (255, 255, 255)),
+    ((30.0, 108.0, 77.0), 20.0, (52, 188, 134)),
+    ((30.0, 108.0, 77.0), 90.0, (255, 255, 255)),
+    ((30.0, 108.0, 77.0), -20.0, (8, 28, 20)),
+    ((0.0, 0.0, 0.0), 50.0, (128, 128, 128)),
+    ((0.0, 0.0, 0.0), -50.0, (0, 0, 0)),
+    ((0.0, 0.0, 0.0), 300.5, (255, 255, 255)),
   ];
 
   for a in asserts.iter() {
@@ -69,9 +69,9 @@ fn lighten_darken_test() {
 #[test]
 fn saturate_desaturate_test() {
   let asserts = [
-    ((120.0, 30.0, 90.0), 0.2, (135, 15, 95)),
-    ((120.0, 30.0, 90.0), -0.2, (105, 45, 85)),
-    ((13.0, 55.0, 137.0), 0.3, (0, 51, 150)),
+    ((120.0, 30.0, 90.0), 20.0, (135, 15, 95)),
+    ((120.0, 30.0, 90.0), -20.0, (105, 45, 85)),
+    ((13.0, 55.0, 137.0), 30.0, (0, 51, 150)),
   ];
 
   for a in asserts.iter() {
@@ -105,9 +105,9 @@ fn adjust_color_test() {
   let rgb = rgb.adjust_color(RgbColor::Red, 55.0);
   assert_eq!(rgb.as_tuple(), (79.0, 91.0, 203.0));
   let asserts = [
-    ((24.0, 0.9, 0.2), RgbColor::Red, 63.0, (160, 42, 5)),
-    ((324.0, 0.77, 0.52), RgbColor::Green, 122.0, (227, 160, 151)),
-    ((195.0, 0.31, 0.87), RgbColor::Blue, -39.0, (212, 227, 193)),
+    ((24.0, 90.0, 20.0), RgbColor::Red, 63.0, (160, 42, 5)),
+    ((324.0, 77.0, 52.0), RgbColor::Green, 122.0, (227, 160, 151)),
+    ((195.0, 31.0, 87.0), RgbColor::Blue, -39.0, (212, 227, 193)),
   ];
 
   for a in asserts.iter() {
@@ -183,7 +183,7 @@ fn hsl_from_str_test() {
   }
 
   assert_eq!(
-    parse_hsl("hsl(37, 0.12, 0.75%)").unwrap().to_rgb().to_css_string(),
+    parse_hsl("hsl(37, 12, 75%)").unwrap().to_rgb().to_css_string(),
     "rgb(199,193,184)".parse::<Rgb>().unwrap().to_css_string()
   );
 }
@@ -191,19 +191,15 @@ fn hsl_from_str_test() {
 #[test]
 fn get_unit_tst() {
   fn cmp(x: f32, y: f32) -> bool {
-    ((x * 100.0).round() / 100.0 - y).abs() <= std::f32::EPSILON
+    (x.round() - y).abs() <= std::f32::EPSILON
   }
 
   let rgb = Rgb::from_tuple((34.0, 12.0, 177.0));
-
-  println!("Hue {}", rgb.get_unit(ColorUnit::Hue));
-  println!("Saturation {}", rgb.get_unit(ColorUnit::Saturation));
-  println!("Lightness {}", rgb.get_unit(ColorUnit::Lightness));
 
   assert!(cmp(rgb.get_unit(ColorUnit::Red), 34.0));
   assert!(cmp(rgb.get_unit(ColorUnit::Green), 12.0));
   assert!(cmp(rgb.get_unit(ColorUnit::Blue), 177.0));
   assert!(cmp(rgb.get_unit(ColorUnit::Hue), 248.0));
-  assert!(cmp(rgb.get_unit(ColorUnit::Saturation), 0.87));
-  assert!(cmp(rgb.get_unit(ColorUnit::Lightness), 0.37));
+  assert!(cmp(rgb.get_unit(ColorUnit::Saturation), 87.0));
+  assert!(cmp(rgb.get_unit(ColorUnit::Lightness), 37.0));
 }

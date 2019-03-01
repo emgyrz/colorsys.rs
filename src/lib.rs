@@ -9,12 +9,14 @@ mod tests;
 use converters::{
   as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, rgb_to_hex, rgb_to_hsl, round_ratio,
 };
-use normalize::{normalize_hsl, normalize_hue, normalize_ratio, normalize_rgb, normalize_rgb_unit};
+use normalize::{
+  normalize_hsl, normalize_hue, normalize_percent, normalize_ratio, normalize_rgb,
+  normalize_rgb_unit,
+};
 
 pub use error::ParseError;
 
 pub type ColorTuple = (f32, f32, f32);
-pub type HexTuple = (String, String, String);
 pub type ColorTupleA = (f32, f32, f32, f32);
 
 pub trait Color {
@@ -288,10 +290,10 @@ impl Color for Hsl {
     (self.h, self.s, self.l)
   }
   fn lighten(&self, amt: f32) -> Hsl {
-    Hsl { h: self.h, s: self.s, l: normalize_ratio(self.l + amt) }
+    Hsl { h: self.h, s: self.s, l: normalize_percent(self.l + amt) }
   }
   fn saturate(&self, amt: f32) -> Hsl {
-    Hsl { h: self.h, s: normalize_ratio(self.s + amt), l: self.l }
+    Hsl { h: self.h, s: normalize_percent(self.s + amt), l: self.l }
   }
   fn adjust_hue(&self, hue: f32) -> Hsl {
     Hsl { h: normalize_hue(self.h + hue), s: self.s, l: self.l }

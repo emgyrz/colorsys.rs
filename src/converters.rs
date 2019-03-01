@@ -1,5 +1,5 @@
 use super::normalize::bound_ratio;
-use super::{ColorTuple, HexTuple};
+use super::ColorTuple;
 
 fn get_min(rgb: &[f32]) -> f32 {
   rgb.iter().fold(std::f32::MAX, |a, &b| a.min(b))
@@ -9,7 +9,7 @@ fn get_max(rgb: &[f32]) -> f32 {
   rgb.iter().fold(std::f32::MIN, |a, &b| a.max(b))
 }
 
-pub fn rgb_to_hex(rgb: &ColorTuple) -> HexTuple {
+pub fn rgb_to_hex(rgb: &ColorTuple) -> (String, String, String) {
   fn to_hex(n: f32) -> String {
     let s = format!("{:x}", n.round() as i32);
     if s.len() == 1 {
@@ -31,7 +31,7 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
   let luminace = (max + min) / 2.0;
 
   if max.eq(&min) {
-    return (0.0, 0.0, luminace);
+    return (0.0, 0.0, luminace * 100.0);
   }
 
   let max_min_delta = max - min;
@@ -51,9 +51,7 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
     (red - green) / max_min_delta + 4.0
   };
 
-  let hue = hue * 60.0;
-
-  (hue, saturation, luminace)
+  (hue * 60.0, saturation * 100.0, luminace * 100.0)
 }
 
 fn calc_rgb_unit(unit: f32, temp1: f32, temp2: f32) -> f32 {
@@ -68,7 +66,11 @@ fn calc_rgb_unit(unit: f32, temp1: f32, temp2: f32) -> f32 {
   result * 255.0
 }
 pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
-  let (h, s, l) = *hsl;
+  let (_h, _s, _l) = *hsl;
+  let h = _h / 360.0;
+  let s = _s / 100.0;
+  let l = _l / 100.0;
+
   if s == 0.0 {
     let unit = 255.0 * l;
     return (unit, unit, unit);
@@ -77,7 +79,7 @@ pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
   let temp1 = if l < 0.5 { l * (1.0 + s) } else { l + s - l * s };
 
   let temp2 = 2.0 * l - temp1;
-  let hue = h / 360.0;
+  let hue = h;
 
   let one_third = 1.0 / 3.0;
   let temp_r = bound_ratio(hue + one_third);
@@ -103,13 +105,9 @@ pub fn as_rounded_rgb_tuple(t: &ColorTuple) -> (u16, u16, u16) {
   (r.round() as u16, g.round() as u16, b.round() as u16)
 }
 
-pub fn ratio_as_percent(r: f32) -> u16 {
-  (r * 100.0).round() as u16
-}
-
 pub fn as_rounded_hsl_tuple(t: &ColorTuple) -> (u16, u16, u16) {
   let (h, s, l) = *t;
-  (h.round() as u16, ratio_as_percent(s), ratio_as_percent(l))
+  (h.round() as u16, s.round() as u16, l.round() as u16)
 }
 
 pub fn round_ratio(r: f32) -> f32 {
