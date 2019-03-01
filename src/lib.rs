@@ -99,6 +99,13 @@ impl Color for Rgb {
   fn to_hsla(&self) -> Hsla {
     self.to_hsl().to_hsla()
   }
+  /// Returns css string
+  /// # Example
+  /// ```
+  /// use colors_rs::{Rgb,Color};
+  ///
+  /// assert_eq!(Rgb::from_tuple((225.0,101.7, 21.0)).to_css(), "rgb(225,102,21)");
+  /// ```
   fn to_css(&self) -> String {
     let (r, g, b) = as_rounded_rgb_tuple(&self.as_tuple());
     format!("rgb({},{},{})", r, g, b)
