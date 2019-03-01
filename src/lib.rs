@@ -1,7 +1,6 @@
 mod converters;
 mod error;
 mod from_str;
-mod misc;
 mod normalize;
 
 #[cfg(test)]
@@ -11,8 +10,6 @@ use converters::{
   as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, rgb_to_hex, rgb_to_hsl, round_ratio,
 };
 use normalize::{normalize_hsl, normalize_hue, normalize_ratio, normalize_rgb, normalize_rgb_unit};
-
-use misc::get_unit;
 
 pub use error::ParseError;
 
@@ -33,12 +30,7 @@ pub trait Color {
   fn saturate(&self, amt: f32) -> Self;
   fn adjust_hue(&self, amt: f32) -> Self;
   fn adjust_color(&self, col_name: RgbColor, val: f32) -> Self;
-  fn get_unit(&self, unit: ColorUnit) -> f32
-  where
-    Self: Sized,
-  {
-    get_unit(self, unit)
-  }
+  fn get_unit(&self, unit: ColorUnit) -> f32;
 }
 
 pub trait AlphaColor {
@@ -108,7 +100,7 @@ impl Color for Rgb {
   /// Returns css string
   /// # Example
   /// ```
-  /// use colors_rs::{Rgb,Color};
+  /// use colors_transform::{Rgb,Color};
   ///
   /// assert_eq!(Rgb::from_tuple((225.0,101.7, 21.0)).to_css(), "rgb(225,102,21)");
   /// ```
@@ -142,6 +134,17 @@ impl Color for Rgb {
       RgbColor::Blue => b = normalize_rgb_unit(b + val),
     }
     Rgb::from_tuple((r, g, b))
+  }
+
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    match unit {
+      ColorUnit::Red => self.r,
+      ColorUnit::Green => self.g,
+      ColorUnit::Blue => self.b,
+      ColorUnit::Hue => self.to_hsl().h,
+      ColorUnit::Saturation => self.to_hsl().s,
+      ColorUnit::Lightness => self.to_hsl().l,
+    }
   }
 }
 
@@ -224,9 +227,9 @@ impl Color for Rgba {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Rgba {
     Rgba { rgb: self.rgb.adjust_color(name, val), alpha: self.alpha }
   }
-  // fn get_unit(&self, unit: ColorUnit) -> f32 {
-  //   get_unit(*self, unit)
-  // }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    self.rgb.get_unit(unit)
+  }
 }
 
 //
@@ -295,9 +298,9 @@ impl Color for Hex {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hex {
     Hex { rgb: self.rgb.adjust_color(name, val) }
   }
-  // fn get_unit(&self, unit: ColorUnit) -> f32 {
-  //   get_unit(*self, unit)
-  // }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    self.rgb.get_unit(unit)
+  }
 }
 
 //
@@ -366,9 +369,17 @@ impl Color for Hsl {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsl {
     self.to_rgb().adjust_color(name, val).to_hsl()
   }
-  // fn get_unit(&self, unit: ColorUnit) -> f32 {
-  //   get_unit(*self, unit)
-  // }
+
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    match unit {
+      ColorUnit::Red => self.to_rgb().r,
+      ColorUnit::Green => self.to_rgb().g,
+      ColorUnit::Blue => self.to_rgb().b,
+      ColorUnit::Hue => self.h,
+      ColorUnit::Saturation => self.s,
+      ColorUnit::Lightness => self.l,
+    }
+  }
 }
 
 //
@@ -450,7 +461,7 @@ impl Color for Hsla {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsla {
     Hsla { hsl: self.hsl.adjust_color(name, val), alpha: self.alpha }
   }
-  // fn get_unit(&self, unit: ColorUnit) -> f32 {
-  //   get_unit(*self, unit)
-  // }
+  fn get_unit(&self, unit: ColorUnit) -> f32 {
+    self.hsl.get_unit(unit)
+  }
 }
