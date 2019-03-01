@@ -1,7 +1,7 @@
 use super::converters::{
   as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, ratio_as_percent, rgb_to_hex, rgb_to_hsl,
 };
-use super::{Color, Hex, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
+use super::{Color, ColorUnit, Hex, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
 
 #[test]
 fn hsl_to_rgb_test() {
@@ -169,4 +169,24 @@ fn hsl_from_str_test() {
     parse_hsl("hsl(37, 0.12, 0.75%)").unwrap().to_rgb().to_css(),
     "rgb(199,193,184)".parse::<Rgb>().unwrap().to_css()
   );
+}
+
+#[test]
+fn get_unit_tst() {
+  fn cmp(x: f32, y: f32) -> bool {
+    ((x * 100.0).round() / 100.0 - y).abs() <= std::f32::EPSILON
+  }
+
+  let rgb = Rgb::from_tuple((34.0, 12.0, 177.0));
+
+  println!("Hue {}", rgb.get_unit(ColorUnit::Hue));
+  println!("Saturation {}", rgb.get_unit(ColorUnit::Saturation));
+  println!("Lightness {}", rgb.get_unit(ColorUnit::Lightness));
+
+  assert!(cmp(rgb.get_unit(ColorUnit::Red), 34.0));
+  assert!(cmp(rgb.get_unit(ColorUnit::Green), 12.0));
+  assert!(cmp(rgb.get_unit(ColorUnit::Blue), 177.0));
+  assert!(cmp(rgb.get_unit(ColorUnit::Hue), 248.0));
+  assert!(cmp(rgb.get_unit(ColorUnit::Saturation), 0.87));
+  assert!(cmp(rgb.get_unit(ColorUnit::Lightness), 0.37));
 }

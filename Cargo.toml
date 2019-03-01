@@ -1,6 +1,6 @@
 [package]
 name = "colors-transform"
-version = "0.1.0"
+version = "0.1.1"
 description = "Lib for covert and transform colors"
 authors = ["mz <emgyrz@gmail.com>"]
 license = "MIT"
@@ -9,5 +9,6 @@ repository = "https://github.com/emgyrz/colors.rs.git"
 keywords = ["colors", "converter", "css", "rgb", "hsl"]
 graphics = [ "graphics"]
 edition = "2018"
+readme = "README.md"
 
 [dependencies]
