@@ -14,16 +14,16 @@ use normalize::{normalize_hsl, normalize_hue, normalize_ratio, normalize_rgb, no
 pub use error::ParseError;
 
 pub type ColorTuple = (f32, f32, f32);
+pub type HexTuple = (String, String, String);
 pub type ColorTupleA = (f32, f32, f32, f32);
 
 pub trait Color {
   type Tuple;
-  fn to_hex(&self) -> Hex;
   fn to_rgb(&self) -> Rgb;
   fn to_rgba(&self) -> Rgba;
   fn to_hsl(&self) -> Hsl;
   fn to_hsla(&self) -> Hsla;
-  fn to_css(&self) -> String;
+  fn to_css_string(&self) -> String;
   fn from_tuple(tuple: Self::Tuple) -> Self;
   fn as_tuple(&self) -> Self::Tuple;
   fn lighten(&self, amt: f32) -> Self;
@@ -67,6 +67,19 @@ pub struct Rgb {
   b: f32,
 }
 
+impl Rgb {
+  pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
+    match from_str::hex(s) {
+      Ok(rgb_tuple) => Ok(Rgb::from_tuple(rgb_tuple)),
+      Err(err) => Err(err),
+    }
+  }
+  pub fn to_css_hex_string(&self) -> String {
+    let (r, g, b) = rgb_to_hex(&self.as_tuple());
+    format!("#{}{}{}", r, g, b)
+  }
+}
+
 impl std::str::FromStr for Rgb {
   type Err = ParseError;
 
@@ -88,9 +101,6 @@ impl Color for Rgb {
     let (r, g, b) = self.as_tuple();
     Rgba { rgb: Rgb::from_tuple((r, g, b)), alpha: 1.0 }
   }
-  fn to_hex(&self) -> Hex {
-    Hex { rgb: *self }
-  }
   fn to_hsl(&self) -> Hsl {
     Hsl::from_tuple(rgb_to_hsl(&self.as_tuple()))
   }
@@ -102,9 +112,9 @@ impl Color for Rgb {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// assert_eq!(Rgb::from_tuple((225.0,101.7, 21.0)).to_css(), "rgb(225,102,21)");
+  /// assert_eq!(Rgb::from_tuple((225.0,101.7, 21.0)).to_css_string(), "rgb(225,102,21)");
   /// ```
-  fn to_css(&self) -> String {
+  fn to_css_string(&self) -> String {
     let (r, g, b) = as_rounded_rgb_tuple(&self.as_tuple());
     format!("rgb({},{},{})", r, g, b)
   }
@@ -175,7 +185,7 @@ impl AlphaColor for Rgba {
     self.alpha
   }
   fn set_alpha(&self, a: f32) -> Rgba {
-    let (r, g, b, a) = self.as_tuple();
+    let (r, g, b, _) = self.as_tuple();
     Rgba { rgb: Rgb::from_tuple((r, g, b)), alpha: normalize_ratio(a) }
   }
   fn opacify(&self, a: f32) -> Rgba {
@@ -198,11 +208,7 @@ impl Color for Rgba {
   fn to_hsla(&self) -> Hsla {
     Hsla { hsl: self.rgb.to_hsl(), alpha: self.alpha }
   }
-  fn to_hex(&self) -> Hex {
-    Hex { rgb: self.to_rgb() }
-  }
-
-  fn to_css(&self) -> String {
+  fn to_css_string(&self) -> String {
     let (r, g, b) = as_rounded_rgb_tuple(&self.rgb.as_tuple());
     format!("rgba({},{},{},{})", r, g, b, round_ratio(self.alpha))
   }
@@ -226,77 +232,6 @@ impl Color for Rgba {
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Rgba {
     Rgba { rgb: self.rgb.adjust_color(name, val), alpha: self.alpha }
-  }
-  fn get_unit(&self, unit: ColorUnit) -> f32 {
-    self.rgb.get_unit(unit)
-  }
-}
-
-//
-//
-// HEX
-//
-//
-pub type HexTuple = (String, String, String);
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Hex {
-  rgb: Rgb,
-}
-
-impl std::str::FromStr for Hex {
-  type Err = ParseError;
-
-  fn from_str(s: &str) -> Result<Hex, ParseError> {
-    match from_str::hex(s) {
-      Ok(rgb_tuple) => Ok(Hex { rgb: Rgb::from_tuple(rgb_tuple) }),
-      Err(err) => Err(err),
-    }
-  }
-}
-
-impl Color for Hex {
-  type Tuple = HexTuple;
-
-  fn to_rgb(&self) -> Rgb {
-    self.rgb
-  }
-  fn to_rgba(&self) -> Rgba {
-    self.rgb.to_rgba()
-  }
-  fn to_hex(&self) -> Hex {
-    *self
-  }
-  fn to_hsl(&self) -> Hsl {
-    self.to_rgb().to_hsl()
-  }
-  fn to_hsla(&self) -> Hsla {
-    self.to_rgb().to_hsla()
-  }
-  fn to_css(&self) -> String {
-    let (r, g, b) = self.as_tuple();
-    format!("#{}{}{}", r, g, b)
-  }
-
-  fn from_tuple(t: HexTuple) -> Hex {
-    // TODO:
-    Hex { rgb: Rgb::from_tuple((0.0, 0.0, 0.0)) }
-  }
-  fn as_tuple(&self) -> HexTuple {
-    rgb_to_hex(&self.rgb.as_tuple())
-  }
-
-  fn lighten(&self, amt: f32) -> Hex {
-    Hex { rgb: self.rgb.lighten(amt) }
-  }
-  fn saturate(&self, amt: f32) -> Hex {
-    Hex { rgb: self.rgb.saturate(amt) }
-  }
-  fn adjust_hue(&self, amt: f32) -> Hex {
-    Hex { rgb: self.rgb.adjust_hue(amt) }
-  }
-  fn adjust_color(&self, name: RgbColor, val: f32) -> Hex {
-    Hex { rgb: self.rgb.adjust_color(name, val) }
   }
   fn get_unit(&self, unit: ColorUnit) -> f32 {
     self.rgb.get_unit(unit)
@@ -341,15 +276,10 @@ impl Color for Hsl {
   fn to_hsla(&self) -> Hsla {
     Hsla { hsl: *self, alpha: 1.0 }
   }
-  fn to_hex(&self) -> Hex {
-    self.to_rgb().to_hex()
-  }
-
-  fn to_css(&self) -> String {
+  fn to_css_string(&self) -> String {
     let (h, s, l) = as_rounded_hsl_tuple(&self.as_tuple());
     format!("hsl({},{}%,{}%)", h, s, l)
   }
-
   fn from_tuple(t: ColorTuple) -> Hsl {
     let (h, s, l) = normalize_hsl(&t);
     Hsl { h, s, l }
@@ -432,11 +362,7 @@ impl Color for Hsla {
   fn to_hsla(&self) -> Hsla {
     *self
   }
-  fn to_hex(&self) -> Hex {
-    self.to_rgb().to_hex()
-  }
-
-  fn to_css(&self) -> String {
+  fn to_css_string(&self) -> String {
     let (h, s, l) = as_rounded_hsl_tuple(&self.hsl.as_tuple());
     format!("hsla({},{}%,{}%,{})", h, s, l, round_ratio(self.alpha))
   }

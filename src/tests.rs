@@ -1,7 +1,21 @@
 use super::converters::{
   as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, ratio_as_percent, rgb_to_hex, rgb_to_hsl,
 };
-use super::{Color, ColorUnit, Hex, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
+use super::{Color, ColorUnit, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
+
+#[test]
+fn speed_test() {
+  use std::time::Duration;
+  let count = 10000;
+  let start = std::time::Instant::now();
+  let rgb = Rgb::from_tuple((255.0, 255.0, 255.0));
+  let mut tmp = Vec::new();
+  for _ in 0..count {
+    tmp.push(rgb.to_hsl());
+  }
+
+  println!("Elapsed {:?} for {} times", start.elapsed(), tmp.len());
+}
 
 #[test]
 fn hsl_to_rgb_test() {
@@ -105,26 +119,26 @@ fn adjust_color_test() {
 }
 
 #[test]
-fn to_css_test() {
+fn to_css_string_test() {
   let rgb = Rgb::from_tuple((255.1, 203.7, 0.47));
-  assert_eq!(&rgb.to_css(), "rgb(255,204,0)");
-  assert_eq!(&rgb.to_rgba().to_css(), "rgba(255,204,0,1)");
-  assert_eq!(&rgb.to_hex().to_css(), "#ffcc00");
+  assert_eq!(&rgb.to_css_string(), "rgb(255,204,0)");
+  assert_eq!(&rgb.to_rgba().to_css_string(), "rgba(255,204,0,1)");
+  assert_eq!(&rgb.to_css_hex_string(), "#ffcc00");
 
   let rgb = Rgb::from_tuple((137.0, 193.0, 31.0));
-  assert_eq!(&rgb.to_hsl().to_css(), "hsl(81,72%,44%)");
-  assert_eq!(&rgb.to_hsla().to_css(), "hsla(81,72%,44%,1)");
+  assert_eq!(&rgb.to_hsl().to_css_string(), "hsl(81,72%,44%)");
+  assert_eq!(&rgb.to_hsla().to_css_string(), "hsla(81,72%,44%,1)");
 }
 
 #[test]
 fn hex_from_str_test() {
-  fn parse_hex(s: &str) -> Result<Hex, ParseError> {
-    s.parse::<Hex>()
+  fn parse_hex(s: &str) -> Result<Rgb, ParseError> {
+    Rgb::from_hex_str(s)
   }
-  assert_eq!(parse_hex("#ffcc00").unwrap().to_css(), "#ffcc00");
-  assert_eq!(parse_hex("#FA1CBE").unwrap().to_css(), "#fa1cbe");
-  assert_eq!(parse_hex("#fc0").unwrap().to_css(), "#ffcc00");
-  assert_eq!(parse_hex("fc0").unwrap().to_css(), "#ffcc00");
+  assert_eq!(parse_hex("#ffcc00").unwrap().to_css_hex_string(), "#ffcc00");
+  assert_eq!(parse_hex("#FA1CBE").unwrap().to_css_hex_string(), "#fa1cbe");
+  assert_eq!(parse_hex("#fc0").unwrap().to_css_hex_string(), "#ffcc00");
+  assert_eq!(parse_hex("fc0").unwrap().to_css_hex_string(), "#ffcc00");
   assert!(parse_hex("").is_err());
   assert!(parse_hex("ffcc0g").is_err());
   assert!(parse_hex("zxc.@0").is_err());
@@ -137,9 +151,9 @@ fn rgb_from_str_test() {
   fn parse_rgb(s: &str) -> Result<Rgb, ParseError> {
     s.parse::<Rgb>()
   }
-  assert_eq!(parse_rgb("Rgb(134,11,251)").unwrap().to_css(), "rgb(134,11,251)");
-  assert_eq!(parse_rgb("Rgb(134.9,11.1,250.55)").unwrap().to_css(), "rgb(135,11,251)");
-  assert_eq!(parse_rgb("(0,0,0)").unwrap().to_css(), "rgb(0,0,0)");
+  assert_eq!(parse_rgb("Rgb(134,11,251)").unwrap().to_css_string(), "rgb(134,11,251)");
+  assert_eq!(parse_rgb("Rgb(134.9,11.1,250.55)").unwrap().to_css_string(), "rgb(135,11,251)");
+  assert_eq!(parse_rgb("(0,0,0)").unwrap().to_css_string(), "rgb(0,0,0)");
   assert!(parse_rgb("").is_err());
   assert!(parse_rgb("ffcc0g").is_err());
 }
@@ -149,12 +163,15 @@ fn rgba_from_str_test() {
   fn parse_rgba(s: &str) -> Result<Rgba, ParseError> {
     s.parse::<Rgba>()
   }
-  assert_eq!(parse_rgba("Rgba(134, 11, 251,0.67)").unwrap().to_css(), "rgba(134,11,251,0.67)");
   assert_eq!(
-    parse_rgba("rgba( 134.9, 11.1, 250.55,0.3 )").unwrap().to_css(),
+    parse_rgba("Rgba(134, 11, 251,0.67)").unwrap().to_css_string(),
+    "rgba(134,11,251,0.67)"
+  );
+  assert_eq!(
+    parse_rgba("rgba( 134.9, 11.1, 250.55,0.3 )").unwrap().to_css_string(),
     "rgba(135,11,251,0.3)"
   );
-  assert_eq!(parse_rgba("(0,0,0,0.1)").unwrap().to_css(), "rgba(0,0,0,0.1)");
+  assert_eq!(parse_rgba("(0,0,0,0.1)").unwrap().to_css_string(), "rgba(0,0,0,0.1)");
   assert!(parse_rgba("asd234,234rgba").is_err());
   assert!(parse_rgba("ffcc0g").is_err());
 }
@@ -166,8 +183,8 @@ fn hsl_from_str_test() {
   }
 
   assert_eq!(
-    parse_hsl("hsl(37, 0.12, 0.75%)").unwrap().to_rgb().to_css(),
-    "rgb(199,193,184)".parse::<Rgb>().unwrap().to_css()
+    parse_hsl("hsl(37, 0.12, 0.75%)").unwrap().to_rgb().to_css_string(),
+    "rgb(199,193,184)".parse::<Rgb>().unwrap().to_css_string()
   );
 }
 
