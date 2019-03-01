@@ -33,6 +33,7 @@ pub trait Color {
   fn adjust_hue(&self, amt: f32) -> Self;
   fn adjust_color(&self, col_name: RgbColor, val: f32) -> Self;
   fn get_unit(&self, unit: ColorUnit) -> f32;
+  fn set_unit(&self, unit: ColorUnit, val: f32) -> Self;
 }
 
 pub trait AlphaColor {
@@ -79,6 +80,16 @@ impl Rgb {
   pub fn to_css_hex_string(&self) -> String {
     let (r, g, b) = rgb_to_hex(&self.as_tuple());
     format!("#{}{}{}", r, g, b)
+  }
+
+  fn set_red(&self, val: f32) -> Rgb {
+    Rgb { r: normalize_rgb_unit(val), g: self.g, b: self.b }
+  }
+  fn set_green(&self, val: f32) -> Rgb {
+    Rgb { r: self.r, g: normalize_rgb_unit(val), b: self.b }
+  }
+  fn set_blue(&self, val: f32) -> Rgb {
+    Rgb { r: self.r, g: self.g, b: normalize_rgb_unit(val) }
   }
 }
 
@@ -139,13 +150,12 @@ impl Color for Rgb {
     self.to_hsl().adjust_hue(amt).to_rgb()
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Rgb {
-    let (mut r, mut g, mut b) = self.as_tuple();
+    let (r, g, b) = self.as_tuple();
     match name {
-      RgbColor::Red => r = normalize_rgb_unit(r + val),
-      RgbColor::Green => g = normalize_rgb_unit(g + val),
-      RgbColor::Blue => b = normalize_rgb_unit(b + val),
+      RgbColor::Red => self.set_red(r + val),
+      RgbColor::Green => self.set_green(g + val),
+      RgbColor::Blue => self.set_blue(b + val),
     }
-    Rgb::from_tuple((r, g, b))
   }
 
   fn get_unit(&self, unit: ColorUnit) -> f32 {
@@ -156,6 +166,16 @@ impl Color for Rgb {
       ColorUnit::Hue => self.to_hsl().h,
       ColorUnit::Saturation => self.to_hsl().s,
       ColorUnit::Lightness => self.to_hsl().l,
+    }
+  }
+  fn set_unit(&self, unit: ColorUnit, val: f32) -> Rgb {
+    match unit {
+      ColorUnit::Red => self.set_red(val),
+      ColorUnit::Green => self.set_green(val),
+      ColorUnit::Blue => self.set_blue(val),
+      ColorUnit::Hue => self.to_hsl().set_h(val).to_rgb(),
+      ColorUnit::Saturation => self.to_hsl().set_s(val).to_rgb(),
+      ColorUnit::Lightness => self.to_hsl().set_l(val).to_rgb(),
     }
   }
 }
@@ -238,6 +258,9 @@ impl Color for Rgba {
   fn get_unit(&self, unit: ColorUnit) -> f32 {
     self.rgb.get_unit(unit)
   }
+  fn set_unit(&self, unit: ColorUnit, val: f32) -> Rgba {
+    Rgba { rgb: self.rgb.set_unit(unit, val), alpha: self.alpha }
+  }
 }
 
 //
@@ -250,6 +273,18 @@ pub struct Hsl {
   h: f32,
   s: f32,
   l: f32,
+}
+
+impl Hsl {
+  fn set_h(&self, val: f32) -> Hsl {
+    Hsl { h: normalize_hue(val), s: self.s, l: self.l }
+  }
+  fn set_s(&self, val: f32) -> Hsl {
+    Hsl { h: self.h, s: normalize_percent(val), l: self.l }
+  }
+  fn set_l(&self, val: f32) -> Hsl {
+    Hsl { h: self.h, s: self.s, l: normalize_percent(val) }
+  }
 }
 
 impl std::str::FromStr for Hsl {
@@ -289,14 +324,14 @@ impl Color for Hsl {
   fn as_tuple(&self) -> ColorTuple {
     (self.h, self.s, self.l)
   }
-  fn lighten(&self, amt: f32) -> Hsl {
-    Hsl { h: self.h, s: self.s, l: normalize_percent(self.l + amt) }
+  fn lighten(&self, val: f32) -> Hsl {
+    self.set_l(self.l + val)
   }
-  fn saturate(&self, amt: f32) -> Hsl {
-    Hsl { h: self.h, s: normalize_percent(self.s + amt), l: self.l }
+  fn saturate(&self, val: f32) -> Hsl {
+    self.set_s(self.s + val)
   }
   fn adjust_hue(&self, hue: f32) -> Hsl {
-    Hsl { h: normalize_hue(self.h + hue), s: self.s, l: self.l }
+    self.set_h(self.h + hue)
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsl {
     self.to_rgb().adjust_color(name, val).to_hsl()
@@ -310,6 +345,16 @@ impl Color for Hsl {
       ColorUnit::Hue => self.h,
       ColorUnit::Saturation => self.s,
       ColorUnit::Lightness => self.l,
+    }
+  }
+  fn set_unit(&self, unit: ColorUnit, val: f32) -> Hsl {
+    match unit {
+      ColorUnit::Red => self.to_rgb().set_red(val).to_hsl(),
+      ColorUnit::Green => self.to_rgb().set_green(val).to_hsl(),
+      ColorUnit::Blue => self.to_rgb().set_blue(val).to_hsl(),
+      ColorUnit::Hue => self.set_h(val),
+      ColorUnit::Saturation => self.set_s(val),
+      ColorUnit::Lightness => self.set_l(val),
     }
   }
 }
@@ -391,5 +436,8 @@ impl Color for Hsla {
   }
   fn get_unit(&self, unit: ColorUnit) -> f32 {
     self.hsl.get_unit(unit)
+  }
+  fn set_unit(&self, unit: ColorUnit, val: f32) -> Hsla {
+    Hsla { hsl: self.hsl.set_unit(unit, val), alpha: self.alpha }
   }
 }
