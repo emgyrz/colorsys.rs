@@ -1,5 +1,5 @@
 [package]
-name = "colors-rs"
+name = "color-transform"
 version = "0.1.0"
 description = "Lib for covert and transform colors"
 authors = ["mz <emgyrz@gmail.com>"]
