@@ -1,7 +1,5 @@
-use super::converters::{
-  as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb, rgb_to_hex, rgb_to_hsl,
-};
-use super::{Color, ColorUnit, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
+use super::converters::{as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb};
+use super::{Color, Hsl, ParseError, Rgb, RgbColor, Rgba};
 
 // #[test]
 // fn speed_test() {
@@ -196,10 +194,10 @@ fn get_unit_tst() {
 
   let rgb = Rgb::from_tuple((34.0, 12.0, 177.0));
 
-  assert!(cmp(rgb.get_unit(ColorUnit::Red), 34.0));
-  assert!(cmp(rgb.get_unit(ColorUnit::Green), 12.0));
-  assert!(cmp(rgb.get_unit(ColorUnit::Blue), 177.0));
-  assert!(cmp(rgb.get_unit(ColorUnit::Hue), 248.0));
-  assert!(cmp(rgb.get_unit(ColorUnit::Saturation), 87.0));
-  assert!(cmp(rgb.get_unit(ColorUnit::Lightness), 37.0));
+  assert!(cmp(rgb.get_red(), 34.0));
+  assert!(cmp(rgb.get_green(), 12.0));
+  assert!(cmp(rgb.get_blue(), 177.0));
+  assert!(cmp(rgb.get_hue(), 248.0));
+  assert!(cmp(rgb.get_saturation(), 87.0));
+  assert!(cmp(rgb.get_lightness(), 37.0));
 }
