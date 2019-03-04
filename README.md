@@ -24,8 +24,8 @@ let modified = rgb
   .set_green(152.0) // Rgb { r: 245.0, g: 152.0, b: 53.0 }
   .set_hue(279.0); // Rgb { r: 177.80003, g: 53.00001, b: 245.0 }
 
-let saturation = rgb.get_saturation(); // 63.71429
-let blue = rgb.get_blue(); // 53.00001
+let saturation = modified.get_saturation(); // 63.71429
+let blue = modified.get_blue(); // 53.00001
 
 ```
 
@@ -82,6 +82,7 @@ All color units is f32. Here are their ranges:
  - saturation - 0.0 .. 100.0
  - lightness - 0.0 .. 100.0
  - alpha - 0.0 .. 1.0
+
 If you specify a value that does not fit within these ranges, they are replaced with a minimum or maximum value.
 
 ##### Enjoy using!

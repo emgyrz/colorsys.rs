@@ -17,13 +17,13 @@
 //!   .set_green(152.0) // Rgb { r: 245.0, g: 152.0, b: 53.0 }
 //!   .set_hue(279.0); // Rgb { r: 177.80003, g: 53.00001, b: 245.0 }
 //!
-//! let saturation = rgb.get_saturation(); // 63.71429
-//! let blue = rgb.get_blue(); // 53.00001
+//! let saturation = modified.get_saturation(); // 63.71429
+//! let blue = modified.get_blue(); // 53.00001
 //!
 //! ```
 //!
 //! ### conversion
-//! ```
+//! ```ignore
 //! let hex_color = Hsl::from_tuple((315.9, 99.7, 50.0))
 //! // where tuple is ($hue, $saturation, $lightness)
 //!   .to_rgb() // ~Rgb { r: 254.6, g: 0.38, b: 187.24 }
@@ -35,7 +35,7 @@
 //! ```
 //!
 //! ### modification
-//! ```
+//! ```ignore
 //! let rgb = Rgb::from_tuple((245.0,152.0,53.0))
 //!   .lighten(21.0) // Rgb { r: 250.05188, g: 204.03442, b: 155.04813 }
 //!   .saturate( 3.9999 ); // Rgb { r: 252.14981, g: 204.1, b: 152.9502 }
@@ -43,7 +43,7 @@
 //! ```
 //!
 //! ### parsing from string & css string representation
-//! ```
+//! ```ignore
 //! let hsla: Hsla = "hsla(359,12%,71,0.3)".parse().unwrap();
 //! // Hsla { h: 359.0, s: 12.0, l: 71.0 alpha: 0.3 }
 //!
@@ -97,7 +97,12 @@ pub use colors::{Hsl, Hsla, Rgb, Rgba};
 
 pub use error::ParseError;
 
-/// Tuple type just for data exchange. May be a `($red,$green,$blue)` or `($hue, $saturation, $lightness)`
+/// Tuple type just for data exchange. May be a:
+/// - `($red,$green,$blue)` _`(0.0..255.0, 0.0..255.0, 0.0..255.0)`_
+///
+/// or
+///
+/// - `($hue, $saturation, $lightness)` _`(0.0..360.0, 0.0..100.0, 0.0..100.0)`_
 /// # Example
 /// ```
 /// use colors_transform::{Rgb,Color,Hsl};
@@ -115,24 +120,74 @@ pub type ColorTupleA = (f32, f32, f32, f32);
 
 /// Common to all trait
 pub trait Color {
+  /// ColorTuple or ColorTupleA.
+  ///
+
   type Tuple;
+  /// Creates a black color
+  /// # Example
+  /// ```
+  /// use colors_transform::{Rgb,Color};
+  ///
+  /// let black = Rgb::from_tuple((0.0,0.0,0.0));
+  /// assert_eq!(black, Rgb::new());
+  /// ```
   fn new() -> Self;
 
+  /// Creates a color from tuple.
+  /// # Example
+  /// ```
+  /// use colors_transform::{Rgba,Hsl,Color};
+  ///
+  /// let rgba = Rgba::from_tuple((10.0,11.0,12.0, 0.5));
+  /// let hsl = Hsl::from_tuple((310.0,50.0,50.0));
+  /// ```
   fn from_tuple(tuple: Self::Tuple) -> Self;
+
+  /// Returns tuple representation of color
+  /// # Example
+  /// ```
+  /// use colors_transform::{Hsla,Color};
+  ///
+  /// let hsla = Hsla::from_tuple((10.0,11.0,12.0, 0.5));
+  /// assert_eq!((10.0,11.0,12.0, 0.5),hsla.as_tuple());
+  /// ```
   fn as_tuple(&self) -> Self::Tuple;
 
+  /// Returns red value of color (`0.0..255.00`)
   fn get_red(&self) -> f32;
+
+  /// Returns green value of color (`0.0..255.00`)
   fn get_green(&self) -> f32;
+
+  /// Returns blue value of color (`0.0..255.00`)
   fn get_blue(&self) -> f32;
+
+  /// Sets red value of color (`0.0..255.00`). Returns Color
   fn set_red(&self, val: f32) -> Self;
+
+  /// Sets green value of color (`0.0..255.00`). Returns Color
   fn set_green(&self, val: f32) -> Self;
+
+  /// Sets blue value of color (`0.0..255.00`). Returns Color
   fn set_blue(&self, val: f32) -> Self;
 
+  /// Returns hue value of color (`0.0..360.00`)
   fn get_hue(&self) -> f32;
+
+  /// Returns saturation value of color (`0.0..100.00`)
   fn get_saturation(&self) -> f32;
+
+  /// Returns lightness value of color (`0.0..100.00`)
   fn get_lightness(&self) -> f32;
+
+  /// Sets hue value of color (`0.0..360.00`). Returns Color
   fn set_hue(&self, val: f32) -> Self;
+
+  /// Sets saturation value of color (`0.0..100.00`). Returns Color
   fn set_saturation(&self, val: f32) -> Self;
+
+  /// Sets lightness value of color (`0.0..100.00`). Returns Color
   fn set_lightness(&self, val: f32) -> Self;
 
   fn to_rgb(&self) -> Rgb;
