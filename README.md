@@ -82,7 +82,7 @@ All color units is f32. Here are their ranges:
  - saturation - 0.0 .. 100.0
  - lightness - 0.0 .. 100.0
  - alpha - 0.0 .. 1.0
-
+If you specify a value that does not fit within these ranges, they are replaced with a minimum or maximum value.
 
 ##### Enjoy using!
 
