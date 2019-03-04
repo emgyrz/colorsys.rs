@@ -7,15 +7,6 @@ A module for color conversion and mutation written in Rust.
 
 [Online documentation](https://docs.rs/colors-transform/0.1.1/colors_transform/)
 
-## Cargo.toml Entries
-
-Add the following lines to your `Cargo.toml` file:
-
-```toml
-[dependencies]
-colors_transform = "0.2"
-```
-
 For now you can work with four color representation options: Rgb, Rgb, Hsl, Hsla. Each of them has a variety of methods to modify and convert. See the [Color](https://docs.rs/colors-transform/0.1.1/colors_transform/trait.Color.html) trait they implement. There are also a couple of methods for hex string color.
 
 All values are given as f32 for more accurate calculations.
@@ -58,19 +49,25 @@ let rgb = Rgb::from_tuple((245.0,152.0,53.0))
 // TODO: grayscale, invert and other
 ```
 
-#### parsing from string
+#### parsing from string & css string representation
 ```Rust
-let hsla: Hsla = "hsla(359,12,71,0.3)".parse().unwrap();
+let hsla: Hsla = "hsla(359,12%,71,0.3)".parse().unwrap();
 // Hsla { h: 359.0, s: 12.0, l: 71.0 alpha: 0.3 }
 
-let rgb = "rgb(12,13,14)"
+let rgb1 = "rgb(12,13,14)"
   .parse::<Rgb>()
   .unwrap()
   .adjust_color( RgbColor::Green, 139.7 );
 // Rgb { r: 12.0, g: 152.7, b: 14.0 }
 
-let rgb = Rgb::from_hex_str("#fc0").unwrap();
+let rgb2 = Rgb::from_hex_str("#fc0").unwrap();
 // Rgb { r: 255.0, g: 204.0, b: 0.0 }
+
+let rgb_str = rgb1.to_css_string();
+// rgb(12,153,14)
+
+let hsla_str = rgb2.to_hsla().to_css_string();
+// "hsla(48,100%,50%,1)"
 ```
 
 As you see it is completely chainable.
