@@ -118,7 +118,8 @@ impl Color for Rgb {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// assert_eq!(Rgb::from_tuple((225.0,101.7, 21.0)).to_css_string(), "rgb(225,102,21)");
+  /// let rgb = Rgb::from_tuple((225.0,101.7, 21.0));
+  /// assert_eq!(rgb.to_css_string(), "rgb(225,102,21)");
   /// ```
   fn to_css_string(&self) -> String {
     let (r, g, b) = as_rounded_rgb_tuple(&self.as_tuple());

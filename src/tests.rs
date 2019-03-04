@@ -201,3 +201,11 @@ fn get_unit_tst() {
   assert!(cmp(rgb.get_saturation(), 87.0));
   assert!(cmp(rgb.get_lightness(), 37.0));
 }
+
+#[test]
+fn eq_test() {
+  let rgb = Rgb::from_tuple((34.0, 12.0, 177.0));
+  let transformed_rgb = rgb.to_hsl().to_rgb();
+  assert!(rgb.get_red() - transformed_rgb.get_red() < std::f32::EPSILON);
+  // assert_eq!(rgb, transformed_rgb);
+}
