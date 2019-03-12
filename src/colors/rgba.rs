@@ -116,4 +116,7 @@ impl Color for Rgba {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Rgba {
     Rgba { rgb: self.rgb.adjust_color(name, val), alpha: self.alpha }
   }
+  fn grayscale(&self) -> Rgba {
+    Rgba { rgb: self.rgb.grayscale(), alpha: self.alpha }
+  }
 }

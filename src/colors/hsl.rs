@@ -103,4 +103,8 @@ impl Color for Hsl {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsl {
     self.to_rgb().adjust_color(name, val).to_hsl()
   }
+
+  fn grayscale(&self) -> Hsl {
+    Hsl { h: 0.0, s: 0.0, l: self.l }
+  }
 }

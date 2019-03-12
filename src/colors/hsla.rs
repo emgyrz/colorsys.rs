@@ -115,4 +115,7 @@ impl Color for Hsla {
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsla {
     Hsla { hsl: self.hsl.adjust_color(name, val), alpha: self.alpha }
   }
+  fn grayscale(&self) -> Hsla {
+    Hsla { hsl: self.hsl.grayscale(), alpha: self.alpha }
+  }
 }

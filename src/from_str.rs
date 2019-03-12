@@ -35,14 +35,8 @@ fn collect_vec_and_parse(s: &str) -> Result<Vec<f32>, std::num::ParseFloatError>
   let mut units = Vec::new();
 
   for unit in v {
-    match unit.parse::<f32>() {
-      Ok(u) => {
-        units.push(u);
-      }
-      Err(err) => {
-        return Err(err);
-      }
-    }
+    let u = unit.parse::<f32>()?;
+    units.push(u);
   }
 
   Ok(units)

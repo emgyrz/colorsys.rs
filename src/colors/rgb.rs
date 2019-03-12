@@ -1,5 +1,5 @@
 use super::{Hsl, Hsla, Rgba};
-use crate::converters::{as_rounded_rgb_tuple, rgb_to_hex, rgb_to_hsl};
+use crate::converters::{as_rounded_rgb_tuple, rgb_to_grayscale, rgb_to_hex, rgb_to_hsl};
 use crate::error::ParseError;
 use crate::normalize::{normalize_rgb, normalize_rgb_unit};
 use crate::{from_str, Color, ColorTuple, RgbColor};
@@ -150,5 +150,9 @@ impl Color for Rgb {
       RgbColor::Green => self.set_green(g + val),
       RgbColor::Blue => self.set_blue(b + val),
     }
+  }
+
+  fn grayscale(&self) -> Rgb {
+    Rgb::from_tuple(rgb_to_grayscale(&self.as_tuple()))
   }
 }
