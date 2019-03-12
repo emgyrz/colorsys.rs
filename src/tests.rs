@@ -41,7 +41,7 @@ fn rgb_to_hsl_test() {
   ];
 
   asserts.iter().for_each(|a| {
-    assert_eq!(as_rounded_hsl_tuple(&Rgb::from_tuple(a.0).to_hsl().as_tuple()), a.1);
+    assert_eq!(as_rounded_hsl_tuple(&Rgb::from_tuple(&a.0).to_hsl().as_tuple()), a.1);
   });
 }
 
@@ -58,7 +58,7 @@ fn lighten_darken_test() {
 
   for a in asserts.iter() {
     let (origin, amt, result) = *a;
-    let rgb = Rgb::from_tuple(origin);
+    let rgb = Rgb::from_tuple(&origin);
     let mutated = rgb.lighten(amt);
     assert_eq!(as_rounded_rgb_tuple(&mutated.as_tuple()), result);
   }
@@ -74,7 +74,7 @@ fn saturate_desaturate_test() {
 
   for a in asserts.iter() {
     let (origin, amt, result) = *a;
-    let rgb = Rgb::from_tuple(origin);
+    let rgb = Rgb::from_tuple(&origin);
     let mutated = rgb.saturate(amt);
     assert_eq!(as_rounded_rgb_tuple(&mutated.as_tuple()), result);
   }
@@ -91,7 +91,7 @@ fn adjust_hue_test() {
 
   for a in asserts.iter() {
     let (origin, amt, result) = *a;
-    let rgb = Rgb::from_tuple(origin);
+    let rgb = Rgb::from_tuple(&origin);
     let mutated = rgb.adjust_hue(amt);
     assert_eq!(as_rounded_rgb_tuple(&mutated.as_tuple()), result);
   }
@@ -99,7 +99,7 @@ fn adjust_hue_test() {
 
 #[test]
 fn adjust_color_test() {
-  let rgb = Rgb::from_tuple((24.0, 91.0, 203.0));
+  let rgb = Rgb::from_tuple(&(24.0, 91.0, 203.0));
   let rgb = rgb.adjust_color(RgbColor::Red, 55.0);
   assert_eq!(rgb.as_tuple(), (79.0, 91.0, 203.0));
   let asserts = [
@@ -110,7 +110,7 @@ fn adjust_color_test() {
 
   for a in asserts.iter() {
     let (origin, col_name, col_val, result) = *a;
-    let hsl = Hsl::from_tuple(origin);
+    let hsl = Hsl::from_tuple(&origin);
     let mutated = hsl.adjust_color(col_name, col_val);
     assert_eq!(as_rounded_rgb_tuple(&mutated.to_rgb().as_tuple()), result);
   }
@@ -118,12 +118,12 @@ fn adjust_color_test() {
 
 #[test]
 fn to_css_string_test() {
-  let rgb = Rgb::from_tuple((255.1, 203.7, 0.47));
+  let rgb = Rgb::from_tuple(&(255.1, 203.7, 0.47));
   assert_eq!(&rgb.to_css_string(), "rgb(255,204,0)");
   assert_eq!(&rgb.to_rgba().to_css_string(), "rgba(255,204,0,1)");
   assert_eq!(&rgb.to_css_hex_string(), "#ffcc00");
 
-  let rgb = Rgb::from_tuple((137.0, 193.0, 31.0));
+  let rgb = Rgb::from_tuple(&(137.0, 193.0, 31.0));
   assert_eq!(&rgb.to_hsl().to_css_string(), "hsl(81,72%,44%)");
   assert_eq!(&rgb.to_hsla().to_css_string(), "hsla(81,72%,44%,1)");
 }
@@ -192,7 +192,7 @@ fn get_unit_tst() {
     (x.round() - y).abs() <= std::f32::EPSILON
   }
 
-  let rgb = Rgb::from_tuple((34.0, 12.0, 177.0));
+  let rgb = Rgb::from_tuple(&(34.0, 12.0, 177.0));
 
   assert!(cmp(rgb.get_red(), 34.0));
   assert!(cmp(rgb.get_green(), 12.0));
@@ -204,7 +204,7 @@ fn get_unit_tst() {
 
 #[test]
 fn eq_test() {
-  let rgb = Rgb::from_tuple((34.0, 12.0, 177.0));
+  let rgb = Rgb::from_tuple(&(34.0, 12.0, 177.0));
   let transformed_rgb = rgb.to_hsl().to_rgb();
   assert!(rgb.get_red() - transformed_rgb.get_red() < std::f32::EPSILON);
   // assert_eq!(rgb, transformed_rgb);

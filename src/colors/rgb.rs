@@ -20,13 +20,13 @@ impl Rgb {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// assert_eq!(Rgb::from_hex_str("#e76B2c").unwrap(),Rgb::from_tuple((231.0,107.0,44.0)));
-  /// assert_eq!(Rgb::from_hex_str("fc0").unwrap(),Rgb::from_tuple((255.0,204.0,0.0)));
+  /// assert_eq!(Rgb::from_hex_str("#e76B2c").unwrap(),Rgb::from_tuple(&(231.0,107.0,44.0)));
+  /// assert_eq!(Rgb::from_hex_str("fc0").unwrap(),Rgb::from_tuple(&(255.0,204.0,0.0)));
   /// assert!(Rgb::from_hex_str("cyan").is_err());
   /// ```
   pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
     match from_str::hex(s) {
-      Ok(rgb_tuple) => Ok(Rgb::from_tuple(rgb_tuple)),
+      Ok(rgb_tuple) => Ok(Rgb::from_tuple(&rgb_tuple)),
       Err(err) => Err(err),
     }
   }
@@ -35,7 +35,7 @@ impl Rgb {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// let rgb1 = Rgb::from_tuple((231.0,107.0,44.0));
+  /// let rgb1 = Rgb::from_tuple(&(231.0,107.0,44.0));
   /// assert_eq!(rgb1.to_css_hex_string(),"#e76b2c");
   ///
   /// let rgb2 = Rgb::from_hex_str("#0C7").unwrap();
@@ -48,12 +48,12 @@ impl Rgb {
 
   ///  The ITU-R BT.709 standard used for HDTV
   pub fn grayscale_rec709(&self) -> Rgb {
-    Rgb::from_tuple(rgb_to_grayscale_rec709(&self.as_tuple()))
+    Rgb::from_tuple(&rgb_to_grayscale_rec709(&self.as_tuple()))
   }
 
   /// Convert color to grayscale using the ITU-R BT.2100 standard for HDR television
   pub fn grayscale_rec2100(&self) -> Rgb {
-    Rgb::from_tuple(rgb_to_grayscale_rec2100(&self.as_tuple()))
+    Rgb::from_tuple(&rgb_to_grayscale_rec2100(&self.as_tuple()))
   }
 }
 
@@ -62,7 +62,7 @@ impl std::str::FromStr for Rgb {
 
   fn from_str(s: &str) -> Result<Rgb, ParseError> {
     match from_str::rgb(s) {
-      Ok(rgb_tuple) => Ok(Rgb::from_tuple(rgb_tuple)),
+      Ok(rgb_tuple) => Ok(Rgb::from_tuple(&rgb_tuple)),
       Err(err) => Err(err),
     }
   }
@@ -118,10 +118,10 @@ impl Color for Rgb {
   }
   fn to_rgba(&self) -> Rgba {
     let (r, g, b) = self.as_tuple();
-    Rgba::from_tuple((r, g, b, 1.0))
+    Rgba::from_tuple(&(r, g, b, 1.0))
   }
   fn to_hsl(&self) -> Hsl {
-    Hsl::from_tuple(rgb_to_hsl(&self.as_tuple()))
+    Hsl::from_tuple(&rgb_to_hsl(&self.as_tuple()))
   }
   fn to_hsla(&self) -> Hsla {
     self.to_hsl().to_hsla()
@@ -131,7 +131,7 @@ impl Color for Rgb {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// let rgb = Rgb::from_tuple((225.0,101.7, 21.0));
+  /// let rgb = Rgb::from_tuple(&(225.0,101.7, 21.0));
   /// assert_eq!(rgb.to_css_string(), "rgb(225,102,21)");
   /// ```
   fn to_css_string(&self) -> String {
@@ -139,7 +139,7 @@ impl Color for Rgb {
     format!("rgb({},{},{})", r, g, b)
   }
 
-  fn from_tuple(t: ColorTuple) -> Rgb {
+  fn from_tuple(t: &ColorTuple) -> Rgb {
     let (r, g, b) = normalize_rgb(&t);
     Rgb { r, g, b }
   }
@@ -166,6 +166,6 @@ impl Color for Rgb {
   }
 
   fn grayscale(&self) -> Rgb {
-    Rgb::from_tuple(rgb_to_grayscale(&self.as_tuple()))
+    Rgb::from_tuple(&rgb_to_grayscale(&self.as_tuple()))
   }
 }

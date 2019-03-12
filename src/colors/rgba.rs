@@ -15,7 +15,7 @@ impl std::str::FromStr for Rgba {
 
   fn from_str(s: &str) -> Result<Rgba, ParseError> {
     match from_str::rgba(s) {
-      Ok(rgba_tuple) => Ok(Rgba::from_tuple(rgba_tuple)),
+      Ok(rgba_tuple) => Ok(Rgba::from_tuple(&rgba_tuple)),
       Err(err) => Err(err),
     }
   }
@@ -27,7 +27,7 @@ impl AlphaColor for Rgba {
   }
   fn set_alpha(&self, a: f32) -> Rgba {
     let (r, g, b, _) = self.as_tuple();
-    Rgba { rgb: Rgb::from_tuple((r, g, b)), alpha: normalize_ratio(a) }
+    Rgba { rgb: Rgb::from_tuple(&(r, g, b)), alpha: normalize_ratio(a) }
   }
   fn opacify(&self, a: f32) -> Rgba {
     self.set_alpha(self.alpha + a)
@@ -96,9 +96,9 @@ impl Color for Rgba {
     format!("rgba({},{},{},{})", r, g, b, round_ratio(self.alpha))
   }
 
-  fn from_tuple(t: ColorTupleA) -> Rgba {
-    let (r, g, b, a) = t;
-    Rgba { rgb: Rgb::from_tuple((r, g, b)), alpha: normalize_ratio(a) }
+  fn from_tuple(t: &ColorTupleA) -> Rgba {
+    let (r, g, b, a) = *t;
+    Rgba { rgb: Rgb::from_tuple(&(r, g, b)), alpha: normalize_ratio(a) }
   }
   fn as_tuple(&self) -> ColorTupleA {
     let (r, g, b) = self.rgb.as_tuple();

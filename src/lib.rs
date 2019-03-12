@@ -9,7 +9,7 @@
 //! ### getters & setters
 //! ```
 //! use colors_transform::{Rgb, Color};
-//! let rgb = Rgb::from_tuple((57.3, 12.7, 53.0));
+//! let rgb = Rgb::from_tuple(&(57.3, 12.7, 53.0));
 //! // where tuple is ($red, $green, $blue)
 //!
 //! let modified = rgb
@@ -107,7 +107,7 @@ pub use error::ParseError;
 /// ```
 /// use colors_transform::{Rgb,Color,Hsl};
 ///
-/// let rgb = Rgb::from_tuple((255.0,13.0,177.0));
+/// let rgb = Rgb::from_tuple(&(255.0,13.0,177.0));
 /// assert_eq!(rgb.get_red(), 255.0);
 ///
 /// let hsl: Hsl = "hsl(315,99,12)".parse().unwrap();
@@ -129,7 +129,7 @@ pub trait Color {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// let black = Rgb::from_tuple((0.0,0.0,0.0));
+  /// let black = Rgb::from_tuple(&(0.0,0.0,0.0));
   /// assert_eq!(black, Rgb::new());
   /// ```
   fn new() -> Self;
@@ -139,17 +139,17 @@ pub trait Color {
   /// ```
   /// use colors_transform::{Rgba,Hsl,Color};
   ///
-  /// let rgba = Rgba::from_tuple((10.0,11.0,12.0, 0.5));
-  /// let hsl = Hsl::from_tuple((310.0,50.0,50.0));
+  /// let rgba = Rgba::from_tuple(&(10.0,11.0,12.0, 0.5));
+  /// let hsl = Hsl::from_tuple(&(310.0,50.0,50.0));
   /// ```
-  fn from_tuple(tuple: Self::Tuple) -> Self;
+  fn from_tuple(tuple: &Self::Tuple) -> Self;
 
   /// Returns tuple representation of color
   /// # Example
   /// ```
   /// use colors_transform::{Hsla,Color};
   ///
-  /// let hsla = Hsla::from_tuple((10.0,11.0,12.0, 0.5));
+  /// let hsla = Hsla::from_tuple(&(10.0,11.0,12.0, 0.5));
   /// assert_eq!((10.0,11.0,12.0, 0.5),hsla.as_tuple());
   /// ```
   fn as_tuple(&self) -> Self::Tuple;
@@ -200,7 +200,7 @@ pub trait Color {
   /// ```
   /// use colors_transform::{Hsl,Color};
   ///
-  /// let hsl = Hsl::from_tuple((301.0,27.0,91.0));
+  /// let hsl = Hsl::from_tuple(&(301.0,27.0,91.0));
   /// assert_eq!(hsl.to_css_string(), "hsl(301,27%,91%)");
   /// ```
   fn to_css_string(&self) -> String;

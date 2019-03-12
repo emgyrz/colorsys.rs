@@ -16,7 +16,7 @@ impl std::str::FromStr for Hsl {
 
   fn from_str(s: &str) -> Result<Hsl, ParseError> {
     match from_str::hsl(s) {
-      Ok(hsl_tuple) => Ok(Hsl::from_tuple(hsl_tuple)),
+      Ok(hsl_tuple) => Ok(Hsl::from_tuple(&hsl_tuple)),
       Err(err) => Err(err),
     }
   }
@@ -68,7 +68,7 @@ impl Color for Hsl {
   }
 
   fn to_rgb(&self) -> Rgb {
-    Rgb::from_tuple(hsl_to_rgb(&self.as_tuple()))
+    Rgb::from_tuple(&hsl_to_rgb(&self.as_tuple()))
   }
   fn to_rgba(&self) -> Rgba {
     self.to_rgb().to_rgba()
@@ -78,13 +78,13 @@ impl Color for Hsl {
   }
   fn to_hsla(&self) -> Hsla {
     let (h, s, l) = self.as_tuple();
-    Hsla::from_tuple((h, s, l, 1.0))
+    Hsla::from_tuple(&(h, s, l, 1.0))
   }
   fn to_css_string(&self) -> String {
     let (h, s, l) = as_rounded_hsl_tuple(&self.as_tuple());
     format!("hsl({},{}%,{}%)", h, s, l)
   }
-  fn from_tuple(t: ColorTuple) -> Hsl {
+  fn from_tuple(t: &ColorTuple) -> Hsl {
     let (h, s, l) = normalize_hsl(&t);
     Hsl { h, s, l }
   }

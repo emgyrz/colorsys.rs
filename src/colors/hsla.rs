@@ -15,7 +15,7 @@ impl std::str::FromStr for Hsla {
 
   fn from_str(s: &str) -> Result<Hsla, ParseError> {
     match from_str::hsla(s) {
-      Ok(hsla_tuple) => Ok(Hsla::from_tuple(hsla_tuple)),
+      Ok(hsla_tuple) => Ok(Hsla::from_tuple(&hsla_tuple)),
       Err(err) => Err(err),
     }
   }
@@ -26,7 +26,7 @@ impl AlphaColor for Hsla {
   }
   fn set_alpha(&self, a: f32) -> Hsla {
     let (h, s, l, _) = self.as_tuple();
-    Hsla { hsl: Hsl::from_tuple((h, s, l)), alpha: normalize_ratio(a) }
+    Hsla { hsl: Hsl::from_tuple(&(h, s, l)), alpha: normalize_ratio(a) }
   }
   fn opacify(&self, a: f32) -> Hsla {
     self.set_alpha(self.alpha + a)
@@ -95,9 +95,9 @@ impl Color for Hsla {
     format!("hsla({},{}%,{}%,{})", h, s, l, round_ratio(self.alpha))
   }
 
-  fn from_tuple(t: ColorTupleA) -> Hsla {
-    let (h, s, l, a) = t;
-    Hsla { hsl: Hsl::from_tuple((h, s, l)), alpha: normalize_ratio(a) }
+  fn from_tuple(t: &ColorTupleA) -> Hsla {
+    let (h, s, l, a) = *t;
+    Hsla { hsl: Hsl::from_tuple(&(h, s, l)), alpha: normalize_ratio(a) }
   }
   fn as_tuple(&self) -> ColorTupleA {
     let (h, s, l) = self.hsl.as_tuple();
