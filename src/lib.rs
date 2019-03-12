@@ -71,7 +71,7 @@
 //!  - red - 0.0 .. 255.0
 //!  - green - 0.0 .. 255.0
 //!  - blue - 0.0 .. 255.0
-//!  - hue - 0.0 .. 360.0
+//!  - hue - 0.0 .. 359.0
 //!  - saturation - 0.0 .. 100.0
 //!  - lightness - 0.0 .. 100.0
 //!  - alpha - 0.0 .. 1.0
@@ -102,7 +102,7 @@ pub use error::ParseError;
 ///
 /// or
 ///
-/// - `($hue, $saturation, $lightness)` _`(0.0..360.0, 0.0..100.0, 0.0..100.0)`_
+/// - `($hue, $saturation, $lightness)` _`(0.0..359.0, 0.0..100.0, 0.0..100.0)`_
 /// # Example
 /// ```
 /// use colors_transform::{Rgb,Color,Hsl};
@@ -172,7 +172,7 @@ pub trait Color {
   /// Sets blue value of color (`0.0..255.00`). Returns Color
   fn set_blue(&self, val: f32) -> Self;
 
-  /// Returns hue value of color (`0.0..360.00`)
+  /// Returns hue value of color (`0.0..359.00`)
   fn get_hue(&self) -> f32;
 
   /// Returns saturation value of color (`0.0..100.00`)
@@ -181,7 +181,7 @@ pub trait Color {
   /// Returns lightness value of color (`0.0..100.00`)
   fn get_lightness(&self) -> f32;
 
-  /// Sets hue value of color (`0.0..360.00`). Returns Color
+  /// Sets hue value of color (`0.0..359.00`). Returns Color
   fn set_hue(&self, val: f32) -> Self;
 
   /// Sets saturation value of color (`0.0..100.00`). Returns Color

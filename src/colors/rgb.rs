@@ -1,5 +1,8 @@
 use super::{Hsl, Hsla, Rgba};
-use crate::converters::{as_rounded_rgb_tuple, rgb_to_grayscale, rgb_to_hex, rgb_to_hsl};
+use crate::converters::{
+  as_rounded_rgb_tuple, rgb_to_grayscale, rgb_to_grayscale_rec2100, rgb_to_grayscale_rec709,
+  rgb_to_hex, rgb_to_hsl,
+};
 use crate::error::ParseError;
 use crate::normalize::{normalize_rgb, normalize_rgb_unit};
 use crate::{from_str, Color, ColorTuple, RgbColor};
@@ -41,6 +44,16 @@ impl Rgb {
   pub fn to_css_hex_string(&self) -> String {
     let (r, g, b) = rgb_to_hex(&self.as_tuple());
     format!("#{}{}{}", r, g, b)
+  }
+
+  ///  The ITU-R BT.709 standard used for HDTV
+  pub fn grayscale_rec709(&self) -> Rgb {
+    Rgb::from_tuple(rgb_to_grayscale_rec709(&self.as_tuple()))
+  }
+
+  /// Convert color to grayscale using the ITU-R BT.2100 standard for HDR television
+  pub fn grayscale_rec2100(&self) -> Rgb {
+    Rgb::from_tuple(rgb_to_grayscale_rec2100(&self.as_tuple()))
   }
 }
 
