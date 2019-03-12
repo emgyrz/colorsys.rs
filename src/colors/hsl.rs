@@ -11,6 +11,12 @@ pub struct Hsl {
   l: f32,
 }
 
+impl Hsl {
+  pub fn from(h: f32, s: f32, l: f32) -> Hsl {
+    Hsl::from_tuple(&(h, s, l))
+  }
+}
+
 impl std::str::FromStr for Hsl {
   type Err = ParseError;
 

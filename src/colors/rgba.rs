@@ -10,6 +10,12 @@ pub struct Rgba {
   alpha: f32,
 }
 
+impl Rgba {
+  pub fn from(r: f32, g: f32, b: f32, a: f32) -> Rgba {
+    Rgba::from_tuple(&(r, g, b, a))
+  }
+}
+
 impl std::str::FromStr for Rgba {
   type Err = ParseError;
 

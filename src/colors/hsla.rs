@@ -10,6 +10,12 @@ pub struct Hsla {
   alpha: f32,
 }
 
+impl Hsla {
+  pub fn from(h: f32, s: f32, l: f32, a: f32) -> Hsla {
+    Hsla::from_tuple(&(h, s, l, a))
+  }
+}
+
 impl std::str::FromStr for Hsla {
   type Err = ParseError;
 

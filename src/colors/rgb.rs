@@ -15,6 +15,10 @@ pub struct Rgb {
 }
 
 impl Rgb {
+  pub fn from(r: f32, g: f32, b: f32) -> Rgb {
+    Rgb::from_tuple(&(r, g, b))
+  }
+
   /// Try to parse string as hex color
   /// # Example
   /// ```
