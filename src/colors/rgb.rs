@@ -24,7 +24,7 @@ impl Rgb {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// assert_eq!(Rgb::from_hex_str("#e76B2c").unwrap(),Rgb::from_tuple(&(231.0,107.0,44.0)));
+  /// assert_eq!(Rgb::from_hex_str("#e76B2c").unwrap(),Rgb::from(231.0,107.0,44.0));
   /// assert_eq!(Rgb::from_hex_str("fc0").unwrap(),Rgb::from_tuple(&(255.0,204.0,0.0)));
   /// assert!(Rgb::from_hex_str("cyan").is_err());
   /// ```
@@ -50,7 +50,7 @@ impl Rgb {
     format!("#{}{}{}", r, g, b)
   }
 
-  ///  The ITU-R BT.709 standard used for HDTV
+  /// Convert color to grayscale using the ITU-R BT.709 standard used for HDTV
   pub fn grayscale_rec709(&self) -> Rgb {
     Rgb::from_tuple(&rgb_to_grayscale_rec709(&self.as_tuple()))
   }

@@ -9,7 +9,7 @@
 //! ### getters & setters
 //! ```
 //! use colors_transform::{Rgb, Color};
-//! let rgb = Rgb::from_tuple(&(57.3, 12.7, 53.0));
+//! let rgb = Rgb::from(57.3, 12.7, 53.0);
 //! // where tuple is ($red, $green, $blue)
 //!
 //! let modified = rgb
@@ -24,7 +24,7 @@
 //!
 //! ### conversion
 //! ```ignore
-//! let hex_color = Hsl::from_tuple((315.9, 99.7, 50.0))
+//! let hex_color = Hsl::from(315.9, 99.7, 50.0)
 //! // where tuple is ($hue, $saturation, $lightness)
 //!   .to_rgb() // ~Rgb { r: 254.6, g: 0.38, b: 187.24 }
 //!   .set_saturation(33.3) // ~Rgb { r: 169.9, g: 85.04, b: 147.45 }
@@ -36,7 +36,7 @@
 //!
 //! ### modification
 //! ```ignore
-//! let rgb = Rgb::from_tuple((245.0,152.0,53.0))
+//! let rgb = Rgb::from(245.0,152.0,53.0)
 //!   .lighten(21.0) // Rgb { r: 250.05188, g: 204.03442, b: 155.04813 }
 //!   .saturate( 3.9999 ); // Rgb { r: 252.14981, g: 204.1, b: 152.9502 }
 //! // TODO: grayscale, invert and other
@@ -129,7 +129,7 @@ pub trait Color {
   /// ```
   /// use colors_transform::{Rgb,Color};
   ///
-  /// let black = Rgb::from_tuple(&(0.0,0.0,0.0));
+  /// let black = Rgb::from(0.0,0.0,0.0);
   /// assert_eq!(black, Rgb::new());
   /// ```
   fn new() -> Self;
@@ -140,7 +140,7 @@ pub trait Color {
   /// use colors_transform::{Rgba,Hsl,Color};
   ///
   /// let rgba = Rgba::from_tuple(&(10.0,11.0,12.0, 0.5));
-  /// let hsl = Hsl::from_tuple(&(310.0,50.0,50.0));
+  /// let hsl = Hsl::from(310.0,50.0,50.0);
   /// ```
   fn from_tuple(tuple: &Self::Tuple) -> Self;
 
@@ -148,9 +148,9 @@ pub trait Color {
   /// # Example
   /// ```
   /// use colors_transform::{Hsla,Color};
-  ///
-  /// let hsla = Hsla::from_tuple(&(10.0,11.0,12.0, 0.5));
-  /// assert_eq!((10.0,11.0,12.0, 0.5),hsla.as_tuple());
+  /// let hsl_tuple = (10.0,11.0,12.0, 0.5);
+  /// let hsla = Hsla::from_tuple(&hsl_tuple);
+  /// assert_eq!(hsl_tuple,hsla.as_tuple());
   /// ```
   fn as_tuple(&self) -> Self::Tuple;
 

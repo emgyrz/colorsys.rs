@@ -16,7 +16,7 @@ All values are given as f32 for more accurate calculations.
 #### getters & setters
 ```Rust
 use colors_transform::{Rgb, Color};
-let rgb = Rgb::from_tuple(&(57.3, 12.7, 53.0));
+let rgb = Rgb::from(57.3, 12.7, 53.0);
 // where tuple is ($red, $green, $blue)
 
 let modified = rgb
@@ -31,7 +31,7 @@ let blue = modified.get_blue(); // 53.00001
 
 #### conversion
 ```Rust
-let hex_color = Hsl::from_tuple(&(315.9, 99.7, 50.0))
+let hex_color = Hsl::from(315.9, 99.7, 50.0)
 // where tuple is ($hue, $saturation, $lightness)
   .to_rgb() // ~Rgb { r: 254.6, g: 0.38, b: 187.24 }
   .set_saturation(33.3) // ~Rgb { r: 169.9, g: 85.04, b: 147.45 }
@@ -43,10 +43,11 @@ let hex_color = Hsl::from_tuple(&(315.9, 99.7, 50.0))
 
 #### modification
 ```Rust
-let rgb = Rgb::from_tuple(&(245.0,152.0,53.0))
+let rgb_tuple = (245.0,152.0,53.0);
+let rgb = Rgb::from_tuple(&rgb_tuple)
   .lighten(21.0) // Rgb { r: 250.05188, g: 204.03442, b: 155.04813 }
   .saturate( 3.9999 ); // Rgb { r: 252.14981, g: 204.1, b: 152.9502 }
-// TODO: grayscale, invert and other
+// TODO: grayscale, invert and other_tuple
 ```
 
 #### parsing from string & css string representation
