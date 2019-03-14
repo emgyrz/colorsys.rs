@@ -12,9 +12,9 @@ static R_REC709_FACTOR: f32 = 0.2126;
 static G_REC709_FACTOR: f32 = 0.7152;
 static B_REC709_FACTOR: f32 = 0.0722;
 
-static R_REC2100_FACTOR: f32 = 0.2126;
-static G_REC2100_FACTOR: f32 = 0.7152;
-static B_REC2100_FACTOR: f32 = 0.0722;
+static R_REC2100_FACTOR: f32 = 0.2627;
+static G_REC2100_FACTOR: f32 = 0.6780;
+static B_REC2100_FACTOR: f32 = 0.0593;
 
 fn get_min(rgb: &[f32]) -> f32 {
   rgb.iter().fold(std::f32::MAX, |a, &b| a.min(b))

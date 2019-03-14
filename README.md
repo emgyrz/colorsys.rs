@@ -47,7 +47,7 @@ let rgb_tuple = (245.0,152.0,53.0);
 let rgb = Rgb::from_tuple(&rgb_tuple)
   .lighten(21.0) // Rgb { r: 250.05188, g: 204.03442, b: 155.04813 }
   .saturate( 3.9999 ); // Rgb { r: 252.14981, g: 204.1, b: 152.9502 }
-
+  .invert(); // Rgb { r: 2.8501892, g: 50.899994, b: 102.049805 }
 ```
 
 #### parsing from string & css string representation
