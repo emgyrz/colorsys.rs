@@ -1,5 +1,5 @@
 use super::converters::{as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb};
-use super::{Color, Hsl, ParseError, Rgb, RgbColor, Rgba};
+use super::{Color, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
 
 // #[test]
 // fn speed_test() {
@@ -208,4 +208,13 @@ fn eq_test() {
   let transformed_rgb = rgb.to_hsl().to_rgb();
   assert!(rgb.get_red() - transformed_rgb.get_red() < std::f32::EPSILON);
   // assert_eq!(rgb, transformed_rgb);
+}
+
+#[test]
+fn invert_tst() {
+  let rgb = Rgb::from(120.0, 200.0, 12.0);
+  assert_eq!(rgb.invert().as_tuple(), (135.0, 55.0, 243.0));
+
+  let hsla = Hsla::from(120.0, 20.0, 72.0, 0.3);
+  assert_eq!(hsla.invert().as_tuple(), (300.0, 20.0, 72.0, 0.3));
 }

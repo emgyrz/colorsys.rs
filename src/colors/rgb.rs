@@ -1,7 +1,7 @@
 use super::{Hsl, Hsla, Rgba};
 use crate::converters::{
-  as_rounded_rgb_tuple, rgb_to_grayscale, rgb_to_grayscale_rec2100, rgb_to_grayscale_rec709,
-  rgb_to_hex, rgb_to_hsl,
+  as_rounded_rgb_tuple, rgb_invert, rgb_to_grayscale, rgb_to_grayscale_rec2100,
+  rgb_to_grayscale_rec709, rgb_to_hex, rgb_to_hsl,
 };
 use crate::error::ParseError;
 use crate::normalize::{normalize_rgb, normalize_rgb_unit};
@@ -171,5 +171,9 @@ impl Color for Rgb {
 
   fn grayscale(&self) -> Rgb {
     Rgb::from_tuple(&rgb_to_grayscale(&self.as_tuple()))
+  }
+
+  fn invert(&self) -> Rgb {
+    Rgb::from_tuple(&rgb_invert(&self.as_tuple()))
   }
 }

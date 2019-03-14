@@ -1,6 +1,6 @@
 [package]
 name = "colors-transform"
-version = "0.2.5"
+version = "0.2.7"
 description = "Lib for covert and transform colors"
 authors = ["mz <emgyrz@gmail.com>"]
 license = "MIT"

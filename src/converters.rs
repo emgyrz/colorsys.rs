@@ -1,6 +1,9 @@
 use super::normalize::bound_ratio;
 use super::ColorTuple;
 
+static RGB_UNIT_MAX: f32 = 255.0;
+static HUE_MAX: f32 = 360.0;
+
 static R_YUV_FACTOR: f32 = 0.299;
 static G_YUV_FACTOR: f32 = 0.587;
 static B_YUV_FACTOR: f32 = 0.114;
@@ -37,7 +40,7 @@ pub fn rgb_to_hex(rgb: &ColorTuple) -> (String, String, String) {
 
 pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
   let (r, g, b) = *rgb;
-  let rgb_arr: Vec<f32> = [r, g, b].iter().map(|p| p / 255.0).collect();
+  let rgb_arr: Vec<f32> = [r, g, b].iter().map(|p| p / RGB_UNIT_MAX).collect();
   let max = get_max(&rgb_arr);
   let min = get_min(&rgb_arr);
   let luminace = (max + min) / 2.0;
@@ -75,7 +78,7 @@ fn calc_rgb_unit(unit: f32, temp1: f32, temp2: f32) -> f32 {
   } else if 3.0 * unit < 2.0 {
     result = temp2 + (temp1 - temp2) * (2.0 / 3.0 - unit) * 6.0
   }
-  result * 255.0
+  result * RGB_UNIT_MAX
 }
 pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
   let (_h, _s, _l) = *hsl;
@@ -84,7 +87,7 @@ pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
   let l = _l / 100.0;
 
   if s == 0.0 {
-    let unit = 255.0 * l;
+    let unit = RGB_UNIT_MAX * l;
     return (unit, unit, unit);
   }
 
@@ -124,6 +127,15 @@ pub fn rgb_to_grayscale_rec709(rgb: &ColorTuple) -> ColorTuple {
 pub fn rgb_to_grayscale_rec2100(rgb: &ColorTuple) -> ColorTuple {
   let (r, g, b) = rgb;
   (r * R_REC2100_FACTOR, g * G_REC2100_FACTOR, b * B_REC2100_FACTOR)
+}
+
+pub fn rgb_invert(rgb: &ColorTuple) -> ColorTuple {
+  let (r, g, b) = rgb;
+  (RGB_UNIT_MAX - r, RGB_UNIT_MAX - g, RGB_UNIT_MAX - b)
+}
+
+pub fn invert_hue(hue: f32) -> f32 {
+  (hue + 180.0) % HUE_MAX
 }
 
 pub fn as_rounded_rgb_tuple(t: &ColorTuple) -> (u16, u16, u16) {

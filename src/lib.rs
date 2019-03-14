@@ -210,6 +210,7 @@ pub trait Color {
   fn lighten(&self, amt: f32) -> Self;
   fn adjust_color(&self, col_name: RgbColor, val: f32) -> Self;
   fn grayscale(&self) -> Self;
+  fn invert(&self) -> Self;
 }
 
 /// Some methods for working with alpha channel for Rgba & Hsla

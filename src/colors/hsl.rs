@@ -1,5 +1,5 @@
 use super::{Hsla, Rgb, Rgba};
-use crate::converters::{as_rounded_hsl_tuple, hsl_to_rgb};
+use crate::converters::{as_rounded_hsl_tuple, hsl_to_rgb, invert_hue};
 use crate::error::ParseError;
 use crate::normalize::{normalize_hsl, normalize_hue, normalize_percent};
 use crate::{from_str, Color, ColorTuple, RgbColor};
@@ -112,5 +112,9 @@ impl Color for Hsl {
 
   fn grayscale(&self) -> Hsl {
     Hsl { h: 0.0, s: 0.0, l: self.l }
+  }
+
+  fn invert(&self) -> Hsl {
+    Hsl { h: invert_hue(self.h), s: self.s, l: self.l }
   }
 }

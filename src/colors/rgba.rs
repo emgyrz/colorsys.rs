@@ -125,4 +125,7 @@ impl Color for Rgba {
   fn grayscale(&self) -> Rgba {
     Rgba { rgb: self.rgb.grayscale(), alpha: self.alpha }
   }
+  fn invert(&self) -> Rgba {
+    Rgba { rgb: self.rgb.invert(), alpha: self.alpha }
+  }
 }

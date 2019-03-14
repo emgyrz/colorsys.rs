@@ -5,9 +5,9 @@
 
 A module for color conversion and mutation written in Rust.
 
-[Online documentation](https://docs.rs/colors-transform/0.2.5/colors_transform/)
+[Online documentation](https://docs.rs/colors-transform/0.2.7/colors_transform/)
 
-For now you can work with four color representation options: Rgb, Rgba, Hsl, Hsla. Each of them has a variety of methods to modify and convert. See the [Color](https://docs.rs/colors-transform/0.2.5/colors_transform/trait.Color.html) trait they implement. There are also a couple of methods for hex string color.
+For now you can work with four color representation options: Rgb, Rgba, Hsl, Hsla. Each of them has a variety of methods to modify and convert. See the [Color](https://docs.rs/colors-transform/0.2.7/colors_transform/trait.Color.html) trait they implement. There are also a couple of methods for hex string color.
 
 All values are given as f32 for more accurate calculations.
 
@@ -47,7 +47,7 @@ let rgb_tuple = (245.0,152.0,53.0);
 let rgb = Rgb::from_tuple(&rgb_tuple)
   .lighten(21.0) // Rgb { r: 250.05188, g: 204.03442, b: 155.04813 }
   .saturate( 3.9999 ); // Rgb { r: 252.14981, g: 204.1, b: 152.9502 }
-// TODO: grayscale, invert and other_tuple
+
 ```
 
 #### parsing from string & css string representation

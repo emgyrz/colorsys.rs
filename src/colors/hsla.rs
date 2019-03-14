@@ -124,4 +124,7 @@ impl Color for Hsla {
   fn grayscale(&self) -> Hsla {
     Hsla { hsl: self.hsl.grayscale(), alpha: self.alpha }
   }
+  fn invert(&self) -> Hsla {
+    Hsla { hsl: self.hsl.invert(), alpha: self.alpha }
+  }
 }
