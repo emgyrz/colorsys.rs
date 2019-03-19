@@ -125,6 +125,7 @@ pub trait Color {
   ///
 
   type Tuple;
+  type TupleA;
   /// Creates a black color
   /// # Example
   /// ```
@@ -144,6 +145,8 @@ pub trait Color {
   /// let hsl = Hsl::from(310.0,50.0,50.0);
   /// ```
   fn from_tuple(tuple: &Self::Tuple) -> Self;
+
+  fn from_tuple_with_alpha(tuple: &Self::TupleA) -> Self;
 
   /// Returns tuple representation of color
   /// # Example

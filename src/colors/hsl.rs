@@ -1,14 +1,15 @@
 use super::Rgb;
 use crate::converters::{as_rounded_hsl_tuple, hsl_to_rgb, invert_hue};
 use crate::error::ParseError;
-use crate::normalize::{normalize_hsl, normalize_hue, normalize_percent};
-use crate::{from_str, Color, ColorTuple, RgbUnit};
+use crate::normalize::{normalize_hsl, normalize_hue, normalize_percent, normalize_ratio};
+use crate::{from_str, AlphaColor, Color, ColorTuple, ColorTupleA, RgbUnit};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Hsl {
   h: f32,
   s: f32,
   l: f32,
+  a: Option<f32>,
 }
 
 impl Hsl {
@@ -17,7 +18,7 @@ impl Hsl {
   }
 
   pub fn grayscale(&self) -> Hsl {
-    Hsl { h: 0.0, s: 0.0, l: self.l }
+    Hsl { h: 0.0, s: 0.0, l: self.l, a: self.a }
   }
 }
 
@@ -34,9 +35,10 @@ impl std::str::FromStr for Hsl {
 
 impl Color for Hsl {
   type Tuple = ColorTuple;
+  type TupleA = ColorTupleA;
 
   fn new() -> Hsl {
-    Hsl { h: 0.0, s: 0.0, l: 0.0 }
+    Hsl { h: 0.0, s: 0.0, l: 0.0, a: None }
   }
 
   fn get_hue(&self) -> f32 {
@@ -49,13 +51,13 @@ impl Color for Hsl {
     self.l
   }
   fn set_hue(&self, val: f32) -> Hsl {
-    Hsl { h: normalize_hue(val), s: self.s, l: self.l }
+    Hsl { h: normalize_hue(val), s: self.s, l: self.l, a: self.a }
   }
   fn set_saturation(&self, val: f32) -> Hsl {
-    Hsl { h: self.h, s: normalize_percent(val), l: self.l }
+    Hsl { h: self.h, s: normalize_percent(val), l: self.l, a: self.a }
   }
   fn set_lightness(&self, val: f32) -> Hsl {
-    Hsl { h: self.h, s: self.s, l: normalize_percent(val) }
+    Hsl { h: self.h, s: self.s, l: normalize_percent(val), a: self.a }
   }
 
   fn get_red(&self) -> f32 {
@@ -89,7 +91,12 @@ impl Color for Hsl {
   }
   fn from_tuple(t: &ColorTuple) -> Hsl {
     let (h, s, l) = normalize_hsl(&t);
-    Hsl { h, s, l }
+    Hsl { h, s, l, a: None }
+  }
+  fn from_tuple_with_alpha(t: &ColorTupleA) -> Hsl {
+    let (h, s, l, a) = *t;
+    let (h, s, l) = normalize_hsl(&(h, s, l));
+    Hsl { h, s, l, a: Some(normalize_ratio(a)) }
   }
   fn as_tuple(&self) -> ColorTuple {
     (self.h, self.s, self.l)
@@ -108,6 +115,18 @@ impl Color for Hsl {
   }
 
   fn invert(&self) -> Hsl {
-    Hsl { h: invert_hue(self.h), s: self.s, l: self.l }
+    Hsl { h: invert_hue(self.h), s: self.s, l: self.l, a: self.a }
+  }
+}
+
+impl AlphaColor for Hsl {
+  fn get_alpha(&self) -> f32 {
+    self.a.unwrap_or(1.0)
+  }
+  fn set_alpha(&self, a: f32) -> Hsl {
+    Hsl { h: self.h, s: self.s, l: self.l, a: Some(normalize_ratio(a)) }
+  }
+  fn opacify(&self, a: f32) -> Hsl {
+    self.set_alpha(self.get_alpha() + a)
   }
 }

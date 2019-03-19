@@ -2,7 +2,7 @@ use super::Hsl;
 use crate::converters::{as_rounded_rgb_tuple, rgb_invert, rgb_to_hex, rgb_to_hsl};
 use crate::error::ParseError;
 use crate::grayscale::{rgb_grayscale, GrayScaleMethod};
-use crate::normalize::{normalize_rgb, normalize_rgb_unit};
+use crate::normalize::{normalize_ratio, normalize_rgb, normalize_rgb_unit};
 use crate::{from_str, AlphaColor, Color, ColorTuple, ColorTupleA, RgbUnit};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -10,6 +10,7 @@ pub struct Rgb {
   r: f32,
   g: f32,
   b: f32,
+  a: Option<f32>,
 }
 
 impl Rgb {
@@ -66,9 +67,10 @@ impl std::str::FromStr for Rgb {
 
 impl Color for Rgb {
   type Tuple = ColorTuple;
+  type TupleA = ColorTupleA;
 
   fn new() -> Rgb {
-    Rgb { r: 0.0, g: 0.0, b: 0.0 }
+    Rgb { r: 0.0, g: 0.0, b: 0.0, a: None }
   }
 
   fn get_red(&self) -> f32 {
@@ -81,13 +83,13 @@ impl Color for Rgb {
     self.b
   }
   fn set_red(&self, val: f32) -> Rgb {
-    Rgb { r: normalize_rgb_unit(val), g: self.g, b: self.b }
+    Rgb { r: normalize_rgb_unit(val), g: self.g, b: self.b, a: self.a }
   }
   fn set_green(&self, val: f32) -> Rgb {
-    Rgb { r: self.r, g: normalize_rgb_unit(val), b: self.b }
+    Rgb { r: self.r, g: normalize_rgb_unit(val), b: self.b, a: self.a }
   }
   fn set_blue(&self, val: f32) -> Rgb {
-    Rgb { r: self.r, g: self.g, b: normalize_rgb_unit(val) }
+    Rgb { r: self.r, g: self.g, b: normalize_rgb_unit(val), a: self.a }
   }
 
   fn get_hue(&self) -> f32 {
@@ -130,7 +132,11 @@ impl Color for Rgb {
 
   fn from_tuple(t: &ColorTuple) -> Rgb {
     let (r, g, b) = normalize_rgb(&t);
-    Rgb { r, g, b }
+    Rgb { r, g, b, a: None }
+  }
+  fn from_tuple_with_alpha(t: &ColorTupleA) -> Rgb {
+    let (r, g, b) = normalize_rgb(&(t.0, t.1, t.2));
+    Rgb { r, g, b, a: Some(normalize_ratio(t.3)) }
   }
   fn as_tuple(&self) -> ColorTuple {
     (self.r, self.g, self.b)
@@ -159,6 +165,14 @@ impl Color for Rgb {
   }
 }
 
-// impl AlphaColor for Rgb {
-
-// }
+impl AlphaColor for Rgb {
+  fn get_alpha(&self) -> f32 {
+    self.a.unwrap_or(1.0)
+  }
+  fn set_alpha(&self, a: f32) -> Rgb {
+    Rgb { r: self.r, g: self.g, b: self.b, a: Some(normalize_ratio(a)) }
+  }
+  fn opacify(&self, a: f32) -> Rgb {
+    self.set_alpha(self.get_alpha() + a)
+  }
+}
