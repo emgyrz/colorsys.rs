@@ -2,7 +2,7 @@ use super::{Hsl, Hsla, Rgb};
 use crate::converters::{as_rounded_rgb_tuple, round_ratio};
 use crate::error::ParseError;
 use crate::normalize::normalize_ratio;
-use crate::{from_str, AlphaColor, Color, ColorTupleA, RgbColor};
+use crate::{from_str, AlphaColor, Color, ColorTupleA, RgbUnit};
 use crate::grayscale::{GrayScaleMethod};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -124,7 +124,7 @@ impl Color for Rgba {
   fn adjust_hue(&self, amt: f32) -> Rgba {
     Rgba { rgb: self.rgb.adjust_hue(amt), alpha: self.alpha }
   }
-  fn adjust_color(&self, name: RgbColor, val: f32) -> Rgba {
+  fn adjust_color(&self, name: RgbUnit, val: f32) -> Rgba {
     Rgba { rgb: self.rgb.adjust_color(name, val), alpha: self.alpha }
   }
   fn invert(&self) -> Rgba {

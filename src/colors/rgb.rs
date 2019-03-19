@@ -4,7 +4,7 @@ use crate::converters::{
 };
 use crate::error::ParseError;
 use crate::normalize::{normalize_rgb, normalize_rgb_unit};
-use crate::{from_str, Color, ColorTuple, RgbColor};
+use crate::{from_str, Color, ColorTuple, RgbUnit};
 use crate::grayscale::{rgb_grayscale,GrayScaleMethod};
 
 
@@ -157,12 +157,12 @@ impl Color for Rgb {
   fn adjust_hue(&self, amt: f32) -> Rgb {
     self.to_hsl().adjust_hue(amt).to_rgb()
   }
-  fn adjust_color(&self, name: RgbColor, val: f32) -> Rgb {
+  fn adjust_color(&self, name: RgbUnit, val: f32) -> Rgb {
     let (r, g, b) = self.as_tuple();
     match name {
-      RgbColor::Red => self.set_red(r + val),
-      RgbColor::Green => self.set_green(g + val),
-      RgbColor::Blue => self.set_blue(b + val),
+      RgbUnit::Red => self.set_red(r + val),
+      RgbUnit::Green => self.set_green(g + val),
+      RgbUnit::Blue => self.set_blue(b + val),
     }
   }
 

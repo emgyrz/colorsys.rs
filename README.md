@@ -58,7 +58,7 @@ let hsla: Hsla = "hsla(359,12%,71,0.3)".parse().unwrap();
 let rgb1 = "rgb(12,13,14)"
   .parse::<Rgb>()
   .unwrap()
-  .adjust_color( RgbColor::Green, 139.7 );
+  .adjust_color( RgbUnit::Green, 139.7 );
 // Rgb { r: 12.0, g: 152.7, b: 14.0 }
 
 let rgb2 = Rgb::from_hex_str("#fc0").unwrap();

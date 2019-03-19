@@ -1,5 +1,5 @@
 use super::converters::{as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb};
-use super::{Color, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba, GrayScaleMethod};
+use super::{Color, Hsl, Hsla, ParseError, Rgb, RgbUnit, Rgba, GrayScaleMethod};
 
 
 // #[test]
@@ -101,12 +101,12 @@ fn adjust_hue_test() {
 #[test]
 fn adjust_color_test() {
   let rgb = Rgb::from_tuple(&(24.0, 91.0, 203.0));
-  let rgb = rgb.adjust_color(RgbColor::Red, 55.0);
+  let rgb = rgb.adjust_color(RgbUnit::Red, 55.0);
   assert_eq!(rgb.as_tuple(), (79.0, 91.0, 203.0));
   let asserts = [
-    ((24.0, 90.0, 20.0), RgbColor::Red, 63.0, (160, 42, 5)),
-    ((324.0, 77.0, 52.0), RgbColor::Green, 122.0, (227, 160, 151)),
-    ((195.0, 31.0, 87.0), RgbColor::Blue, -39.0, (212, 227, 193)),
+    ((24.0, 90.0, 20.0), RgbUnit::Red, 63.0, (160, 42, 5)),
+    ((324.0, 77.0, 52.0), RgbUnit::Green, 122.0, (227, 160, 151)),
+    ((195.0, 31.0, 87.0), RgbUnit::Blue, -39.0, (212, 227, 193)),
   ];
 
   for a in asserts.iter() {

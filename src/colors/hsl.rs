@@ -2,7 +2,7 @@ use super::{Hsla, Rgb, Rgba};
 use crate::converters::{as_rounded_hsl_tuple, hsl_to_rgb, invert_hue};
 use crate::error::ParseError;
 use crate::normalize::{normalize_hsl, normalize_hue, normalize_percent};
-use crate::{from_str, Color, ColorTuple, RgbColor};
+use crate::{from_str, Color, ColorTuple, RgbUnit};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Hsl {
@@ -111,7 +111,7 @@ impl Color for Hsl {
   fn adjust_hue(&self, hue: f32) -> Hsl {
     self.set_hue(self.h + hue)
   }
-  fn adjust_color(&self, name: RgbColor, val: f32) -> Hsl {
+  fn adjust_color(&self, name: RgbUnit, val: f32) -> Hsl {
     self.to_rgb().adjust_color(name, val).to_hsl()
   }
 

@@ -50,7 +50,7 @@
 //! let rgb1 = "rgb(12,13,14)"
 //!   .parse::<Rgb>()
 //!   .unwrap()
-//!   .adjust_color( RgbColor::Green, 139.7 );
+//!   .adjust_color( RgbUnit::Green, 139.7 );
 //! // Rgb { r: 12.0, g: 152.7, b: 14.0 }
 //!
 //! let rgb2 = Rgb::from_hex_str("#fc0").unwrap();
@@ -210,7 +210,7 @@ pub trait Color {
   fn adjust_hue(&self, amt: f32) -> Self;
   fn saturate(&self, amt: f32) -> Self;
   fn lighten(&self, amt: f32) -> Self;
-  fn adjust_color(&self, col_name: RgbColor, val: f32) -> Self;
+  fn adjust_color(&self, col_name: RgbUnit, val: f32) -> Self;
   fn invert(&self) -> Self;
 }
 
@@ -222,7 +222,7 @@ pub trait AlphaColor {
 }
 
 #[derive(Clone, Copy)]
-pub enum RgbColor {
+pub enum RgbUnit {
   Red,
   Green,
   Blue,
