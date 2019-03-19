@@ -1,11 +1,11 @@
-use super::ColorTuple;
+use super::Rgb;
 
 pub enum GrayScaleMethod {
   Average,
   AverageProminent,
   Luminance,
   Rec709,
-  Rec2100
+  Rec2100,
 }
 
 static R_YUV_FACTOR: f32 = 0.299;
@@ -20,37 +20,41 @@ static R_REC2100_FACTOR: f32 = 0.2627;
 static G_REC2100_FACTOR: f32 = 0.6780;
 static B_REC2100_FACTOR: f32 = 0.0593;
 
-fn rgb_to_grayscale_lum(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  (r * R_YUV_FACTOR, g * G_YUV_FACTOR, b * B_YUV_FACTOR)
+fn rgb_to_grayscale_lum(rgb: &mut Rgb) {
+  rgb.r *= R_YUV_FACTOR;
+  rgb.g *= G_YUV_FACTOR;
+  rgb.b *= B_YUV_FACTOR;
 }
 
-fn rgb_to_grayscale_rec709(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  (r * R_REC709_FACTOR, g * G_REC709_FACTOR, b * B_REC709_FACTOR)
+fn rgb_to_grayscale_rec709(rgb: &mut Rgb) {
+  rgb.r *= R_REC709_FACTOR;
+  rgb.g *= G_REC709_FACTOR;
+  rgb.b *= B_REC709_FACTOR;
 }
-fn rgb_to_grayscale_rec2100(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  (r * R_REC2100_FACTOR, g * G_REC2100_FACTOR, b * B_REC2100_FACTOR)
-}
-
-fn rgb_to_grayscale_avg(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  let y = (r + g + b) / 3.0;
-  (y, y, y)
+fn rgb_to_grayscale_rec2100(rgb: &mut Rgb) {
+  rgb.r *= R_REC2100_FACTOR;
+  rgb.g *= G_REC2100_FACTOR;
+  rgb.b *= B_REC2100_FACTOR;
 }
 
-fn rgb_to_grayscale_avg_prom(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  let rgb_vec = vec![r, g, b];
-  let max = rgb_vec.iter().fold(std::f32::MIN, |a, &b| a.max(*b));
-  let min = rgb_vec.iter().fold(std::f32::MAX, |a, &b| a.min(*b));
+fn rgb_to_grayscale_avg(rgb: &mut Rgb) {
+  let y = (rgb.r + rgb.g + rgb.b) / 3.0;
+  rgb.r = y;
+  rgb.g = y;
+  rgb.b = y;
+}
+
+fn rgb_to_grayscale_avg_prom(rgb: &mut Rgb) {
+  let rgb_vec = vec![rgb.r, rgb.g, rgb.b];
+  let max = rgb_vec.iter().fold(std::f32::MIN, |a, &b| a.max(b));
+  let min = rgb_vec.iter().fold(std::f32::MAX, |a, &b| a.min(b));
   let y = (max + min) / 2.0;
-  (y, y, y)
+  rgb.r = y;
+  rgb.g = y;
+  rgb.b = y;
 }
 
-
-pub fn rgb_grayscale(rgb: &ColorTuple, method: GrayScaleMethod) -> ColorTuple {
+pub fn rgb_grayscale(rgb: &mut Rgb, method: GrayScaleMethod) {
   match method {
     GrayScaleMethod::Average => rgb_to_grayscale_avg(rgb),
     GrayScaleMethod::AverageProminent => rgb_to_grayscale_avg_prom(rgb),

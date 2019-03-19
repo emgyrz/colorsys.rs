@@ -4,7 +4,7 @@ mod normalize;
 mod rgb;
 
 pub use hsl::Hsl;
-pub use rgb::Rgb;
+pub use rgb::{GrayScaleMethod, Rgb};
 
 // pub type ColorArr = [f32; 3];
 // pub type ColorArrA = [f32; 4];

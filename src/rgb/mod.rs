@@ -78,8 +78,7 @@ impl Rgb {
   }
 
   pub fn grayscale(&mut self, method: GrayScaleMethod) {
-    let grayscaled = rgb_grayscale(&self.as_tuple(), method);
-    self._apply_tuple(&grayscaled);
+    rgb_grayscale(self, method);
   }
 
   pub fn invert(&mut self) {
