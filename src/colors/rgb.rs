@@ -1,12 +1,9 @@
-use super::{Hsl, Hsla, Rgba};
-use crate::converters::{
-  as_rounded_rgb_tuple, rgb_invert, rgb_to_hex, rgb_to_hsl,
-};
+use super::Hsl;
+use crate::converters::{as_rounded_rgb_tuple, rgb_invert, rgb_to_hex, rgb_to_hsl};
 use crate::error::ParseError;
+use crate::grayscale::{rgb_grayscale, GrayScaleMethod};
 use crate::normalize::{normalize_rgb, normalize_rgb_unit};
-use crate::{from_str, Color, ColorTuple, RgbUnit};
-use crate::grayscale::{rgb_grayscale,GrayScaleMethod};
-
+use crate::{from_str, AlphaColor, Color, ColorTuple, ColorTupleA, RgbUnit};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Rgb {
@@ -20,11 +17,9 @@ impl Rgb {
     Rgb::from_tuple(&(r, g, b))
   }
 
-
   pub fn grayscale(&self, method: GrayScaleMethod) -> Rgb {
     Rgb::from_tuple(&rgb_grayscale(&self.as_tuple(), method))
   }
-
 
   /// Try to parse string as hex color
   /// # Example
@@ -117,15 +112,8 @@ impl Color for Rgb {
   fn to_rgb(&self) -> Rgb {
     *self
   }
-  fn to_rgba(&self) -> Rgba {
-    let (r, g, b) = self.as_tuple();
-    Rgba::from_tuple(&(r, g, b, 1.0))
-  }
   fn to_hsl(&self) -> Hsl {
     Hsl::from_tuple(&rgb_to_hsl(&self.as_tuple()))
-  }
-  fn to_hsla(&self) -> Hsla {
-    self.to_hsl().to_hsla()
   }
   /// Returns css string
   /// # Example
@@ -170,3 +158,7 @@ impl Color for Rgb {
     Rgb::from_tuple(&rgb_invert(&self.as_tuple()))
   }
 }
+
+// impl AlphaColor for Rgb {
+
+// }

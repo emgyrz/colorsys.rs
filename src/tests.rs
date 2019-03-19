@@ -1,6 +1,5 @@
 use super::converters::{as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb};
-use super::{Color, Hsl, Hsla, ParseError, Rgb, RgbUnit, Rgba, GrayScaleMethod};
-
+use super::{Color, GrayScaleMethod, Hsl, ParseError, Rgb, RgbUnit};
 
 // #[test]
 // fn speed_test() {
@@ -121,12 +120,10 @@ fn adjust_color_test() {
 fn to_css_string_test() {
   let rgb = Rgb::from_tuple(&(255.1, 203.7, 0.47));
   assert_eq!(&rgb.to_css_string(), "rgb(255,204,0)");
-  assert_eq!(&rgb.to_rgba().to_css_string(), "rgba(255,204,0,1)");
   assert_eq!(&rgb.to_css_hex_string(), "#ffcc00");
 
   let rgb = Rgb::from_tuple(&(137.0, 193.0, 31.0));
   assert_eq!(&rgb.to_hsl().to_css_string(), "hsl(81,72%,44%)");
-  assert_eq!(&rgb.to_hsla().to_css_string(), "hsla(81,72%,44%,1)");
 }
 
 #[test]
@@ -155,24 +152,6 @@ fn rgb_from_str_test() {
   assert_eq!(parse_rgb("(0,0,0)").unwrap().to_css_string(), "rgb(0,0,0)");
   assert!(parse_rgb("").is_err());
   assert!(parse_rgb("ffcc0g").is_err());
-}
-
-#[test]
-fn rgba_from_str_test() {
-  fn parse_rgba(s: &str) -> Result<Rgba, ParseError> {
-    s.parse::<Rgba>()
-  }
-  assert_eq!(
-    parse_rgba("Rgba(134, 11, 251,0.67)").unwrap().to_css_string(),
-    "rgba(134,11,251,0.67)"
-  );
-  assert_eq!(
-    parse_rgba("rgba( 134.9, 11.1, 250.55,0.3 )").unwrap().to_css_string(),
-    "rgba(135,11,251,0.3)"
-  );
-  assert_eq!(parse_rgba("(0,0,0,0.1)").unwrap().to_css_string(), "rgba(0,0,0,0.1)");
-  assert!(parse_rgba("asd234,234rgba").is_err());
-  assert!(parse_rgba("ffcc0g").is_err());
 }
 
 #[test]
@@ -216,10 +195,9 @@ fn invert_tst() {
   let rgb = Rgb::from(120.0, 200.0, 12.0);
   assert_eq!(rgb.invert().as_tuple(), (135.0, 55.0, 243.0));
 
-  let hsla = Hsla::from(120.0, 20.0, 72.0, 0.3);
-  assert_eq!(hsla.invert().as_tuple(), (300.0, 20.0, 72.0, 0.3));
+  let hsl = Hsl::from(120.0, 20.0, 72.0);
+  assert_eq!(hsl.invert().as_tuple(), (300.0, 20.0, 72.0));
 }
-
 
 #[test]
 fn grayscale() {
@@ -229,7 +207,7 @@ fn grayscale() {
   }
 
   let rgb = Rgb::from(60.0, 184.0, 120.0);
-  let grayscaled_rgb = rgb.grayscale( GrayScaleMethod::AverageProminent );
+  let grayscaled_rgb = rgb.grayscale(GrayScaleMethod::AverageProminent);
   let grayscaled_from_hsl = rgb.to_hsl().grayscale().to_rgb();
   let t1 = grayscaled_rgb.as_tuple();
   let t2 = grayscaled_from_hsl.as_tuple();

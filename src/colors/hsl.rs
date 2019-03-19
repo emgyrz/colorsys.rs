@@ -1,4 +1,4 @@
-use super::{Hsla, Rgb, Rgba};
+use super::Rgb;
 use crate::converters::{as_rounded_hsl_tuple, hsl_to_rgb, invert_hue};
 use crate::error::ParseError;
 use crate::normalize::{normalize_hsl, normalize_hue, normalize_percent};
@@ -19,7 +19,6 @@ impl Hsl {
   pub fn grayscale(&self) -> Hsl {
     Hsl { h: 0.0, s: 0.0, l: self.l }
   }
-
 }
 
 impl std::str::FromStr for Hsl {
@@ -81,15 +80,8 @@ impl Color for Hsl {
   fn to_rgb(&self) -> Rgb {
     Rgb::from_tuple(&hsl_to_rgb(&self.as_tuple()))
   }
-  fn to_rgba(&self) -> Rgba {
-    self.to_rgb().to_rgba()
-  }
   fn to_hsl(&self) -> Hsl {
     *self
-  }
-  fn to_hsla(&self) -> Hsla {
-    let (h, s, l) = self.as_tuple();
-    Hsla::from_tuple(&(h, s, l, 1.0))
   }
   fn to_css_string(&self) -> String {
     let (h, s, l) = as_rounded_hsl_tuple(&self.as_tuple());

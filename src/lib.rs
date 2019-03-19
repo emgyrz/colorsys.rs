@@ -1,6 +1,6 @@
 //! A module for color conversion and mutation.
 //!
-//! For now you can work with four color representation options: Rgb, Rgba, Hsl, Hsla. Each of them has a variety of methods to modify and convert. See the Color trait they implement. There are also a couple of methods for hex string color.
+//! For now you can work with four color representation options: Rgb (Rgba), Hsl (Hsla). Each of them has a variety of methods to modify and convert. See the Color trait they implement. There are also a couple of methods for hex string color.
 //!
 //! All values are given as f32 for more accurate calculations.
 //!
@@ -28,8 +28,8 @@
 //! // where tuple is ($hue, $saturation, $lightness)
 //!   .to_rgb() // ~Rgb { r: 254.6, g: 0.38, b: 187.24 }
 //!   .set_saturation(33.3) // ~Rgb { r: 169.9, g: 85.04, b: 147.45 }
-//!   .to_hsla() // Hsla { h: 315.9, s: 33.3, l: 50.0 alpha: 1.0 }
-//!   .set_alpha(0.47) // Hsla { h: 315.9, s: 99.7, l: 50.0 alpha: 0.47 }
+//!   .to_hsl() // Hsl { h: 315.9, s: 33.3, l: 50.0 }
+//!   .set_alpha(0.47) // Hsl { h: 315.9, s: 99.7, l: 50.0 } // a: 0.47
 //!   .to_rgb() // Rgb { r: 169.95749, g: 85.0425, b: 147.45502 }
 //!   .to_css_hex_string(); // #aa5593
 //! ```
@@ -39,13 +39,12 @@
 //! let rgb = Rgb::from(245.0,152.0,53.0)
 //!   .lighten(21.0) // Rgb { r: 250.05188, g: 204.03442, b: 155.04813 }
 //!   .saturate( 3.9999 ); // Rgb { r: 252.14981, g: 204.1, b: 152.9502 }
-//! // TODO: grayscale, invert and other
 //! ```
 //!
 //! ### parsing from string & css string representation
 //! ```ignore
-//! let hsla: Hsla = "hsla(359,12%,71,0.3)".parse().unwrap();
-//! // Hsla { h: 359.0, s: 12.0, l: 71.0 alpha: 0.3 }
+//! let hsl: Hsl = "hsl(359,12%,71)".parse().unwrap();
+//! // Hsl { h: 359.0, s: 12.0, l: 71.0 alpha: 0.3 }
 //!
 //! let rgb1 = "rgb(12,13,14)"
 //!   .parse::<Rgb>()
@@ -59,8 +58,8 @@
 //! let rgb_str = rgb1.to_css_string();
 //! // rgb(12,153,14)
 //!
-//! let hsla_str = rgb2.to_hsla().to_css_string();
-//! // "hsla(48,100%,50%,1)"
+//! let hsl_str = rgb2.to_hsl().to_css_string();
+//! // "hsl(48,100%,50%)"
 //! ```
 //!
 //! As you see it is completely chainable.
@@ -88,13 +87,13 @@ mod colors;
 mod converters;
 mod error;
 mod from_str;
-mod normalize;
 mod grayscale;
+mod normalize;
 
 #[cfg(test)]
 mod tests;
 
-pub use colors::{Hsl, Hsla, Rgb, Rgba};
+pub use colors::{Hsl, Rgb};
 pub use grayscale::GrayScaleMethod;
 
 pub use error::ParseError;
@@ -139,9 +138,9 @@ pub trait Color {
   /// Creates a color from tuple.
   /// # Example
   /// ```
-  /// use colors_transform::{Rgba,Hsl,Color};
+  /// use colors_transform::{Rgb,Hsl,Color};
   ///
-  /// let rgba = Rgba::from_tuple(&(10.0,11.0,12.0, 0.5));
+  /// let rgb = Rgb::from_tuple(&(10.0,11.0,12.0));
   /// let hsl = Hsl::from(310.0,50.0,50.0);
   /// ```
   fn from_tuple(tuple: &Self::Tuple) -> Self;
@@ -149,10 +148,10 @@ pub trait Color {
   /// Returns tuple representation of color
   /// # Example
   /// ```
-  /// use colors_transform::{Hsla,Color};
-  /// let hsl_tuple = (10.0,11.0,12.0, 0.5);
-  /// let hsla = Hsla::from_tuple(&hsl_tuple);
-  /// assert_eq!(hsl_tuple,hsla.as_tuple());
+  /// use colors_transform::{Hsl,Color};
+  /// let hsl_tuple = (10.0,11.0,12.0);
+  /// let hsl = Hsl::from_tuple(&hsl_tuple);
+  /// assert_eq!(hsl_tuple,hsl.as_tuple());
   /// ```
   fn as_tuple(&self) -> Self::Tuple;
 
@@ -193,9 +192,7 @@ pub trait Color {
   fn set_lightness(&self, val: f32) -> Self;
 
   fn to_rgb(&self) -> Rgb;
-  fn to_rgba(&self) -> Rgba;
   fn to_hsl(&self) -> Hsl;
-  fn to_hsla(&self) -> Hsla;
 
   /// Returns css string
   /// # Example
