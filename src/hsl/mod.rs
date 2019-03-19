@@ -1,3 +1,4 @@
+use crate::consts::{ALL_MIN, HUE_MAX};
 use crate::normalize::{normalize_alpha, normalize_hue, normalize_percent};
 use crate::{ColorTuple, ColorTupleA};
 
@@ -62,5 +63,14 @@ impl Hsl {
   }
   pub fn set_alpha(&mut self, val: f32) {
     self.a = Some(normalize_alpha(val));
+  }
+
+  pub fn grayscale(&mut self) {
+    self.h = ALL_MIN;
+    self.s = ALL_MIN;
+  }
+
+  pub fn invert(&mut self) {
+    self.h = (self.h + HUE_MAX * 0.5) % HUE_MAX
   }
 }

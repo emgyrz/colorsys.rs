@@ -1,5 +1,6 @@
 mod grayscale;
 
+use crate::consts::RGB_UNIT_MAX;
 use crate::normalize::{normalize_alpha, normalize_rgb_unit};
 use crate::{ColorTuple, ColorTupleA};
 
@@ -79,5 +80,11 @@ impl Rgb {
   pub fn grayscale(&mut self, method: GrayScaleMethod) {
     let grayscaled = rgb_grayscale(&self.as_tuple(), method);
     self._apply_tuple(&grayscaled);
+  }
+
+  pub fn invert(&mut self) {
+    self.r = RGB_UNIT_MAX - self.r;
+    self.g = RGB_UNIT_MAX - self.g;
+    self.b = RGB_UNIT_MAX - self.b;
   }
 }
