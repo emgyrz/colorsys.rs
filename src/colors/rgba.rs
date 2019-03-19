@@ -3,6 +3,7 @@ use crate::converters::{as_rounded_rgb_tuple, round_ratio};
 use crate::error::ParseError;
 use crate::normalize::normalize_ratio;
 use crate::{from_str, AlphaColor, Color, ColorTupleA, RgbColor};
+use crate::grayscale::{GrayScaleMethod};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Rgba {
@@ -13,6 +14,10 @@ pub struct Rgba {
 impl Rgba {
   pub fn from(r: f32, g: f32, b: f32, a: f32) -> Rgba {
     Rgba::from_tuple(&(r, g, b, a))
+  }
+
+  pub fn grayscale(&self, method: GrayScaleMethod) -> Rgba {
+    Rgba { rgb: self.rgb.grayscale( method ), alpha: self.alpha }
   }
 }
 
@@ -121,9 +126,6 @@ impl Color for Rgba {
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Rgba {
     Rgba { rgb: self.rgb.adjust_color(name, val), alpha: self.alpha }
-  }
-  fn grayscale(&self) -> Rgba {
-    Rgba { rgb: self.rgb.grayscale(), alpha: self.alpha }
   }
   fn invert(&self) -> Rgba {
     Rgba { rgb: self.rgb.invert(), alpha: self.alpha }

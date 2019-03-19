@@ -1,5 +1,6 @@
 use super::converters::{as_rounded_hsl_tuple, as_rounded_rgb_tuple, hsl_to_rgb};
-use super::{Color, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba};
+use super::{Color, Hsl, Hsla, ParseError, Rgb, RgbColor, Rgba, GrayScaleMethod};
+
 
 // #[test]
 // fn speed_test() {
@@ -188,11 +189,11 @@ fn hsl_from_str_test() {
 
 #[test]
 fn get_unit_tst() {
+  let rgb = Rgb::from_tuple(&(34.0, 12.0, 177.0));
+
   fn cmp(x: f32, y: f32) -> bool {
     (x.round() - y).abs() <= std::f32::EPSILON
   }
-
-  let rgb = Rgb::from_tuple(&(34.0, 12.0, 177.0));
 
   assert!(cmp(rgb.get_red(), 34.0));
   assert!(cmp(rgb.get_green(), 12.0));
@@ -217,4 +218,22 @@ fn invert_tst() {
 
   let hsla = Hsla::from(120.0, 20.0, 72.0, 0.3);
   assert_eq!(hsla.invert().as_tuple(), (300.0, 20.0, 72.0, 0.3));
+}
+
+
+#[test]
+fn grayscale() {
+  static PRECISION: f32 = 0.0001;
+  fn cmp(x: f32, y: f32) -> bool {
+    (x.round() - y).abs() <= PRECISION
+  }
+
+  let rgb = Rgb::from(60.0, 184.0, 120.0);
+  let grayscaled_rgb = rgb.grayscale( GrayScaleMethod::AverageProminent );
+  let grayscaled_from_hsl = rgb.to_hsl().grayscale().to_rgb();
+  let t1 = grayscaled_rgb.as_tuple();
+  let t2 = grayscaled_from_hsl.as_tuple();
+  assert!(cmp(t1.0, t2.0));
+  assert!(cmp(t1.1, t2.1));
+  assert!(cmp(t1.2, t2.2));
 }

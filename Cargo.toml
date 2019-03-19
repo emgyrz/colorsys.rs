@@ -1,7 +1,7 @@
 [package]
 name = "colors-transform"
 version = "0.2.7"
-description = "Lib for covert and transform colors"
+description = "Module for convert and transform colors"
 authors = ["mz <emgyrz@gmail.com>"]
 license = "MIT"
 homepage = "https://github.com/emgyrz/colors.rs"

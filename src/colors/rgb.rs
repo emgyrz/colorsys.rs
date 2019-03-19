@@ -1,11 +1,12 @@
 use super::{Hsl, Hsla, Rgba};
 use crate::converters::{
-  as_rounded_rgb_tuple, rgb_invert, rgb_to_grayscale, rgb_to_grayscale_rec2100,
-  rgb_to_grayscale_rec709, rgb_to_hex, rgb_to_hsl,
+  as_rounded_rgb_tuple, rgb_invert, rgb_to_hex, rgb_to_hsl,
 };
 use crate::error::ParseError;
 use crate::normalize::{normalize_rgb, normalize_rgb_unit};
 use crate::{from_str, Color, ColorTuple, RgbColor};
+use crate::grayscale::{rgb_grayscale,GrayScaleMethod};
+
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Rgb {
@@ -18,6 +19,12 @@ impl Rgb {
   pub fn from(r: f32, g: f32, b: f32) -> Rgb {
     Rgb::from_tuple(&(r, g, b))
   }
+
+
+  pub fn grayscale(&self, method: GrayScaleMethod) -> Rgb {
+    Rgb::from_tuple(&rgb_grayscale(&self.as_tuple(), method))
+  }
+
 
   /// Try to parse string as hex color
   /// # Example
@@ -48,16 +55,6 @@ impl Rgb {
   pub fn to_css_hex_string(&self) -> String {
     let (r, g, b) = rgb_to_hex(&self.as_tuple());
     format!("#{}{}{}", r, g, b)
-  }
-
-  /// Convert color to grayscale using the ITU-R BT.709 standard used for HDTV
-  pub fn grayscale_rec709(&self) -> Rgb {
-    Rgb::from_tuple(&rgb_to_grayscale_rec709(&self.as_tuple()))
-  }
-
-  /// Convert color to grayscale using the ITU-R BT.2100 standard for HDR television
-  pub fn grayscale_rec2100(&self) -> Rgb {
-    Rgb::from_tuple(&rgb_to_grayscale_rec2100(&self.as_tuple()))
   }
 }
 
@@ -167,10 +164,6 @@ impl Color for Rgb {
       RgbColor::Green => self.set_green(g + val),
       RgbColor::Blue => self.set_blue(b + val),
     }
-  }
-
-  fn grayscale(&self) -> Rgb {
-    Rgb::from_tuple(&rgb_to_grayscale(&self.as_tuple()))
   }
 
   fn invert(&self) -> Rgb {

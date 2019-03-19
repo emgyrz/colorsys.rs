@@ -89,11 +89,13 @@ mod converters;
 mod error;
 mod from_str;
 mod normalize;
+mod grayscale;
 
 #[cfg(test)]
 mod tests;
 
 pub use colors::{Hsl, Hsla, Rgb, Rgba};
+pub use grayscale::GrayScaleMethod;
 
 pub use error::ParseError;
 
@@ -209,7 +211,6 @@ pub trait Color {
   fn saturate(&self, amt: f32) -> Self;
   fn lighten(&self, amt: f32) -> Self;
   fn adjust_color(&self, col_name: RgbColor, val: f32) -> Self;
-  fn grayscale(&self) -> Self;
   fn invert(&self) -> Self;
 }
 

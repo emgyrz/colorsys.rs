@@ -4,18 +4,6 @@ use super::ColorTuple;
 static RGB_UNIT_MAX: f32 = 255.0;
 static HUE_MAX: f32 = 360.0;
 
-static R_YUV_FACTOR: f32 = 0.299;
-static G_YUV_FACTOR: f32 = 0.587;
-static B_YUV_FACTOR: f32 = 0.114;
-
-static R_REC709_FACTOR: f32 = 0.2126;
-static G_REC709_FACTOR: f32 = 0.7152;
-static B_REC709_FACTOR: f32 = 0.0722;
-
-static R_REC2100_FACTOR: f32 = 0.2627;
-static G_REC2100_FACTOR: f32 = 0.6780;
-static B_REC2100_FACTOR: f32 = 0.0593;
-
 fn get_min(rgb: &[f32]) -> f32 {
   rgb.iter().fold(std::f32::MAX, |a, &b| a.min(b))
 }
@@ -113,20 +101,6 @@ pub fn hex_num_to_rgb(num: usize) -> ColorTuple {
   let b = (num & 0x0000_00FF) as f32;
 
   (r, g, b)
-}
-
-pub fn rgb_to_grayscale(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  (r * R_YUV_FACTOR, g * G_YUV_FACTOR, b * B_YUV_FACTOR)
-}
-
-pub fn rgb_to_grayscale_rec709(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  (r * R_REC709_FACTOR, g * G_REC709_FACTOR, b * B_REC709_FACTOR)
-}
-pub fn rgb_to_grayscale_rec2100(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb;
-  (r * R_REC2100_FACTOR, g * G_REC2100_FACTOR, b * B_REC2100_FACTOR)
 }
 
 pub fn rgb_invert(rgb: &ColorTuple) -> ColorTuple {

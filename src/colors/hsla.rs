@@ -14,6 +14,9 @@ impl Hsla {
   pub fn from(h: f32, s: f32, l: f32, a: f32) -> Hsla {
     Hsla::from_tuple(&(h, s, l, a))
   }
+  pub fn grayscale(&self) -> Hsla {
+    Hsla { hsl: self.hsl.grayscale(), alpha: self.alpha }
+  }
 }
 
 impl std::str::FromStr for Hsla {
@@ -120,9 +123,6 @@ impl Color for Hsla {
   }
   fn adjust_color(&self, name: RgbColor, val: f32) -> Hsla {
     Hsla { hsl: self.hsl.adjust_color(name, val), alpha: self.alpha }
-  }
-  fn grayscale(&self) -> Hsla {
-    Hsla { hsl: self.hsl.grayscale(), alpha: self.alpha }
   }
   fn invert(&self) -> Hsla {
     Hsla { hsl: self.hsl.invert(), alpha: self.alpha }
