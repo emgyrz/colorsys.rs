@@ -1,16 +1,8 @@
-use super::ColorTuple;
-use std::f32::EPSILON;
+use super::consts::{ALL_MIN, ALPHA_MAX, HUE_MAX, PERCENT_MAX, RGB_UNIT_MAX};
 
-struct NormalizeArg<T> {
-  pub val: T,
-  pub max: T,
-  pub min: T,
-}
-
-fn normalize<T: std::cmp::PartialOrd>(arg: NormalizeArg<T>) -> T {
-  let NormalizeArg { val, max, min } = arg;
-  if val < min {
-    return min;
+fn bound(val: f32, max: f32) -> f32 {
+  if val < ALL_MIN {
+    return ALL_MIN;
   }
   if val > max {
     return max;
@@ -18,49 +10,23 @@ fn normalize<T: std::cmp::PartialOrd>(arg: NormalizeArg<T>) -> T {
   val
 }
 
-pub fn normalize_ratio(r: f32) -> f32 {
-  normalize(NormalizeArg { val: r, max: 1.0, min: 0.0 })
-}
-
-pub fn normalize_percent(r: f32) -> f32 {
-  normalize(NormalizeArg { val: r, max: 100.0, min: 0.0 })
-}
-
-pub fn normalize_rgb_unit(u: f32) -> f32 {
-  normalize(NormalizeArg { val: u, max: 255.0, min: 0.0 })
+pub fn normalize_percent(val: f32) -> f32 {
+  bound(val, PERCENT_MAX)
 }
 
 pub fn normalize_hue(h: f32) -> f32 {
-  let h = normalize(NormalizeArg { val: h, max: 360.0, min: 0.0 });
-  if (h - 360.0).abs() < EPSILON {
+  let h = bound(h, HUE_MAX);
+  if (h - HUE_MAX).abs() < std::f32::EPSILON {
     0.0
   } else {
     h
   }
 }
 
-pub fn normalize_hsl(hsl_tuple: &ColorTuple) -> ColorTuple {
-  let (h, s, l) = hsl_tuple;
-  (normalize_hue(*h), normalize_percent(*s), normalize_percent(*l))
+pub fn normalize_rgb_unit(val: f32) -> f32 {
+  bound(val, RGB_UNIT_MAX)
 }
 
-pub fn normalize_rgb(rgb_tuple: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = rgb_tuple;
-  (normalize_rgb_unit(*r), normalize_rgb_unit(*g), normalize_rgb_unit(*b))
-}
-
-pub fn bound_ratio(r: f32) -> f32 {
-  let mut n = r;
-  loop {
-    let less = n < 0.0;
-    let bigger = n > 1.0;
-    if !less && !bigger {
-      break n;
-    }
-    if less {
-      n += 1.0;
-    } else {
-      n -= 1.0;
-    }
-  }
+pub fn normalize_alpha(val: f32) -> f32 {
+  bound(val, ALPHA_MAX)
 }

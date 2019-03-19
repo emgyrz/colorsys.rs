@@ -20,6 +20,26 @@ impl Hsl {
   pub fn grayscale(&self) -> Hsl {
     Hsl { h: 0.0, s: 0.0, l: self.l, a: self.a }
   }
+
+  pub fn get_hue(&self) -> f32 {
+    self.h
+  }
+  pub fn get_saturation(&self) -> f32 {
+    self.s
+  }
+  pub fn get_lightness(&self) -> f32 {
+    self.l
+  }
+
+  pub fn set_hue(&self, val: f32) -> Hsl {
+    Hsl { h: normalize_hue(val), s: self.s, l: self.l, a: self.a }
+  }
+  pub fn set_saturation(&self, val: f32) -> Hsl {
+    Hsl { h: self.h, s: normalize_percent(val), l: self.l, a: self.a }
+  }
+  pub fn set_lightness(&self, val: f32) -> Hsl {
+    Hsl { h: self.h, s: self.s, l: normalize_percent(val), a: self.a }
+  }
 }
 
 impl std::str::FromStr for Hsl {
@@ -41,43 +61,24 @@ impl Color for Hsl {
     Hsl { h: 0.0, s: 0.0, l: 0.0, a: None }
   }
 
-  fn get_hue(&self) -> f32 {
-    self.h
-  }
-  fn get_saturation(&self) -> f32 {
-    self.s
-  }
-  fn get_lightness(&self) -> f32 {
-    self.l
-  }
-  fn set_hue(&self, val: f32) -> Hsl {
-    Hsl { h: normalize_hue(val), s: self.s, l: self.l, a: self.a }
-  }
-  fn set_saturation(&self, val: f32) -> Hsl {
-    Hsl { h: self.h, s: normalize_percent(val), l: self.l, a: self.a }
-  }
-  fn set_lightness(&self, val: f32) -> Hsl {
-    Hsl { h: self.h, s: self.s, l: normalize_percent(val), a: self.a }
-  }
-
-  fn get_red(&self) -> f32 {
-    self.to_rgb().get_red()
-  }
-  fn get_green(&self) -> f32 {
-    self.to_rgb().get_green()
-  }
-  fn get_blue(&self) -> f32 {
-    self.to_rgb().get_blue()
-  }
-  fn set_red(&self, val: f32) -> Hsl {
-    self.to_rgb().set_red(val).to_hsl()
-  }
-  fn set_green(&self, val: f32) -> Hsl {
-    self.to_rgb().set_green(val).to_hsl()
-  }
-  fn set_blue(&self, val: f32) -> Hsl {
-    self.to_rgb().set_blue(val).to_hsl()
-  }
+  // fn get_red(&self) -> f32 {
+  //   self.to_rgb().get_red()
+  // }
+  // fn get_green(&self) -> f32 {
+  //   self.to_rgb().get_green()
+  // }
+  // fn get_blue(&self) -> f32 {
+  //   self.to_rgb().get_blue()
+  // }
+  // fn set_red(&self, val: f32) -> Hsl {
+  //   self.to_rgb().set_red(val).to_hsl()
+  // }
+  // fn set_green(&self, val: f32) -> Hsl {
+  //   self.to_rgb().set_green(val).to_hsl()
+  // }
+  // fn set_blue(&self, val: f32) -> Hsl {
+  //   self.to_rgb().set_blue(val).to_hsl()
+  // }
 
   fn to_rgb(&self) -> Rgb {
     Rgb::from_tuple(&hsl_to_rgb(&self.as_tuple()))
@@ -110,7 +111,7 @@ impl Color for Hsl {
   fn adjust_hue(&self, hue: f32) -> Hsl {
     self.set_hue(self.h + hue)
   }
-  fn adjust_color(&self, name: RgbUnit, val: f32) -> Hsl {
+  fn adjust_color(&mut self, name: RgbUnit, val: f32) -> Hsl {
     self.to_rgb().adjust_color(name, val).to_hsl()
   }
 

@@ -5,7 +5,7 @@ use crate::grayscale::{rgb_grayscale, GrayScaleMethod};
 use crate::normalize::{normalize_ratio, normalize_rgb, normalize_rgb_unit};
 use crate::{from_str, AlphaColor, Color, ColorTuple, ColorTupleA, RgbUnit};
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Rgb {
   r: f32,
   g: f32,
@@ -52,6 +52,25 @@ impl Rgb {
     let (r, g, b) = rgb_to_hex(&self.as_tuple());
     format!("#{}{}{}", r, g, b)
   }
+
+  pub fn get_red(&self) -> f32 {
+    self.r
+  }
+  pub fn get_green(&self) -> f32 {
+    self.g
+  }
+  pub fn get_blue(&self) -> f32 {
+    self.b
+  }
+  pub fn set_red(&mut self, val: f32) {
+    self.r = normalize_rgb_unit(val);
+  }
+  pub fn set_green(&mut self, val: f32) {
+    self.g = normalize_rgb_unit(val);
+  }
+  pub fn set_blue(&mut self, val: f32) {
+    self.b = normalize_rgb_unit(val);
+  }
 }
 
 impl std::str::FromStr for Rgb {
@@ -71,44 +90,6 @@ impl Color for Rgb {
 
   fn new() -> Rgb {
     Rgb { r: 0.0, g: 0.0, b: 0.0, a: None }
-  }
-
-  fn get_red(&self) -> f32 {
-    self.r
-  }
-  fn get_green(&self) -> f32 {
-    self.g
-  }
-  fn get_blue(&self) -> f32 {
-    self.b
-  }
-  fn set_red(&self, val: f32) -> Rgb {
-    Rgb { r: normalize_rgb_unit(val), g: self.g, b: self.b, a: self.a }
-  }
-  fn set_green(&self, val: f32) -> Rgb {
-    Rgb { r: self.r, g: normalize_rgb_unit(val), b: self.b, a: self.a }
-  }
-  fn set_blue(&self, val: f32) -> Rgb {
-    Rgb { r: self.r, g: self.g, b: normalize_rgb_unit(val), a: self.a }
-  }
-
-  fn get_hue(&self) -> f32 {
-    self.to_hsl().get_hue()
-  }
-  fn get_saturation(&self) -> f32 {
-    self.to_hsl().get_saturation()
-  }
-  fn get_lightness(&self) -> f32 {
-    self.to_hsl().get_lightness()
-  }
-  fn set_hue(&self, val: f32) -> Rgb {
-    self.to_hsl().set_hue(val).to_rgb()
-  }
-  fn set_saturation(&self, val: f32) -> Rgb {
-    self.to_hsl().set_saturation(val).to_rgb()
-  }
-  fn set_lightness(&self, val: f32) -> Rgb {
-    self.to_hsl().set_lightness(val).to_rgb()
   }
 
   fn to_rgb(&self) -> Rgb {
@@ -151,7 +132,7 @@ impl Color for Rgb {
   fn adjust_hue(&self, amt: f32) -> Rgb {
     self.to_hsl().adjust_hue(amt).to_rgb()
   }
-  fn adjust_color(&self, name: RgbUnit, val: f32) -> Rgb {
+  fn adjust_color(&mut self, name: RgbUnit, val: f32) -> Rgb {
     let (r, g, b) = self.as_tuple();
     match name {
       RgbUnit::Red => self.set_red(r + val),
