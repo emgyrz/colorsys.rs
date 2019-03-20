@@ -11,3 +11,8 @@ pub use rgb::{GrayScaleMethod, Rgb};
 
 pub type ColorTuple = (f32, f32, f32);
 pub type ColorTupleA = (f32, f32, f32, f32);
+
+pub enum SaturationInSpace {
+  Hsl(f32),
+  Hsv(f32),
+}

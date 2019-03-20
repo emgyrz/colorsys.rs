@@ -1,8 +1,12 @@
-use crate::consts::{ALL_MIN, HUE_MAX};
-use crate::normalize::{normalize_alpha, normalize_hue, normalize_percent};
-use crate::{ColorTuple, ColorTupleA};
+mod converters;
 
-#[derive(Debug, PartialEq)]
+use crate::consts::{ALL_MIN, HUE_MAX};
+use crate::normalize::{bound_hue, normalize_alpha, normalize_hue, normalize_percent};
+
+use crate::{ColorTuple, ColorTupleA, Rgb, SaturationInSpace};
+use converters::hsl_to_rgb;
+
+#[derive(Debug, PartialEq, Clone)]
 pub struct Hsl {
   h: f32,
   s: f32,
@@ -65,11 +69,32 @@ impl Hsl {
     self.a = Some(normalize_alpha(val));
   }
 
+  pub fn to_rgb(&self) -> Rgb {
+    Rgb::from_tuple(&hsl_to_rgb(&self.as_tuple()))
+  }
+
+  pub fn lighten(&mut self, amt: f32) {
+    self.set_lightness(self.l + amt)
+  }
+
+  pub fn saturate(&mut self, sat: SaturationInSpace) {
+    match sat {
+      SaturationInSpace::Hsl(amt) => self.set_saturation(self.s + amt),
+      SaturationInSpace::Hsv(amt) => {
+        println!("{}", amt);
+        unimplemented!();
+      }
+    }
+  }
+
+  pub fn adjust_hue(&mut self, hue: f32) {
+    self.h = bound_hue(self.h + hue);
+  }
+
   pub fn grayscale(&mut self) {
     self.h = ALL_MIN;
     self.s = ALL_MIN;
   }
-
   pub fn invert(&mut self) {
     self.h = (self.h + HUE_MAX * 0.5) % HUE_MAX
   }

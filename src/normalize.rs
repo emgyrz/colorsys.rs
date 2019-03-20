@@ -1,6 +1,6 @@
 use super::consts::{ALL_MIN, ALPHA_MAX, HUE_MAX, PERCENT_MAX, RGB_UNIT_MAX};
 
-fn bound(val: f32, max: f32) -> f32 {
+fn normalize(val: f32, max: f32) -> f32 {
   if val < ALL_MIN {
     return ALL_MIN;
   }
@@ -11,11 +11,11 @@ fn bound(val: f32, max: f32) -> f32 {
 }
 
 pub fn normalize_percent(val: f32) -> f32 {
-  bound(val, PERCENT_MAX)
+  normalize(val, PERCENT_MAX)
 }
 
 pub fn normalize_hue(h: f32) -> f32 {
-  let h = bound(h, HUE_MAX);
+  let h = normalize(h, HUE_MAX);
   if (h - HUE_MAX).abs() < std::f32::EPSILON {
     0.0
   } else {
@@ -24,9 +24,33 @@ pub fn normalize_hue(h: f32) -> f32 {
 }
 
 pub fn normalize_rgb_unit(val: f32) -> f32 {
-  bound(val, RGB_UNIT_MAX)
+  normalize(val, RGB_UNIT_MAX)
 }
 
 pub fn normalize_alpha(val: f32) -> f32 {
-  bound(val, ALPHA_MAX)
+  normalize(val, ALPHA_MAX)
+}
+
+pub fn bound(r: f32, entire: f32) -> f32 {
+  let mut n = r;
+  loop {
+    let less = n < ALL_MIN;
+    let bigger = n > entire;
+    if !less && !bigger {
+      break n;
+    }
+    if less {
+      n += entire;
+    } else {
+      n -= entire;
+    }
+  }
+}
+
+pub fn bound_ratio(r: f32) -> f32 {
+  bound(r, ALPHA_MAX)
+}
+
+pub fn bound_hue(h: f32) -> f32 {
+  bound(h, HUE_MAX)
 }

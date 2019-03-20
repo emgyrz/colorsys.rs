@@ -1,13 +1,17 @@
+#[cfg(test)]
+mod tests;
+
+mod converters;
 mod grayscale;
 
 use crate::consts::RGB_UNIT_MAX;
 use crate::normalize::{normalize_alpha, normalize_rgb_unit};
-use crate::{ColorTuple, ColorTupleA};
+use crate::{ColorTuple, ColorTupleA, Hsl, SaturationInSpace};
 
 use grayscale::rgb_grayscale;
 pub use grayscale::GrayScaleMethod;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Rgb {
   r: f32,
   g: f32,
@@ -75,6 +79,38 @@ impl Rgb {
   }
   pub fn set_alpha(&mut self, val: f32) {
     self.a = Some(normalize_alpha(val));
+  }
+
+  pub fn to_hsl(&self) -> Hsl {
+    let hsl_tuple = converters::rgb_to_hsl(&self.as_tuple());
+    Hsl::from_tuple(&hsl_tuple)
+  }
+
+  pub fn lighten(&mut self, amt: f32) {
+    let mut hsl = self.to_hsl();
+    hsl.lighten(amt);
+    let lightened_rgb = hsl.to_rgb();
+    self._apply_tuple(&lightened_rgb.as_tuple());
+  }
+
+  pub fn saturate(&mut self, sat: SaturationInSpace) {
+    match sat {
+      SaturationInSpace::Hsl(amt) => {
+        let mut hsl = self.to_hsl();
+        hsl.set_saturation(hsl.get_saturation() + amt);
+        self._apply_tuple(&hsl.to_rgb().as_tuple());
+      }
+      SaturationInSpace::Hsv(amt) => {
+        println!("{}", amt);
+        unimplemented!();
+      }
+    }
+  }
+
+  pub fn adjust_hue(&mut self, hue: f32) {
+    let mut hsl = self.to_hsl();
+    hsl.adjust_hue(hue);
+    self._apply_tuple(&hsl.to_rgb().as_tuple());
   }
 
   pub fn grayscale(&mut self, method: GrayScaleMethod) {
