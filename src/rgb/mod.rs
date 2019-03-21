@@ -5,7 +5,7 @@ mod converters;
 mod grayscale;
 
 use crate::consts::RGB_UNIT_MAX;
-use crate::normalize::{normalize_alpha, normalize_rgb_unit};
+use crate::normalize::{normalize_ratio, normalize_rgb_unit};
 use crate::{ColorTuple, ColorTupleA, Hsl, SaturationInSpace};
 
 use grayscale::rgb_grayscale;
@@ -36,7 +36,7 @@ impl Rgb {
   }
   pub fn from_with_alpha(r: f32, g: f32, b: f32, a: f32) -> Rgb {
     let n = normalize_rgb_unit;
-    Rgb { r: n(r), g: n(g), b: n(b), a: Some(normalize_alpha(a)) }
+    Rgb { r: n(r), g: n(g), b: n(b), a: Some(normalize_ratio(a)) }
   }
 
   pub fn from_tuple(t: &ColorTuple) -> Rgb {
@@ -78,7 +78,7 @@ impl Rgb {
     self.b = normalize_rgb_unit(val);
   }
   pub fn set_alpha(&mut self, val: f32) {
-    self.a = Some(normalize_alpha(val));
+    self.a = Some(normalize_ratio(val));
   }
 
   pub fn to_hsl(&self) -> Hsl {

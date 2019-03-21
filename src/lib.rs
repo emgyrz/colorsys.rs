@@ -2,6 +2,7 @@ mod consts;
 mod hsl;
 mod normalize;
 mod rgb;
+pub mod ratio_converters;
 
 pub use hsl::Hsl;
 pub use rgb::{GrayScaleMethod, Rgb};

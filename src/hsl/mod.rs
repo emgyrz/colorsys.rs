@@ -1,7 +1,7 @@
 mod converters;
 
 use crate::consts::{ALL_MIN, HUE_MAX};
-use crate::normalize::{bound_hue, normalize_alpha, normalize_hue, normalize_percent};
+use crate::normalize::{bound_hue, normalize_ratio, normalize_hue, normalize_percent};
 
 use crate::{ColorTuple, ColorTupleA, Rgb, SaturationInSpace};
 use converters::hsl_to_rgb;
@@ -23,7 +23,7 @@ impl Hsl {
     Hsl { h: normalize_hue(h), s: normalize_percent(s), l: normalize_percent(l), a: None }
   }
   pub fn from_with_alpha(h: f32, s: f32, l: f32, a: f32) -> Hsl {
-    let a = Some(normalize_alpha(a));
+    let a = Some(normalize_ratio(a));
     Hsl { h: normalize_hue(h), s: normalize_percent(s), l: normalize_percent(l), a }
   }
 
@@ -66,7 +66,7 @@ impl Hsl {
     self.l = normalize_percent(val);
   }
   pub fn set_alpha(&mut self, val: f32) {
-    self.a = Some(normalize_alpha(val));
+    self.a = Some(normalize_ratio(val));
   }
 
   pub fn to_rgb(&self) -> Rgb {
