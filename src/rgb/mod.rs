@@ -2,9 +2,11 @@
 mod tests;
 
 mod converters;
+mod from_str;
 mod grayscale;
 
 use crate::consts::RGB_UNIT_MAX;
+use crate::err::ParseError;
 use crate::normalize::{normalize_ratio, normalize_rgb_unit};
 use crate::{ColorTuple, ColorTupleA, Hsl, SaturationInSpace};
 
@@ -45,6 +47,11 @@ impl Rgb {
 
   pub fn from_tuple_with_alpha(t: &ColorTupleA) -> Rgb {
     Rgb::from_with_alpha(t.0, t.1, t.2, t.3)
+  }
+
+  pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
+    let tuple = from_str::hex(s)?;
+    Ok(Rgb::from_tuple(&tuple))
   }
 
   pub fn as_tuple(&self) -> ColorTuple {
@@ -121,5 +128,13 @@ impl Rgb {
     self.r = RGB_UNIT_MAX - self.r;
     self.g = RGB_UNIT_MAX - self.g;
     self.b = RGB_UNIT_MAX - self.b;
+  }
+}
+
+impl std::str::FromStr for Rgb {
+  type Err = ParseError;
+  fn from_str(s: &str) -> Result<Rgb, ParseError> {
+    let t = from_str::rgb(s)?;
+    Ok(Rgb::from_tuple_with_alpha(&t))
   }
 }

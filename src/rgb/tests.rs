@@ -1,4 +1,4 @@
-use crate::{ColorTuple, Rgb};
+use crate::{ColorTuple, ParseError, Rgb};
 
 fn round(n: f32) -> u32 {
   n.round() as u32
@@ -27,4 +27,25 @@ fn lighten() {
 
   rgb4.lighten(-203.0);
   assert_eq!(round_tuple(&rgb4.as_tuple()), (0, 0, 0));
+}
+
+#[test]
+fn from_str_tst() {
+  fn parse_rgb(s: &str) -> Result<Rgb, ParseError> {
+    s.parse::<Rgb>()
+  }
+
+  assert_eq!(
+    parse_rgb("Rgb(134,11,251)").unwrap().as_tuple(),
+    Rgb::from(134.0, 11.0, 251.0).as_tuple()
+  );
+  assert_eq!(
+    parse_rgb("rgba(134.9,11.1,250.55, 0.9)").unwrap().as_tuple_with_alpha(),
+    Rgb::from_with_alpha(134.9, 11.1, 250.55, 0.9).as_tuple_with_alpha()
+  );
+  assert_eq!(parse_rgb("rgb (0,   0,0)").unwrap().as_tuple(), Rgb::default().as_tuple());
+
+  assert!(parse_rgb("12,1,97)").is_err());
+  assert!(parse_rgb("").is_err());
+  assert!(parse_rgb("ffcc0g").is_err());
 }

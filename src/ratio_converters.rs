@@ -1,6 +1,6 @@
 use super::consts::{HUE_MAX, PERCENT_MAX, RGB_UNIT_MAX};
 use super::normalize::{
-  bound_hue, bound_ratio, normalize_hue, normalize_percent, normalize_ratio, normalize_rgb_unit,
+  bound_hue, bound_ratio, normalize_percent, normalize_ratio, normalize_rgb_unit,
 };
 use super::{ColorTuple, ColorTupleA};
 

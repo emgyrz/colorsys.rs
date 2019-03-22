@@ -1,9 +1,11 @@
 mod consts;
+mod err;
 mod hsl;
 mod normalize;
-mod rgb;
 pub mod ratio_converters;
+mod rgb;
 
+pub use err::ParseError;
 pub use hsl::Hsl;
 pub use rgb::{GrayScaleMethod, Rgb};
 
