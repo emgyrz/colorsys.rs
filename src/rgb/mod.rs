@@ -93,6 +93,10 @@ impl Rgb {
     Hsl::from_tuple(&hsl_tuple)
   }
 
+  pub fn to_css_string(&self) -> String {
+    converters::to_css_string(self)
+  }
+
   pub fn lighten(&mut self, amt: f32) {
     let mut hsl = self.to_hsl();
     hsl.lighten(amt);

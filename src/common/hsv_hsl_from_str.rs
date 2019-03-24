@@ -1,3 +1,4 @@
+use super::Hs;
 use crate::err::{make_parse_err, ParseError};
 use crate::{consts, ColorTuple};
 
@@ -11,30 +12,22 @@ fn get_max_by_ind(ind: usize) -> f32 {
   }
 }
 
-fn strings_from_name(name: &str) -> Option<(String, String, String)> {
+fn strings_from_name(space: Hs) -> (String, String, String) {
   let mut x = String::with_capacity(1);
-  match name {
-    "hsl" => {
+  match space {
+    Hs::Hsl => {
       x.push('l');
     }
-    "hsv" => {
+    Hs::Hsv => {
       x.push('v');
-    }
-    _ => {
-      return None;
     }
   }
 
-  Some((format!("hs{}(", x), format!("hs{}a(", x), format!("hs{} or hs{}a", x, x)))
+  (format!("hs{}(", x), format!("hs{}a(", x), format!("hs{} or hs{}a", x, x))
 }
 
-pub fn hsl_hsv_from_str(s: &str, col_type: &str) -> Result<(ColorTuple, Option<f32>), ParseError> {
-  let (start, start_a, err_name) = match strings_from_name(col_type) {
-    Some(strs) => strs,
-    None => {
-      return Err(make_parse_err(s, "undefined"));
-    }
-  };
+pub fn hsl_hsv_from_str(s: &str, col_space: Hs) -> Result<(ColorTuple, Option<f32>), ParseError> {
+  let (start, start_a, err_name) = strings_from_name(col_space);
 
   let make_err = || Err(make_parse_err(s, &err_name));
   let s = s.trim().to_lowercase().replace(" ", "");

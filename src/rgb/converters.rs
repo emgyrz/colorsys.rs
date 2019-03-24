@@ -1,4 +1,6 @@
+use super::Rgb;
 use crate::consts::{ALL_MIN, PERCENT_MAX};
+use crate::normalize::round_ratio;
 use crate::ratio_converters::rgb_to_ratio;
 use crate::ColorTuple;
 
@@ -43,4 +45,21 @@ pub fn hex_num_to_rgb(num: usize) -> ColorTuple {
   let b = (num & 0x0000_00FF) as f32;
 
   (r, g, b)
+}
+
+pub fn to_css_string(rgb: &Rgb) -> String {
+  let Rgb { r, g, b, .. } = rgb;
+  let a = rgb.get_alpha();
+  let alpha =
+    if (a - 1.0) < std::f32::EPSILON { "1".to_owned() } else { round_ratio(a).to_string() };
+  let mut start = String::from("rgb");
+  let mut vals =
+    [r, g, b].iter().map(|u| (u.round() as u8).to_string()).collect::<Vec<String>>().join(",");
+
+  if alpha != "1" {
+    start.push('a');
+    vals.push_str(&(",".to_owned() + &alpha));
+  }
+
+  format!("{}({})", start, vals)
 }

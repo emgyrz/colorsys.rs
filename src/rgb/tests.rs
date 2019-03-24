@@ -49,3 +49,10 @@ fn from_str_tst() {
   assert!(parse_rgb("").is_err());
   assert!(parse_rgb("ffcc0g").is_err());
 }
+
+#[test]
+fn tst() {
+  // let x: f32 = 3.92354325154235423542435;
+
+  // println!("{}", x.round() as u16);
+}

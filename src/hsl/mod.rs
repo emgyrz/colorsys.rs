@@ -3,7 +3,7 @@ mod converters;
 use crate::consts::{ALL_MIN, HUE_MAX};
 use crate::normalize::{bound_hue, normalize_hue, normalize_percent, normalize_ratio};
 
-use crate::common::hsl_hsv_from_str;
+use crate::common::{hsl_hsv_from_str, Hs};
 use crate::{ColorTuple, ColorTupleA, ParseError, Rgb, SaturationInSpace};
 use converters::hsl_to_rgb;
 
@@ -80,9 +80,9 @@ impl Hsl {
 
   pub fn saturate(&mut self, sat: SaturationInSpace) {
     match sat {
-      SaturationInSpace::Hsl(amt) => self.set_saturation(self.s + amt),
-      SaturationInSpace::Hsv(amt) => {
-        println!("{}", amt);
+      SaturationInSpace::Hsl(s) => self.set_saturation(self.s + s),
+      SaturationInSpace::Hsv(s) => {
+        println!("{}", s);
         unimplemented!();
       }
     }
@@ -104,7 +104,7 @@ impl Hsl {
 impl std::str::FromStr for Hsl {
   type Err = ParseError;
   fn from_str(s: &str) -> Result<Hsl, ParseError> {
-    let (tuple, alpha) = hsl_hsv_from_str(s, "hsl")?;
+    let (tuple, alpha) = hsl_hsv_from_str(s, Hs::Hsl)?;
     let mut hsl = Hsl::from_tuple(&tuple);
     if let Some(a) = alpha {
       hsl.set_alpha(a);
