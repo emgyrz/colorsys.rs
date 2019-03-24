@@ -52,7 +52,18 @@ fn from_str_tst() {
 
 #[test]
 fn tst() {
-  // let x: f32 = 3.92354325154235423542435;
+  use std::time::Duration;
+  let count = 10000;
+  let mut tmp = Vec::new();
 
-  // println!("{}", x.round() as u16);
+  let start = std::time::Instant::now();
+  for _ in 0..count {
+    let mut rgb = Rgb::from(2.0, 55.0, 5.0);
+    rgb.lighten(13.0);
+    rgb.set_green(13.0);
+    tmp.push(rgb);
+  }
+
+  println!("Elapsed {:?} for {} times", start.elapsed(), tmp.len());
+  // }
 }
