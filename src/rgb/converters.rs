@@ -1,4 +1,5 @@
-use crate::consts::{ALL_MIN, PERCENT_MAX, RGB_UNIT_MAX};
+use crate::consts::{ALL_MIN, PERCENT_MAX};
+use crate::ratio_converters::rgb_to_ratio;
 use crate::ColorTuple;
 
 fn get_min(rgb: &[f32]) -> f32 {
@@ -10,8 +11,8 @@ fn get_max(rgb: &[f32]) -> f32 {
 }
 
 pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
-  let (r, g, b) = *rgb;
-  let rgb_arr: Vec<f32> = [r, g, b].iter().map(|p| p / RGB_UNIT_MAX).collect();
+  let (red, green, blue) = rgb_to_ratio(&rgb);
+  let rgb_arr = [red, green, blue];
   let max = get_max(&rgb_arr);
   let min = get_min(&rgb_arr);
   let luminace = (max + min) / 2.0;
@@ -24,12 +25,8 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
   let saturation =
     if luminace > 0.5 { max_min_delta / (2.0 - max - min) } else { max_min_delta / (max + min) };
 
-  let red = rgb_arr[0];
-  let green = rgb_arr[1];
-  let blue = rgb_arr[2];
-
   let hue = if red.eq(&max) {
-    let x = if g < b { 6.0 } else { ALL_MIN };
+    let x = if green < blue { 6.0 } else { ALL_MIN };
     (green - blue) / max_min_delta + x
   } else if green.eq(&max) {
     (blue - red) / max_min_delta + 2.0

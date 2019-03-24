@@ -1,8 +1,8 @@
 use super::converters::hex_num_to_rgb;
 use crate::err::{make_parse_err, ParseError};
-use crate::{consts, ColorTuple, ColorTupleA};
+use crate::{consts, ColorTuple};
 
-use consts::{ALL_MIN, RGB_UNIT_MAX};
+use consts::{ALL_MIN, RATIO_MAX, RGB_UNIT_MAX};
 
 // use super::converters::hex_num_to_rgb;
 
@@ -23,7 +23,7 @@ pub fn hex(s: &str) -> Result<ColorTuple, ParseError> {
   }
 }
 
-pub fn rgb(s: &str) -> Result<ColorTupleA, ParseError> {
+pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f32>), ParseError> {
   let make_err = || Err(make_parse_err(s, "rgb or rgba"));
   let s = s.trim().to_lowercase().replace(" ", "");
   let is_rgb = s.starts_with("rgb(");
@@ -37,26 +37,24 @@ pub fn rgb(s: &str) -> Result<ColorTupleA, ParseError> {
   let s = &s[start_ind..s.len() - 1];
   let nums_str = s.split(',').collect::<Vec<&str>>();
   let len = nums_str.len();
-  if is_rgb && len != 3 || is_rgba && len != 4 {
+  if (is_rgb && len != 3) || (is_rgba && len != 4) {
     return make_err();
   }
 
   let mut nums = Vec::with_capacity(len);
-  for n in nums_str {
-    match n.parse::<f32>() {
-      Ok(num) => {
-        if num < ALL_MIN || num > RGB_UNIT_MAX {
-          return make_err();
-        }
-        nums.push(num)
-      }
-      Err(_) => {
+  for (ind, n) in nums_str.iter().enumerate() {
+    if let Ok(num) = n.parse::<f32>() {
+      let max = if ind == 4 { RATIO_MAX } else { RGB_UNIT_MAX };
+      if num < ALL_MIN || num > max {
         return make_err();
       }
+      nums.push(num)
+    } else {
+      return make_err();
     }
   }
+  let rgb = (nums[0], nums[1], nums[2]);
+  let alpha = if is_rgba { Some(nums[len - 1]) } else { None };
 
-  let alpha = if is_rgba { nums[len - 1] } else { 1.0 };
-
-  Ok((nums[0], nums[1], nums[2], alpha))
+  Ok((rgb, alpha))
 }

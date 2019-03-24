@@ -134,7 +134,11 @@ impl Rgb {
 impl std::str::FromStr for Rgb {
   type Err = ParseError;
   fn from_str(s: &str) -> Result<Rgb, ParseError> {
-    let t = from_str::rgb(s)?;
-    Ok(Rgb::from_tuple_with_alpha(&t))
+    let (tuple, alpha) = from_str::rgb(s)?;
+    let mut rgb = Rgb::from_tuple(&tuple);
+    if let Some(a) = alpha {
+      rgb.set_alpha(a);
+    }
+    Ok(rgb)
   }
 }

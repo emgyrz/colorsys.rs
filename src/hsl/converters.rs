@@ -1,5 +1,6 @@
-use crate::consts::{HUE_MAX, PERCENT_MAX, RGB_UNIT_MAX};
+use crate::consts::RGB_UNIT_MAX;
 use crate::normalize::bound_ratio;
+use crate::ratio_converters::hsl_to_ratio;
 use crate::ColorTuple;
 
 fn calc_rgb_unit(unit: f32, temp1: f32, temp2: f32) -> f32 {
@@ -13,12 +14,9 @@ fn calc_rgb_unit(unit: f32, temp1: f32, temp2: f32) -> f32 {
   }
   result * RGB_UNIT_MAX
 }
-pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
-  let (_h, _s, _l) = *hsl;
-  let h = _h / HUE_MAX;
-  let s = _s / PERCENT_MAX;
-  let l = _l / PERCENT_MAX;
 
+pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
+  let (h, s, l) = hsl_to_ratio(hsl);
   if s == 0.0 {
     let unit = RGB_UNIT_MAX * l;
     return (unit, unit, unit);

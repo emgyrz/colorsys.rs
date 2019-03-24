@@ -1,9 +1,10 @@
 mod converters;
 
 use crate::consts::{ALL_MIN, HUE_MAX};
-use crate::normalize::{bound_hue, normalize_ratio, normalize_hue, normalize_percent};
+use crate::normalize::{bound_hue, normalize_hue, normalize_percent, normalize_ratio};
 
-use crate::{ColorTuple, ColorTupleA, Rgb, SaturationInSpace};
+use crate::common::hsl_hsv_from_str;
+use crate::{ColorTuple, ColorTupleA, ParseError, Rgb, SaturationInSpace};
 use converters::hsl_to_rgb;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -97,5 +98,17 @@ impl Hsl {
   }
   pub fn invert(&mut self) {
     self.h = (self.h + HUE_MAX * 0.5) % HUE_MAX
+  }
+}
+
+impl std::str::FromStr for Hsl {
+  type Err = ParseError;
+  fn from_str(s: &str) -> Result<Hsl, ParseError> {
+    let (tuple, alpha) = hsl_hsv_from_str(s, "hsl")?;
+    let mut hsl = Hsl::from_tuple(&tuple);
+    if let Some(a) = alpha {
+      hsl.set_alpha(a);
+    }
+    Ok(hsl)
   }
 }

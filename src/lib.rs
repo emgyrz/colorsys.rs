@@ -1,3 +1,4 @@
+mod common;
 mod consts;
 mod err;
 mod hsl;
