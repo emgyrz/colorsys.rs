@@ -51,19 +51,27 @@ fn from_str_tst() {
 }
 
 #[test]
-fn tst() {
-  use std::time::Duration;
-  let count = 10000;
-  let mut tmp = Vec::new();
-
-  let start = std::time::Instant::now();
-  for _ in 0..count {
-    let mut rgb = Rgb::from(2.0, 55.0, 5.0);
-    rgb.lighten(13.0);
-    rgb.set_green(13.0);
-    tmp.push(rgb);
-  }
-
-  println!("Elapsed {:?} for {} times", start.elapsed(), tmp.len());
-  // }
+fn rgb_iter() {
+  let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
+  let rgb2 = Rgb::from_hex_str("ffcc00").unwrap();
+  let rgb3 = rgb1 + rgb2;
+  println!(">>> {:?}", rgb3);
 }
+
+// #[test]
+// fn tst() {
+//   use std::time::Duration;
+//   let count = 10000;
+//   let mut tmp = Vec::new();
+
+//   let start = std::time::Instant::now();
+//   for _ in 0..count {
+//     let mut rgb = Rgb::from(2.0, 55.0, 5.0);
+//     rgb.lighten(13.0);
+//     rgb.set_green(13.0);
+//     tmp.push(rgb);
+//   }
+
+//   println!("Elapsed {:?} for {} times", start.elapsed(), tmp.len());
+//   // }
+// }

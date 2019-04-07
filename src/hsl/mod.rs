@@ -1,4 +1,8 @@
+#[cfg(test)]
+mod tests;
+
 mod converters;
+mod from;
 
 use crate::consts::{ALL_MIN, HUE_MAX};
 use crate::normalize::{bound_hue, normalize_hue, normalize_percent, normalize_ratio};
@@ -16,24 +20,9 @@ pub struct Hsl {
 }
 
 impl Hsl {
-  pub fn default() -> Hsl {
-    Hsl { h: 0.0, s: 0.0, l: 0.0, a: None }
-  }
-
-  pub fn from(h: f32, s: f32, l: f32) -> Hsl {
-    Hsl { h: normalize_hue(h), s: normalize_percent(s), l: normalize_percent(l), a: None }
-  }
-  pub fn from_with_alpha(h: f32, s: f32, l: f32, a: f32) -> Hsl {
-    let a = Some(normalize_ratio(a));
+  pub fn new(h: f32, s: f32, l: f32, a: Option<f32>) -> Hsl {
+    let a = a.map(normalize_ratio);
     Hsl { h: normalize_hue(h), s: normalize_percent(s), l: normalize_percent(l), a }
-  }
-
-  pub fn from_tuple(t: &ColorTuple) -> Hsl {
-    Hsl::from(t.0, t.1, t.2)
-  }
-
-  pub fn from_tuple_with_alpha(t: &ColorTupleA) -> Hsl {
-    Hsl::from_with_alpha(t.0, t.1, t.2, t.3)
   }
 
   pub fn as_tuple(&self) -> ColorTuple {
@@ -101,11 +90,17 @@ impl Hsl {
   }
 }
 
+impl Default for Hsl {
+  fn default() -> Hsl {
+    Hsl { h: 0.0, s: 0.0, l: 0.0, a: None }
+  }
+}
+
 impl std::str::FromStr for Hsl {
   type Err = ParseError;
   fn from_str(s: &str) -> Result<Hsl, ParseError> {
     let (tuple, alpha) = hsl_hsv_from_str(s, Hs::Hsl)?;
-    let mut hsl = Hsl::from_tuple(&tuple);
+    let mut hsl = Hsl::from(&tuple);
     if let Some(a) = alpha {
       hsl.set_alpha(a);
     }

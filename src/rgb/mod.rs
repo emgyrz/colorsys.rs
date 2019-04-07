@@ -1,6 +1,9 @@
 #[cfg(test)]
 mod tests;
 
+mod iter;
+mod ops;
+
 mod converters;
 mod from_str;
 mod grayscale;
@@ -12,6 +15,8 @@ use crate::{ColorTuple, ColorTupleA, Hsl, SaturationInSpace};
 
 use grayscale::rgb_grayscale;
 pub use grayscale::GrayScaleMethod;
+
+use iter::RgbIter;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Rgb {
@@ -28,23 +33,31 @@ impl Rgb {
     self.b = t.2;
   }
 
-  pub fn default() -> Rgb {
-    Rgb { r: 0.0, g: 0.0, b: 0.0, a: None }
+  pub fn new(r: f32, g: f32, b: f32, a: Option<f32>) -> Rgb {
+    let n = normalize_rgb_unit;
+
+    let a = a.map(normalize_ratio);
+    Rgb { r: n(r), g: n(g), b: n(b), a }
   }
 
+  // TODO: del
   pub fn from(r: f32, g: f32, b: f32) -> Rgb {
     let n = normalize_rgb_unit;
     Rgb { r: n(r), g: n(g), b: n(b), a: None }
   }
+
+  // TODO: del
   pub fn from_with_alpha(r: f32, g: f32, b: f32, a: f32) -> Rgb {
     let n = normalize_rgb_unit;
     Rgb { r: n(r), g: n(g), b: n(b), a: Some(normalize_ratio(a)) }
   }
 
+  // TODO: del
   pub fn from_tuple(t: &ColorTuple) -> Rgb {
     Rgb::from(t.0, t.1, t.2)
   }
 
+  // TODO: del
   pub fn from_tuple_with_alpha(t: &ColorTupleA) -> Rgb {
     Rgb::from_with_alpha(t.0, t.1, t.2, t.3)
   }
@@ -90,7 +103,7 @@ impl Rgb {
 
   pub fn to_hsl(&self) -> Hsl {
     let hsl_tuple = converters::rgb_to_hsl(&self.as_tuple());
-    Hsl::from_tuple(&hsl_tuple)
+    Hsl::from(&hsl_tuple)
   }
 
   pub fn to_css_string(&self) -> String {
@@ -132,6 +145,16 @@ impl Rgb {
     self.r = RGB_UNIT_MAX - self.r;
     self.g = RGB_UNIT_MAX - self.g;
     self.b = RGB_UNIT_MAX - self.b;
+  }
+
+  pub fn iter(&self) -> RgbIter {
+    RgbIter::new(self.as_tuple(), self.a)
+  }
+}
+
+impl Default for Rgb {
+  fn default() -> Rgb {
+    Rgb { r: 0.0, g: 0.0, b: 0.0, a: None }
   }
 }
 
