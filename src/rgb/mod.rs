@@ -1,17 +1,17 @@
 #[cfg(test)]
 mod tests;
 
+mod from;
 mod iter;
 mod ops;
 
-mod converters;
 mod from_str;
 mod grayscale;
 
 use crate::consts::RGB_UNIT_MAX;
 use crate::err::ParseError;
 use crate::normalize::{normalize_ratio, normalize_rgb_unit};
-use crate::{ColorTuple, ColorTupleA, Hsl, SaturationInSpace};
+use crate::{converters, ColorTuple, Hsl, SaturationInSpace};
 
 use grayscale::rgb_grayscale;
 pub use grayscale::GrayScaleMethod;
@@ -40,39 +40,9 @@ impl Rgb {
     Rgb { r: n(r), g: n(g), b: n(b), a }
   }
 
-  // TODO: del
-  pub fn from(r: f32, g: f32, b: f32) -> Rgb {
-    let n = normalize_rgb_unit;
-    Rgb { r: n(r), g: n(g), b: n(b), a: None }
-  }
-
-  // TODO: del
-  pub fn from_with_alpha(r: f32, g: f32, b: f32, a: f32) -> Rgb {
-    let n = normalize_rgb_unit;
-    Rgb { r: n(r), g: n(g), b: n(b), a: Some(normalize_ratio(a)) }
-  }
-
-  // TODO: del
-  pub fn from_tuple(t: &ColorTuple) -> Rgb {
-    Rgb::from(t.0, t.1, t.2)
-  }
-
-  // TODO: del
-  pub fn from_tuple_with_alpha(t: &ColorTupleA) -> Rgb {
-    Rgb::from_with_alpha(t.0, t.1, t.2, t.3)
-  }
-
   pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
     let tuple = from_str::hex(s)?;
-    Ok(Rgb::from_tuple(&tuple))
-  }
-
-  pub fn as_tuple(&self) -> ColorTuple {
-    (self.r, self.g, self.b)
-  }
-
-  pub fn as_tuple_with_alpha(&self) -> ColorTupleA {
-    (self.r, self.g, self.b, self.get_alpha())
+    Ok(Rgb::from(&tuple))
   }
 
   pub fn get_red(&self) -> f32 {
@@ -101,28 +71,23 @@ impl Rgb {
     self.a = Some(normalize_ratio(val));
   }
 
-  pub fn to_hsl(&self) -> Hsl {
-    let hsl_tuple = converters::rgb_to_hsl(&self.as_tuple());
-    Hsl::from(&hsl_tuple)
-  }
-
   pub fn to_css_string(&self) -> String {
-    converters::to_css_string(self)
+    converters::rgb_to_css_string(self)
   }
 
   pub fn lighten(&mut self, amt: f32) {
-    let mut hsl = self.to_hsl();
+    let mut hsl: Hsl = self.into();
     hsl.lighten(amt);
     let lightened_rgb = hsl.to_rgb();
-    self._apply_tuple(&lightened_rgb.as_tuple());
+    self._apply_tuple(&lightened_rgb.into());
   }
 
   pub fn saturate(&mut self, sat: SaturationInSpace) {
     match sat {
       SaturationInSpace::Hsl(amt) => {
-        let mut hsl = self.to_hsl();
+        let mut hsl: Hsl = self.into();
         hsl.set_saturation(hsl.get_saturation() + amt);
-        self._apply_tuple(&hsl.to_rgb().as_tuple());
+        self._apply_tuple(&hsl.to_rgb().into());
       }
       SaturationInSpace::Hsv(amt) => {
         println!("{}", amt);
@@ -132,9 +97,9 @@ impl Rgb {
   }
 
   pub fn adjust_hue(&mut self, hue: f32) {
-    let mut hsl = self.to_hsl();
+    let mut hsl: Hsl = self.into();
     hsl.adjust_hue(hue);
-    self._apply_tuple(&hsl.to_rgb().as_tuple());
+    self._apply_tuple(&hsl.to_rgb().into());
   }
 
   pub fn grayscale(&mut self, method: GrayScaleMethod) {
@@ -148,7 +113,7 @@ impl Rgb {
   }
 
   pub fn iter(&self) -> RgbIter {
-    RgbIter::new(self.as_tuple(), self.a)
+    RgbIter::new(self.into(), self.a)
   }
 }
 
@@ -158,11 +123,17 @@ impl Default for Rgb {
   }
 }
 
+impl AsRef<Rgb> for Rgb {
+  fn as_ref(&self) -> &Rgb {
+    &self
+  }
+}
+
 impl std::str::FromStr for Rgb {
   type Err = ParseError;
   fn from_str(s: &str) -> Result<Rgb, ParseError> {
     let (tuple, alpha) = from_str::rgb(s)?;
-    let mut rgb = Rgb::from_tuple(&tuple);
+    let mut rgb = Rgb::from(&tuple);
     if let Some(a) = alpha {
       rgb.set_alpha(a);
     }

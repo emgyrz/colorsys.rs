@@ -1,6 +1,5 @@
 use super::Rgb;
-use crate::{normalize, ColorTuple};
-use normalize::{normalize_ratio, normalize_rgb_unit};
+use crate::{ColorTuple, ColorTupleA};
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -37,8 +36,7 @@ impl Add for Rgb {
   type Output = Rgb;
   fn add(self, rhs: Self) -> Self {
     let (t, a) = calc(&self, &rhs, true);
-    // TODO: use From::from
-    let mut rgb = Rgb::from_tuple(&t);
+    let mut rgb = Rgb::from(&t);
     rgb.a = a;
     rgb
   }
@@ -46,10 +44,7 @@ impl Add for Rgb {
 
 impl AddAssign for Rgb {
   fn add_assign(&mut self, rhs: Self) {
-    let (t, a) = calc(&self, &rhs, true);
-    // TODO: add normalize funcs
-    self._apply_tuple(&t);
-    self.a = a
+    *self = self.clone() + rhs;
   }
 }
 
@@ -67,11 +62,11 @@ impl AddAssign for Rgb {
 fn rgb_add() {
   let rgb1 = Rgb::default();
   let rgb2 = Rgb::from_hex_str("ffcc00").unwrap();
-  let rgb3 = rgb1 + rgb2;
-  assert_eq!(rgb3.as_tuple_with_alpha(), (255.0, 204.0, 0.0, 1.0));
+  let rgb3: ColorTupleA = (rgb1 + rgb2).into();
+  assert_eq!(Into::<ColorTupleA>::into(rgb3), (255.0, 204.0, 0.0, 1.0));
 
   let rgb1 = Rgb::new(200.0, 200.0, 200.0, Some(0.3));
   let rgb2 = Rgb::new(200.0, 200.0, 200.0, None);
-  let rgb3 = rgb1 + rgb2;
-  assert_eq!(rgb3.as_tuple_with_alpha(), (255.0, 255.0, 255.0, 0.3));
+  let rgb3: ColorTupleA = (rgb1 + rgb2).into();
+  assert_eq!(rgb3, (255.0, 255.0, 255.0, 0.3));
 }

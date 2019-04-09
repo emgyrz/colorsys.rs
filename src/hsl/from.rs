@@ -37,9 +37,40 @@ impl From<ColorTupleA> for Hsl {
 //   }
 // }
 
+//
+//
+//
+// INTO
+//
+impl<'a> Into<ColorTuple> for &'a mut Hsl {
+  fn into(self) -> ColorTuple {
+    let Hsl { h, s, l, .. } = *self;
+    (h, s, l)
+  }
+}
+impl<'a> Into<ColorTuple> for &'a Hsl {
+  fn into(self) -> ColorTuple {
+    let Hsl { h, s, l, .. } = *self;
+    (h, s, l)
+  }
+}
+
 impl Into<ColorTuple> for Hsl {
   fn into(self) -> ColorTuple {
     self.as_tuple()
+  }
+}
+
+impl<'a> Into<ColorTupleA> for &'a Hsl {
+  fn into(self) -> ColorTupleA {
+    let Hsl { h, s, l, .. } = *self;
+    (h, s, l, self.get_alpha())
+  }
+}
+impl<'a> Into<ColorTupleA> for &'a mut Hsl {
+  fn into(self) -> ColorTupleA {
+    let Hsl { h, s, l, .. } = *self;
+    (h, s, l, self.get_alpha())
   }
 }
 

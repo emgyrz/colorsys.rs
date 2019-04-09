@@ -1,10 +1,9 @@
-use super::converters::hex_num_to_rgb;
 use crate::err::{make_parse_err, ParseError};
-use crate::{consts, ColorTuple};
+use crate::{consts, converters, ColorTuple};
 
 use consts::{ALL_MIN, RATIO_MAX, RGB_UNIT_MAX};
 
-// use super::converters::hex_num_to_rgb;
+use converters::hex_num_to_rgb;
 
 pub fn hex(s: &str) -> Result<ColorTuple, ParseError> {
   let mut hex = s.replace("#", "").to_lowercase();

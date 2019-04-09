@@ -60,7 +60,7 @@ impl Hsl {
   }
 
   pub fn to_rgb(&self) -> Rgb {
-    Rgb::from_tuple(&hsl_to_rgb(&self.as_tuple()))
+    Rgb::from(&hsl_to_rgb(&self.as_tuple()))
   }
 
   pub fn lighten(&mut self, amt: f32) {

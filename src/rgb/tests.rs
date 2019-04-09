@@ -1,4 +1,4 @@
-use crate::{ColorTuple, ParseError, Rgb};
+use crate::{ColorTuple, ColorTupleA, ParseError, Rgb};
 
 fn round(n: f32) -> u32 {
   n.round() as u32
@@ -11,22 +11,22 @@ fn round_tuple(t: &ColorTuple) -> (u32, u32, u32) {
 
 #[test]
 fn lighten() {
-  let mut rgb = Rgb::from(80.0, 186.0, 90.0);
+  let mut rgb = Rgb::from((80.0, 186.0, 90.0));
   let mut rgb2 = rgb.clone();
   let mut rgb3 = rgb.clone();
   let mut rgb4 = rgb.clone();
 
   rgb.lighten(15.0);
-  assert_eq!(round_tuple(&rgb.as_tuple()), (135, 208, 142));
+  assert_eq!(round_tuple(&rgb.into()), (135, 208, 142));
 
   rgb2.lighten(45.0);
-  assert_eq!(round_tuple(&rgb2.as_tuple()), (245, 251, 245));
+  assert_eq!(round_tuple(&rgb2.into()), (245, 251, 245));
 
   rgb3.lighten(-23.0);
-  assert_eq!(round_tuple(&rgb3.as_tuple()), (42, 107, 48));
+  assert_eq!(round_tuple(&rgb3.into()), (42, 107, 48));
 
   rgb4.lighten(-203.0);
-  assert_eq!(round_tuple(&rgb4.as_tuple()), (0, 0, 0));
+  assert_eq!(round_tuple(&rgb4.into()), (0, 0, 0));
 }
 
 #[test]
@@ -36,14 +36,15 @@ fn from_str_tst() {
   }
 
   assert_eq!(
-    parse_rgb("Rgb(134,11,251)").unwrap().as_tuple(),
-    Rgb::from(134.0, 11.0, 251.0).as_tuple()
+    Into::<ColorTuple>::into(parse_rgb("Rgb(134,11,251)").unwrap()),
+    Rgb::from((134.0, 11.0, 251.0)).into()
   );
+
   assert_eq!(
-    parse_rgb("rgba(134.9,11.1,250.55, 0.9)").unwrap().as_tuple_with_alpha(),
-    Rgb::from_with_alpha(134.9, 11.1, 250.55, 0.9).as_tuple_with_alpha()
+    Into::<ColorTupleA>::into(parse_rgb("rgba(134.9,11.1,250.55, 0.9)").unwrap()),
+    Rgb::from((134.9, 11.1, 250.55, 0.9)).into()
   );
-  assert_eq!(parse_rgb("rgb (0,   0,0)").unwrap().as_tuple(), Rgb::default().as_tuple());
+  assert_eq!(Into::<ColorTuple>::into(parse_rgb("rgb (0,   0,0)").unwrap()), Rgb::default().into());
 
   assert!(parse_rgb("12,1,97)").is_err());
   assert!(parse_rgb("").is_err());
@@ -54,6 +55,7 @@ fn from_str_tst() {
 fn rgb_iter() {
   let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
   let rgb2 = Rgb::from_hex_str("ffcc00").unwrap();
+  let t: ColorTuple = rgb1.as_ref().into();
   let rgb3 = rgb1 + rgb2;
   println!(">>> {:?}", rgb3);
 }
