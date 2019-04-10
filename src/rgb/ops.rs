@@ -1,5 +1,5 @@
 use super::Rgb;
-use crate::{ColorTuple, ColorTupleA};
+use crate::{ColorTuple, ColorTupleA, Hsl};
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -32,31 +32,73 @@ fn compute_add_alpha(a1: Option<f32>, a2: Option<f32>, is_add: bool) -> Option<f
   }
 }
 
+fn add(rgb1: &Rgb, rgb2: &Rgb) -> Rgb {
+  let (t, a) = calc(rgb1, rgb2, true);
+  let mut rgb = Rgb::from(t);
+  rgb.a = a;
+  rgb
+}
+
+fn sub(rgb1: &Rgb, rgb2: &Rgb) -> Rgb {
+  let (t, a) = calc(rgb1, rgb2, false);
+  let mut rgb = Rgb::from(t);
+  rgb.a = a;
+  rgb
+}
+
+impl<'a> Add for &'a Rgb {
+  type Output = Rgb;
+  fn add(self, rhs: &Rgb) -> Rgb {
+    add(self, rhs)
+  }
+}
+
+impl<'a> Add for &'a mut Rgb {
+  type Output = Rgb;
+  fn add(self, rhs: &'a mut Rgb) -> Rgb {
+    add(self, rhs)
+  }
+}
+
 impl Add for Rgb {
   type Output = Rgb;
   fn add(self, rhs: Self) -> Self {
-    let (t, a) = calc(&self, &rhs, true);
-    let mut rgb = Rgb::from(&t);
-    rgb.a = a;
-    rgb
+    add(&self, &rhs)
   }
 }
 
 impl AddAssign for Rgb {
   fn add_assign(&mut self, rhs: Self) {
-    *self = self.clone() + rhs;
+    *self = add(self, &rhs);
   }
 }
 
-// impl Sub for Rgb {
-//   type Output = Rgb;
-//   fn sub(self, rhs: Self) -> Self {
-//     let Rgb { r: r1, g: g1, b: b1, a: a1 } = self;
-//     let Rgb { r: r2, g: g2, b: b2, a: a2 } = rhs;
-//     let a = compute_add_alpha(a1, a2);
-//     Rgb::new(r1 - r2, g1 - g2, b1 - b2, a)
-//   }
-// }
+impl Sub for Rgb {
+  type Output = Rgb;
+  fn sub(self, rhs: Self) -> Self {
+    sub(&self, &rhs)
+  }
+}
+
+impl<'a> Sub for &'a Rgb {
+  type Output = Rgb;
+  fn sub(self, rhs: Self) -> Rgb {
+    sub(self, rhs)
+  }
+}
+
+impl<'a> Sub for &'a mut Rgb {
+  type Output = Rgb;
+  fn sub(self, rhs: Self) -> Rgb {
+    sub(self, rhs)
+  }
+}
+
+impl SubAssign for Rgb {
+  fn sub_assign(&mut self, rhs: Self) {
+    *self = sub(self, &rhs);
+  }
+}
 
 #[test]
 fn rgb_add() {
@@ -69,4 +111,22 @@ fn rgb_add() {
   let rgb2 = Rgb::new(200.0, 200.0, 200.0, None);
   let rgb3: ColorTupleA = (rgb1 + rgb2).into();
   assert_eq!(rgb3, (255.0, 255.0, 255.0, 0.3));
+}
+
+#[test]
+fn rgb_eq() {
+  let rgb1 = Rgb::default();
+  let mut rgb2 = Rgb::default();
+  let rgb3 = Rgb::from((12.1, 123.21321, 12.002310123));
+  let hsl: Hsl = rgb3.as_ref().into();
+  let rgb4 = Rgb::from(hsl);
+  rgb2 += rgb3.clone();
+  rgb2 -= rgb3.clone();
+
+  let r3 = rgb3.get_red();
+  let r4 = rgb4.get_red();
+  println!("{:?}", r3 - r4);
+
+  assert_eq!(rgb1, rgb2);
+  assert_eq!(rgb3, rgb4);
 }
