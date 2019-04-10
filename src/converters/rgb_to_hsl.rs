@@ -8,7 +8,7 @@ enum RgbUnit {
   Blue,
 }
 
-fn get_max(red: f32, green: f32, blue: f32) -> (f32, RgbUnit) {
+fn get_max(red: f64, green: f64, blue: f64) -> (f64, RgbUnit) {
   if (red > green) && (red > blue) {
     return (red, RgbUnit::Red);
   }
@@ -19,7 +19,7 @@ fn get_max(red: f32, green: f32, blue: f32) -> (f32, RgbUnit) {
   }
 }
 
-fn get_min(red: f32, green: f32, blue: f32) -> f32 {
+fn get_min(red: f64, green: f64, blue: f64) -> f64 {
   if (red < green) && (red < blue) {
     red
   } else if green < blue {

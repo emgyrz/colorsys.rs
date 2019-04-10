@@ -4,7 +4,7 @@ use crate::{consts, ColorTuple};
 
 use consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX};
 
-fn get_max_by_ind(ind: usize) -> f32 {
+fn get_max_by_ind(ind: usize) -> f64 {
   match ind {
     0 => HUE_MAX,
     3 => RATIO_MAX,
@@ -26,7 +26,7 @@ fn strings_from_name(space: Hs) -> (String, String, String) {
   (format!("hs{}(", x), format!("hs{}a(", x), format!("hs{} or hs{}a", x, x))
 }
 
-pub fn hsl_hsv_from_str(s: &str, col_space: Hs) -> Result<(ColorTuple, Option<f32>), ParseError> {
+pub fn hsl_hsv_from_str(s: &str, col_space: Hs) -> Result<(ColorTuple, Option<f64>), ParseError> {
   let (start, start_a, err_name) = strings_from_name(col_space);
 
   let make_err = || Err(make_parse_err(s, &err_name));
@@ -48,7 +48,7 @@ pub fn hsl_hsv_from_str(s: &str, col_space: Hs) -> Result<(ColorTuple, Option<f3
 
   let mut nums = Vec::with_capacity(len);
   for (ind, n) in nums_str.iter().enumerate() {
-    if let Ok(num) = n.parse::<f32>() {
+    if let Ok(num) = n.parse::<f64>() {
       let max = get_max_by_ind(ind);
       if num < ALL_MIN || num > max {
         return make_err();

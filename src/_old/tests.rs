@@ -170,8 +170,8 @@ fn hsl_from_str_test() {
 fn get_unit_tst() {
   let rgb = Rgb::from_tuple(&(34.0, 12.0, 177.0));
 
-  fn cmp(x: f32, y: f32) -> bool {
-    (x.round() - y).abs() <= std::f32::EPSILON
+  fn cmp(x: f64, y: f64) -> bool {
+    (x.round() - y).abs() <= std::f64::EPSILON
   }
 
   assert!(cmp(rgb.get_red(), 34.0));
@@ -186,7 +186,7 @@ fn get_unit_tst() {
 fn eq_test() {
   let rgb = Rgb::from_tuple(&(34.0, 12.0, 177.0));
   let transformed_rgb = rgb.to_hsl().to_rgb();
-  assert!(rgb.get_red() - transformed_rgb.get_red() < std::f32::EPSILON);
+  assert!(rgb.get_red() - transformed_rgb.get_red() < std::f64::EPSILON);
   // assert_eq!(rgb, transformed_rgb);
 }
 
@@ -201,8 +201,8 @@ fn invert_tst() {
 
 #[test]
 fn grayscale() {
-  static PRECISION: f32 = 0.0001;
-  fn cmp(x: f32, y: f32) -> bool {
+  static PRECISION: f64 = 0.0001;
+  fn cmp(x: f64, y: f64) -> bool {
     (x.round() - y).abs() <= PRECISION
   }
 

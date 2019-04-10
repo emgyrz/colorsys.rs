@@ -22,7 +22,7 @@ pub fn hex(s: &str) -> Result<ColorTuple, ParseError> {
   }
 }
 
-pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f32>), ParseError> {
+pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f64>), ParseError> {
   let make_err = || Err(make_parse_err(s, "rgb or rgba"));
   let s = s.trim().to_lowercase().replace(" ", "");
   let is_rgb = s.starts_with("rgb(");
@@ -42,7 +42,7 @@ pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f32>), ParseError> {
 
   let mut nums = Vec::with_capacity(len);
   for (ind, n) in nums_str.iter().enumerate() {
-    if let Ok(num) = n.parse::<f32>() {
+    if let Ok(num) = n.parse::<f64>() {
       let max = if ind == 4 { RATIO_MAX } else { RGB_UNIT_MAX };
       if num < ALL_MIN || num > max {
         return make_err();

@@ -1,5 +1,5 @@
 use super::ColorTuple;
-use std::f32::EPSILON;
+use std::f64::EPSILON;
 
 struct NormalizeArg<T> {
   pub val: T,
@@ -18,19 +18,19 @@ fn normalize<T: std::cmp::PartialOrd>(arg: NormalizeArg<T>) -> T {
   val
 }
 
-pub fn normalize_ratio(r: f32) -> f32 {
+pub fn normalize_ratio(r: f64) -> f64 {
   normalize(NormalizeArg { val: r, max: 1.0, min: 0.0 })
 }
 
-pub fn normalize_percent(r: f32) -> f32 {
+pub fn normalize_percent(r: f64) -> f64 {
   normalize(NormalizeArg { val: r, max: 100.0, min: 0.0 })
 }
 
-pub fn normalize_rgb_unit(u: f32) -> f32 {
+pub fn normalize_rgb_unit(u: f64) -> f64 {
   normalize(NormalizeArg { val: u, max: 255.0, min: 0.0 })
 }
 
-pub fn normalize_hue(h: f32) -> f32 {
+pub fn normalize_hue(h: f64) -> f64 {
   let h = normalize(NormalizeArg { val: h, max: 360.0, min: 0.0 });
   if (h - 360.0).abs() < EPSILON {
     0.0
@@ -49,7 +49,7 @@ pub fn normalize_rgb(rgb_tuple: &ColorTuple) -> ColorTuple {
   (normalize_rgb_unit(*r), normalize_rgb_unit(*g), normalize_rgb_unit(*b))
 }
 
-pub fn bound_ratio(r: f32) -> f32 {
+pub fn bound_ratio(r: f64) -> f64 {
   let mut n = r;
   loop {
     let less = n < 0.0;

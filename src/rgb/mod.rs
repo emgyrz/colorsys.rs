@@ -1,29 +1,28 @@
 #[cfg(test)]
 mod tests;
 
-mod from;
-mod iter;
-mod ops;
-
-mod from_str;
-mod grayscale;
-
-use crate::consts::RGB_UNIT_MAX;
+use crate::common::approx::approx_def;
+use crate::consts::{RATIO_MAX, RGB_UNIT_MAX};
 use crate::err::ParseError;
 use crate::normalize::{normalize_ratio, normalize_rgb_unit};
 use crate::{converters, ColorTuple, Hsl, SaturationInSpace};
 
+mod from;
+mod from_str;
+mod grayscale;
+mod iter;
+mod ops;
+
 use grayscale::rgb_grayscale;
 pub use grayscale::GrayScaleMethod;
-
 use iter::RgbIter;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Rgb {
-  r: f32,
-  g: f32,
-  b: f32,
-  a: Option<f32>,
+  r: f64,
+  g: f64,
+  b: f64,
+  a: Option<f64>,
 }
 
 impl Rgb {
@@ -33,10 +32,10 @@ impl Rgb {
     self.b = t.2;
   }
 
-  pub fn new(r: f32, g: f32, b: f32, a: Option<f32>) -> Rgb {
+  pub fn new(r: f64, g: f64, b: f64, a: Option<f64>) -> Rgb {
     let n = normalize_rgb_unit;
 
-    let a = a.map(normalize_ratio);
+    let a = a.map(normalize_ratio).filter(|al| approx_def(*al, RATIO_MAX));
     Rgb { r: n(r), g: n(g), b: n(b), a }
   }
 
@@ -45,29 +44,29 @@ impl Rgb {
     Ok(Rgb::from(&tuple))
   }
 
-  pub fn get_red(&self) -> f32 {
+  pub fn get_red(&self) -> f64 {
     self.r
   }
-  pub fn get_green(&self) -> f32 {
+  pub fn get_green(&self) -> f64 {
     self.g
   }
-  pub fn get_blue(&self) -> f32 {
+  pub fn get_blue(&self) -> f64 {
     self.b
   }
-  pub fn get_alpha(&self) -> f32 {
+  pub fn get_alpha(&self) -> f64 {
     self.a.unwrap_or(1.0)
   }
 
-  pub fn set_red(&mut self, val: f32) {
+  pub fn set_red(&mut self, val: f64) {
     self.r = normalize_rgb_unit(val);
   }
-  pub fn set_green(&mut self, val: f32) {
+  pub fn set_green(&mut self, val: f64) {
     self.g = normalize_rgb_unit(val);
   }
-  pub fn set_blue(&mut self, val: f32) {
+  pub fn set_blue(&mut self, val: f64) {
     self.b = normalize_rgb_unit(val);
   }
-  pub fn set_alpha(&mut self, val: f32) {
+  pub fn set_alpha(&mut self, val: f64) {
     self.a = Some(normalize_ratio(val));
   }
 
@@ -75,7 +74,7 @@ impl Rgb {
     converters::rgb_to_css_string(self)
   }
 
-  pub fn lighten(&mut self, amt: f32) {
+  pub fn lighten(&mut self, amt: f64) {
     let mut hsl: Hsl = self.into();
     hsl.lighten(amt);
     let lightened_rgb = hsl.to_rgb();
@@ -96,7 +95,7 @@ impl Rgb {
     }
   }
 
-  pub fn adjust_hue(&mut self, hue: f32) {
+  pub fn adjust_hue(&mut self, hue: f64) {
     let mut hsl: Hsl = self.into();
     hsl.adjust_hue(hue);
     self._apply_tuple(&hsl.to_rgb().into());

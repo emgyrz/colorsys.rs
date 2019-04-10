@@ -1,6 +1,6 @@
 use crate::{ColorTuple, ColorTupleA, ParseError, Rgb};
 
-fn round(n: f32) -> u32 {
+fn round(n: f64) -> u32 {
   n.round() as u32
 }
 
@@ -56,7 +56,7 @@ fn rgb_iter() {
   let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
   let rgb2 = Rgb::from_hex_str("ffcc00").unwrap();
   let t: ColorTuple = rgb1.as_ref().into();
-  let rgb3 = rgb1 + rgb2;
+  let rgb3 = &rgb1 + &rgb2;
   println!(">>> {:?}", rgb3);
 }
 

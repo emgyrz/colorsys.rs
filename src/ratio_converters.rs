@@ -4,22 +4,22 @@ use super::normalize::{
 };
 use super::{ColorTuple, ColorTupleA};
 
-fn rgb_to(n: f32) -> f32 {
+fn rgb_to(n: f64) -> f64 {
   normalize_ratio(n / RGB_UNIT_MAX)
 }
-fn to_rgb(n: f32) -> f32 {
+fn to_rgb(n: f64) -> f64 {
   normalize_rgb_unit(n * RGB_UNIT_MAX)
 }
-fn hue_to(n: f32) -> f32 {
+fn hue_to(n: f64) -> f64 {
   bound_hue(n) / HUE_MAX
 }
-fn to_hue(n: f32) -> f32 {
+fn to_hue(n: f64) -> f64 {
   bound_ratio(n) * HUE_MAX
 }
-fn per_to(n: f32) -> f32 {
+fn per_to(n: f64) -> f64 {
   normalize_ratio(n / PERCENT_MAX)
 }
-fn to_per(n: f32) -> f32 {
+fn to_per(n: f64) -> f64 {
   normalize_percent(n * PERCENT_MAX)
 }
 

@@ -29,13 +29,13 @@ fn clear_str(s: &str) -> String {
   result
 }
 
-fn collect_vec_and_parse(s: &str) -> Result<Vec<f32>, std::num::ParseFloatError> {
+fn collect_vec_and_parse(s: &str) -> Result<Vec<f64>, std::num::ParseFloatError> {
   let v = s.split(',').map(|c| c.to_string()).collect::<Vec<String>>();
 
   let mut units = Vec::new();
 
   for unit in v {
-    let u = unit.parse::<f32>()?;
+    let u = unit.parse::<f64>()?;
     units.push(u);
   }
 

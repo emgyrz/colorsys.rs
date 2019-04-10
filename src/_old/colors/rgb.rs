@@ -7,14 +7,14 @@ use crate::{from_str, AlphaColor, Color, ColorTuple, ColorTupleA, RgbUnit};
 
 #[derive(Debug, PartialEq)]
 pub struct Rgb {
-  r: f32,
-  g: f32,
-  b: f32,
-  a: Option<f32>,
+  r: f64,
+  g: f64,
+  b: f64,
+  a: Option<f64>,
 }
 
 impl Rgb {
-  pub fn from(r: f32, g: f32, b: f32) -> Rgb {
+  pub fn from(r: f64, g: f64, b: f64) -> Rgb {
     Rgb::from_tuple(&(r, g, b))
   }
 
@@ -53,22 +53,22 @@ impl Rgb {
     format!("#{}{}{}", r, g, b)
   }
 
-  pub fn get_red(&self) -> f32 {
+  pub fn get_red(&self) -> f64 {
     self.r
   }
-  pub fn get_green(&self) -> f32 {
+  pub fn get_green(&self) -> f64 {
     self.g
   }
-  pub fn get_blue(&self) -> f32 {
+  pub fn get_blue(&self) -> f64 {
     self.b
   }
-  pub fn set_red(&mut self, val: f32) {
+  pub fn set_red(&mut self, val: f64) {
     self.r = normalize_rgb_unit(val);
   }
-  pub fn set_green(&mut self, val: f32) {
+  pub fn set_green(&mut self, val: f64) {
     self.g = normalize_rgb_unit(val);
   }
-  pub fn set_blue(&mut self, val: f32) {
+  pub fn set_blue(&mut self, val: f64) {
     self.b = normalize_rgb_unit(val);
   }
 }
@@ -123,16 +123,16 @@ impl Color for Rgb {
     (self.r, self.g, self.b)
   }
 
-  fn lighten(&self, amt: f32) -> Rgb {
+  fn lighten(&self, amt: f64) -> Rgb {
     self.to_hsl().lighten(amt).to_rgb()
   }
-  fn saturate(&self, amt: f32) -> Rgb {
+  fn saturate(&self, amt: f64) -> Rgb {
     self.to_hsl().saturate(amt).to_rgb()
   }
-  fn adjust_hue(&self, amt: f32) -> Rgb {
+  fn adjust_hue(&self, amt: f64) -> Rgb {
     self.to_hsl().adjust_hue(amt).to_rgb()
   }
-  fn adjust_color(&mut self, name: RgbUnit, val: f32) -> Rgb {
+  fn adjust_color(&mut self, name: RgbUnit, val: f64) -> Rgb {
     let (r, g, b) = self.as_tuple();
     match name {
       RgbUnit::Red => self.set_red(r + val),
@@ -147,13 +147,13 @@ impl Color for Rgb {
 }
 
 impl AlphaColor for Rgb {
-  fn get_alpha(&self) -> f32 {
+  fn get_alpha(&self) -> f64 {
     self.a.unwrap_or(1.0)
   }
-  fn set_alpha(&self, a: f32) -> Rgb {
+  fn set_alpha(&self, a: f64) -> Rgb {
     Rgb { r: self.r, g: self.g, b: self.b, a: Some(normalize_ratio(a)) }
   }
-  fn opacify(&self, a: f32) -> Rgb {
+  fn opacify(&self, a: f64) -> Rgb {
     self.set_alpha(self.get_alpha() + a)
   }
 }

@@ -1,19 +1,19 @@
 use super::normalize::bound_ratio;
 use super::ColorTuple;
 
-static RGB_UNIT_MAX: f32 = 255.0;
-static HUE_MAX: f32 = 360.0;
+static RGB_UNIT_MAX: f64 = 255.0;
+static HUE_MAX: f64 = 360.0;
 
-fn get_min(rgb: &[f32]) -> f32 {
-  rgb.iter().fold(std::f32::MAX, |a, &b| a.min(b))
+fn get_min(rgb: &[f64]) -> f64 {
+  rgb.iter().fold(std::f64::MAX, |a, &b| a.min(b))
 }
 
-fn get_max(rgb: &[f32]) -> f32 {
-  rgb.iter().fold(std::f32::MIN, |a, &b| a.max(b))
+fn get_max(rgb: &[f64]) -> f64 {
+  rgb.iter().fold(std::f64::MIN, |a, &b| a.max(b))
 }
 
 pub fn rgb_to_hex(rgb: &ColorTuple) -> (String, String, String) {
-  fn to_hex(n: f32) -> String {
+  fn to_hex(n: f64) -> String {
     let s = format!("{:x}", n.round() as i32);
     if s.len() == 1 {
       "0".to_string() + &s
@@ -28,7 +28,7 @@ pub fn rgb_to_hex(rgb: &ColorTuple) -> (String, String, String) {
 
 pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
   let (r, g, b) = *rgb;
-  let rgb_arr: Vec<f32> = [r, g, b].iter().map(|p| p / RGB_UNIT_MAX).collect();
+  let rgb_arr: Vec<f64> = [r, g, b].iter().map(|p| p / RGB_UNIT_MAX).collect();
   let max = get_max(&rgb_arr);
   let min = get_min(&rgb_arr);
   let luminace = (max + min) / 2.0;
@@ -57,7 +57,7 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
   (hue * 60.0, saturation * 100.0, luminace * 100.0)
 }
 
-fn calc_rgb_unit(unit: f32, temp1: f32, temp2: f32) -> f32 {
+fn calc_rgb_unit(unit: f64, temp1: f64, temp2: f64) -> f64 {
   let mut result = temp2;
   if 6.0 * unit < 1.0 {
     result = temp2 + (temp1 - temp2) * 6.0 * unit
@@ -96,9 +96,9 @@ pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
 }
 
 pub fn hex_num_to_rgb(num: usize) -> ColorTuple {
-  let r = (num >> 16) as f32;
-  let g = ((num >> 8) & 0x00FF) as f32;
-  let b = (num & 0x0000_00FF) as f32;
+  let r = (num >> 16) as f64;
+  let g = ((num >> 8) & 0x00FF) as f64;
+  let b = (num & 0x0000_00FF) as f64;
 
   (r, g, b)
 }
@@ -108,7 +108,7 @@ pub fn rgb_invert(rgb: &ColorTuple) -> ColorTuple {
   (RGB_UNIT_MAX - r, RGB_UNIT_MAX - g, RGB_UNIT_MAX - b)
 }
 
-pub fn invert_hue(hue: f32) -> f32 {
+pub fn invert_hue(hue: f64) -> f64 {
   (hue + 180.0) % HUE_MAX
 }
 
@@ -122,6 +122,6 @@ pub fn as_rounded_hsl_tuple(t: &ColorTuple) -> (u16, u16, u16) {
   (h.round() as u16, s.round() as u16, l.round() as u16)
 }
 
-pub fn round_ratio(r: f32) -> f32 {
+pub fn round_ratio(r: f64) -> f64 {
   (r * 100.0).round() / 100.0
 }

@@ -27,8 +27,8 @@ impl From<ColorTupleA> for Hsl {
   }
 }
 
-// impl From<&[f32]> for Hsl {
-//   fn from(a: &[f32]) -> Hsl {
+// impl From<&[f64]> for Hsl {
+//   fn from(a: &[f64]) -> Hsl {
 //     let h = a.get(0).cloned().unwrap_or(0.0);
 //     let s = a.get(1).cloned().unwrap_or(0.0);
 //     let l = a.get(2).cloned().unwrap_or(0.0);

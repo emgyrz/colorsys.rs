@@ -8,17 +8,17 @@ pub enum GrayScaleMethod {
   Rec2100,
 }
 
-static R_YUV_FACTOR: f32 = 0.299;
-static G_YUV_FACTOR: f32 = 0.587;
-static B_YUV_FACTOR: f32 = 0.114;
+static R_YUV_FACTOR: f64 = 0.299;
+static G_YUV_FACTOR: f64 = 0.587;
+static B_YUV_FACTOR: f64 = 0.114;
 
-static R_REC709_FACTOR: f32 = 0.2126;
-static G_REC709_FACTOR: f32 = 0.7152;
-static B_REC709_FACTOR: f32 = 0.0722;
+static R_REC709_FACTOR: f64 = 0.2126;
+static G_REC709_FACTOR: f64 = 0.7152;
+static B_REC709_FACTOR: f64 = 0.0722;
 
-static R_REC2100_FACTOR: f32 = 0.2627;
-static G_REC2100_FACTOR: f32 = 0.6780;
-static B_REC2100_FACTOR: f32 = 0.0593;
+static R_REC2100_FACTOR: f64 = 0.2627;
+static G_REC2100_FACTOR: f64 = 0.6780;
+static B_REC2100_FACTOR: f64 = 0.0593;
 
 fn rgb_to_grayscale_lum(rgb: &mut Rgb) {
   rgb.r *= R_YUV_FACTOR;
@@ -46,8 +46,8 @@ fn rgb_to_grayscale_avg(rgb: &mut Rgb) {
 
 fn rgb_to_grayscale_avg_prom(rgb: &mut Rgb) {
   let rgb_vec = vec![rgb.r, rgb.g, rgb.b];
-  let max = rgb_vec.iter().fold(std::f32::MIN, |a, &b| a.max(b));
-  let min = rgb_vec.iter().fold(std::f32::MAX, |a, &b| a.min(b));
+  let max = rgb_vec.iter().fold(std::f64::MIN, |a, &b| a.max(b));
+  let min = rgb_vec.iter().fold(std::f64::MAX, |a, &b| a.min(b));
   let y = (max + min) / 2.0;
   rgb.r = y;
   rgb.g = y;

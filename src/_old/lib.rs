@@ -2,7 +2,7 @@
 //!
 //! For now you can work with four color representation options: Rgb (Rgba), Hsl (Hsla). Each of them has a variety of methods to modify and convert. See the Color trait they implement. There are also a couple of methods for hex string color.
 //!
-//! All values are given as f32 for more accurate calculations.
+//! All values are given as f64 for more accurate calculations.
 //!
 //! ## What It Can Do
 //!
@@ -66,7 +66,7 @@
 //!
 //!
 //! ## Color unit ranges
-//! All color units is f32. Here are their ranges:
+//! All color units is f64. Here are their ranges:
 //!  - red - 0.0 .. 255.0
 //!  - green - 0.0 .. 255.0
 //!  - blue - 0.0 .. 255.0
@@ -114,10 +114,10 @@ pub use error::ParseError;
 /// let hsl: Hsl = "hsl(315,99,12)".parse().unwrap();
 /// assert_eq!(hsl.get_saturation(), 99.0);
 /// ```
-pub type ColorTuple = (f32, f32, f32);
+pub type ColorTuple = (f64, f64, f64);
 
 /// Like a `ColorTuple` but with fourth alpha value
-pub type ColorTupleA = (f32, f32, f32, f32);
+pub type ColorTupleA = (f64, f64, f64, f64);
 
 /// Common to all trait
 pub trait Color {
@@ -159,40 +159,40 @@ pub trait Color {
   fn as_tuple(&self) -> Self::Tuple;
 
   // /// Returns red value of color (`0.0..255.00`)
-  // fn get_red(&self) -> f32;
+  // fn get_red(&self) -> f64;
 
   // /// Returns green value of color (`0.0..255.00`)
-  // fn get_green(&self) -> f32;
+  // fn get_green(&self) -> f64;
 
   // /// Returns blue value of color (`0.0..255.00`)
-  // fn get_blue(&self) -> f32;
+  // fn get_blue(&self) -> f64;
 
   // /// Sets red value of color (`0.0..255.00`). Returns Color
-  // fn set_red(&self, val: f32) -> Self;
+  // fn set_red(&self, val: f64) -> Self;
 
   // /// Sets green value of color (`0.0..255.00`). Returns Color
-  // fn set_green(&self, val: f32) -> Self;
+  // fn set_green(&self, val: f64) -> Self;
 
   // /// Sets blue value of color (`0.0..255.00`). Returns Color
-  // fn set_blue(&self, val: f32) -> Self;
+  // fn set_blue(&self, val: f64) -> Self;
 
   // /// Returns hue value of color (`0.0..359.00`)
-  // fn get_hue(&self) -> f32;
+  // fn get_hue(&self) -> f64;
 
   // /// Returns saturation value of color (`0.0..100.00`)
-  // fn get_saturation(&self) -> f32;
+  // fn get_saturation(&self) -> f64;
 
   // /// Returns lightness value of color (`0.0..100.00`)
-  // fn get_lightness(&self) -> f32;
+  // fn get_lightness(&self) -> f64;
 
   // /// Sets hue value of color (`0.0..359.00`). Returns Color
-  // fn set_hue(&self, val: f32) -> Self;
+  // fn set_hue(&self, val: f64) -> Self;
 
   // /// Sets saturation value of color (`0.0..100.00`). Returns Color
-  // fn set_saturation(&self, val: f32) -> Self;
+  // fn set_saturation(&self, val: f64) -> Self;
 
   // /// Sets lightness value of color (`0.0..100.00`). Returns Color
-  // fn set_lightness(&self, val: f32) -> Self;
+  // fn set_lightness(&self, val: f64) -> Self;
 
   fn to_rgb(&self) -> Rgb;
   fn to_hsl(&self) -> Hsl;
@@ -207,18 +207,18 @@ pub trait Color {
   /// ```
   fn to_css_string(&self) -> String;
 
-  fn adjust_hue(&self, amt: f32);
-  fn saturate(&self, amt: f32);
-  fn lighten(&self, amt: f32);
-  fn adjust_color(&mut self, col_name: RgbUnit, val: f32);
+  fn adjust_hue(&self, amt: f64);
+  fn saturate(&self, amt: f64);
+  fn lighten(&self, amt: f64);
+  fn adjust_color(&mut self, col_name: RgbUnit, val: f64);
   fn invert(&self) -> Self;
 }
 
 /// Some methods for working with alpha channel for Rgba & Hsla
 pub trait AlphaColor {
-  fn get_alpha(&self) -> f32;
-  fn set_alpha(&self, a: f32) -> Self;
-  fn opacify(&self, o: f32) -> Self;
+  fn get_alpha(&self) -> f64;
+  fn set_alpha(&self, a: f64) -> Self;
+  fn opacify(&self, o: f64) -> Self;
 }
 
 #[derive(Clone, Copy)]

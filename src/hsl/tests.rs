@@ -8,7 +8,7 @@
 //   let y = Hsl::from(&x);
 //   // println!("{:?}", x);
 //   // println!("{:?}", y);
-//   let a = [1.0_f32, 1.0, 12.0, 2.0];
+//   let a = [1.0_f64, 1.0, 12.0, 2.0];
 //   // let hsl = Hsl::from(&a[..]);
 //   let v = vec![1, 2, 3];
 //   for a in &v {}

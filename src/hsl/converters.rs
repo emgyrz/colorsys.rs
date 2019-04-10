@@ -3,15 +3,15 @@ use crate::normalize::bound_ratio;
 use crate::ratio_converters::hsl_to_ratio;
 use crate::ColorTuple;
 
-static ONE: f32 = 1.0;
-static TWO: f32 = 2.0;
-static SIX: f32 = 6.0;
+static ONE: f64 = 1.0;
+static TWO: f64 = 2.0;
+static SIX: f64 = 6.0;
 
-static ONE_THIRD: f32 = ONE / 3.0;
-static TWO_THIRD: f32 = TWO / 3.0;
+static ONE_THIRD: f64 = ONE / 3.0;
+static TWO_THIRD: f64 = TWO / 3.0;
 
 pub fn hsl_to_rgb(hsl: &ColorTuple) -> ColorTuple {
-  let calc_rgb_unit = |unit: f32, temp1: f32, temp2: f32| -> f32 {
+  let calc_rgb_unit = |unit: f64, temp1: f64, temp2: f64| -> f64 {
     let mut result = temp2;
     if SIX * unit < ONE {
       result = temp2 + (temp1 - temp2) * SIX * unit

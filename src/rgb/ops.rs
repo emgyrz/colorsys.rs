@@ -1,9 +1,9 @@
 use super::Rgb;
-use crate::{ColorTuple, ColorTupleA, Hsl};
+use crate::{common::approx::*, ColorTuple, ColorTupleA, Hsl};
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-fn calc(rgb1: &Rgb, rgb2: &Rgb, is_add: bool) -> (ColorTuple, Option<f32>) {
+fn calc(rgb1: &Rgb, rgb2: &Rgb, is_add: bool) -> (ColorTuple, Option<f64>) {
   let Rgb { r: r1, g: g1, b: b1, a: a1 } = rgb1;
   let Rgb { r: r2, g: g2, b: b2, a: a2 } = rgb2;
 
@@ -13,7 +13,7 @@ fn calc(rgb1: &Rgb, rgb2: &Rgb, is_add: bool) -> (ColorTuple, Option<f32>) {
   (t, a)
 }
 
-fn compute_add_alpha(a1: Option<f32>, a2: Option<f32>, is_add: bool) -> Option<f32> {
+fn compute_add_alpha(a1: Option<f64>, a2: Option<f64>, is_add: bool) -> Option<f64> {
   let has1 = a1.is_some();
   let has2 = a2.is_some();
   if !has1 && !has2 {
@@ -100,6 +100,30 @@ impl SubAssign for Rgb {
   }
 }
 
+impl ApproxEq<Rgb> for Rgb {
+  fn approx_eq(&self, other: &Rgb) -> bool {
+    let t1: ColorTuple = self.into();
+    let t2: ColorTuple = other.into();
+    approx_tuple_def(&t1, &t2) && approx_def(self.get_alpha(), other.get_alpha())
+  }
+  fn approx_eq_clarify(&self, other: &Rgb, precision: f64) -> bool {
+    let t1: ColorTuple = self.into();
+    let t2: ColorTuple = other.into();
+    approx_tuple(&t1, &t2, precision) && approx(self.get_alpha(), other.get_alpha(), precision)
+  }
+}
+
+impl ApproxEq<Hsl> for Rgb {
+  fn approx_eq(&self, hsl: &Hsl) -> bool {
+    self.approx_eq_clarify(hsl, DEFAULT_APPROX_EQ_PRECISION)
+  }
+  fn approx_eq_clarify(&self, hsl: &Hsl, precision: f64) -> bool {
+    let t1: ColorTuple = self.into();
+    let t2: ColorTuple = Rgb::from(hsl).into();
+    approx_tuple(&t1, &t2, precision) && approx(self.get_alpha(), hsl.get_alpha(), precision)
+  }
+}
+
 #[test]
 fn rgb_add() {
   let rgb1 = Rgb::default();
@@ -117,16 +141,13 @@ fn rgb_add() {
 fn rgb_eq() {
   let rgb1 = Rgb::default();
   let mut rgb2 = Rgb::default();
-  let rgb3 = Rgb::from((12.1, 123.21321, 12.002310123));
+  let rgb3 = Rgb::from((12.12534, 123.21321, 12.002_310_123));
   let hsl: Hsl = rgb3.as_ref().into();
-  let rgb4 = Rgb::from(hsl);
+  let rgb4 = Rgb::from(&hsl);
   rgb2 += rgb3.clone();
   rgb2 -= rgb3.clone();
 
-  let r3 = rgb3.get_red();
-  let r4 = rgb4.get_red();
-  println!("{:?}", r3 - r4);
-
   assert_eq!(rgb1, rgb2);
-  assert_eq!(rgb3, rgb4);
+  assert!(rgb3.approx_eq(&rgb4));
+  assert!(rgb3.approx_eq_clarify(&hsl, 0.000_000_000_001));
 }
