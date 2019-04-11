@@ -1,5 +1,6 @@
 use super::Rgb;
-use crate::{common::approx::*, ColorTuple, ColorTupleA, Hsl};
+use crate::common::simple_rand;
+use crate::{common::approx::*, ColorAlpha, ColorTuple, ColorTupleA, Hsl};
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -150,4 +151,8 @@ fn rgb_eq() {
   assert_eq!(rgb1, rgb2);
   assert!(rgb3.approx_eq(&rgb4));
   assert!(rgb3.approx_eq_clarify(&hsl, 0.000_000_000_001));
+
+  // println!("time {:?}", simple_rand(255.0));
+  // println!("time {:?}", simple_rand(255.0));
+  // println!("time {:?}", simple_rand(255.0));
 }

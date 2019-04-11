@@ -1,5 +1,5 @@
 use crate::normalize::round_ratio;
-use crate::Rgb;
+use crate::{ColorAlpha, Rgb};
 
 pub fn rgb_to_css_string(rgb: &Rgb) -> String {
   let (r, g, b) = rgb.into();

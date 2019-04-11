@@ -22,7 +22,7 @@ pub struct Hsl {
 
 impl Hsl {
   pub fn new(h: f64, s: f64, l: f64, a: Option<f64>) -> Hsl {
-    let a = a.map(normalize_ratio).filter(|al| approx_def(*al, RATIO_MAX));
+    let a = a.map(normalize_ratio).filter(|al| !approx_def(*al, RATIO_MAX));
     Hsl { h: normalize_hue(h), s: normalize_percent(s), l: normalize_percent(l), a }
   }
 

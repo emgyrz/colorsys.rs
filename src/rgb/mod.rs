@@ -5,7 +5,7 @@ use crate::common::approx::approx_def;
 use crate::consts::{RATIO_MAX, RGB_UNIT_MAX};
 use crate::err::ParseError;
 use crate::normalize::{normalize_ratio, normalize_rgb_unit};
-use crate::{converters, ColorTuple, Hsl, SaturationInSpace};
+use crate::{converters, ColorAlpha, ColorTuple, Hsl, SaturationInSpace};
 
 mod from;
 mod from_str;
@@ -35,7 +35,7 @@ impl Rgb {
   pub fn new(r: f64, g: f64, b: f64, a: Option<f64>) -> Rgb {
     let n = normalize_rgb_unit;
 
-    let a = a.map(normalize_ratio).filter(|al| approx_def(*al, RATIO_MAX));
+    let a = a.map(normalize_ratio).filter(|al| !approx_def(*al, RATIO_MAX));
     Rgb { r: n(r), g: n(g), b: n(b), a }
   }
 
@@ -53,9 +53,6 @@ impl Rgb {
   pub fn get_blue(&self) -> f64 {
     self.b
   }
-  pub fn get_alpha(&self) -> f64 {
-    self.a.unwrap_or(1.0)
-  }
 
   pub fn set_red(&mut self, val: f64) {
     self.r = normalize_rgb_unit(val);
@@ -65,9 +62,6 @@ impl Rgb {
   }
   pub fn set_blue(&mut self, val: f64) {
     self.b = normalize_rgb_unit(val);
-  }
-  pub fn set_alpha(&mut self, val: f64) {
-    self.a = Some(normalize_ratio(val));
   }
 
   pub fn to_css_string(&self) -> String {
@@ -137,5 +131,19 @@ impl std::str::FromStr for Rgb {
       rgb.set_alpha(a);
     }
     Ok(rgb)
+  }
+}
+
+impl ColorAlpha for Rgb {
+  fn get_alpha(&self) -> f64 {
+    self.a.unwrap_or(1.0)
+  }
+
+  fn set_alpha(&mut self, val: f64) {
+    self.a = Some(normalize_ratio(val));
+  }
+
+  fn opacify(&mut self, val: f64) {
+    self.set_alpha(self.get_alpha() + val);
   }
 }

@@ -7,6 +7,7 @@ mod normalize;
 pub mod ratio_converters;
 mod rgb;
 
+pub use common::alpha::ColorAlpha;
 pub use common::approx::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 pub use err::ParseError;
 pub use hsl::Hsl;

@@ -1,5 +1,5 @@
 use crate::converters::*;
-use crate::{ColorTuple, ColorTupleA, Hsl, Rgb};
+use crate::{ColorAlpha, ColorTuple, ColorTupleA, Hsl, Rgb};
 
 impl std::convert::From<&ColorTuple> for Rgb {
   fn from(t: &ColorTuple) -> Rgb {
