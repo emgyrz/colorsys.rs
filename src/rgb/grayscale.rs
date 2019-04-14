@@ -1,3 +1,5 @@
+use crate::ColorTuple;
+
 use super::Rgb;
 
 pub enum GrayScaleMethod {
@@ -11,30 +13,33 @@ pub enum GrayScaleMethod {
 static R_YUV_FACTOR: f64 = 0.299;
 static G_YUV_FACTOR: f64 = 0.587;
 static B_YUV_FACTOR: f64 = 0.114;
+static YUV_FACTORS: ColorTuple = (R_YUV_FACTOR, G_YUV_FACTOR, B_YUV_FACTOR);
 
 static R_REC709_FACTOR: f64 = 0.2126;
 static G_REC709_FACTOR: f64 = 0.7152;
 static B_REC709_FACTOR: f64 = 0.0722;
+static REC709_FACTORS: ColorTuple = (R_REC709_FACTOR, G_REC709_FACTOR, B_REC709_FACTOR);
 
 static R_REC2100_FACTOR: f64 = 0.2627;
 static G_REC2100_FACTOR: f64 = 0.6780;
 static B_REC2100_FACTOR: f64 = 0.0593;
+static REC2100_FACTORS: ColorTuple = (R_REC2100_FACTOR, G_REC2100_FACTOR, B_REC2100_FACTOR);
+
+fn mul(rgb: &mut Rgb, factors: ColorTuple) {
+  rgb.r *= factors.0;
+  rgb.g *= factors.1;
+  rgb.b *= factors.2;
+}
 
 fn rgb_to_grayscale_lum(rgb: &mut Rgb) {
-  rgb.r *= R_YUV_FACTOR;
-  rgb.g *= G_YUV_FACTOR;
-  rgb.b *= B_YUV_FACTOR;
+  mul(rgb, YUV_FACTORS)
 }
 
 fn rgb_to_grayscale_rec709(rgb: &mut Rgb) {
-  rgb.r *= R_REC709_FACTOR;
-  rgb.g *= G_REC709_FACTOR;
-  rgb.b *= B_REC709_FACTOR;
+  mul(rgb, REC709_FACTORS);
 }
 fn rgb_to_grayscale_rec2100(rgb: &mut Rgb) {
-  rgb.r *= R_REC2100_FACTOR;
-  rgb.g *= G_REC2100_FACTOR;
-  rgb.b *= B_REC2100_FACTOR;
+  mul(rgb, REC2100_FACTORS);
 }
 
 fn rgb_to_grayscale_avg(rgb: &mut Rgb) {
