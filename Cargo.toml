@@ -7,7 +7,7 @@ license = "MIT"
 homepage = "https://github.com/emgyrz/colors.rs"
 repository = "https://github.com/emgyrz/colors.rs.git"
 keywords = ["colors", "converter", "css", "rgb", "hsl"]
-graphics = [ "graphics"]
+categories = [ "graphics"]
 edition = "2018"
 readme = "README.md"
 

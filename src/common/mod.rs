@@ -1,9 +1,10 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub mod alpha;
 pub mod approx;
 mod hsv_hsl_from_str;
+mod iter;
 pub use hsv_hsl_from_str::hsl_hsv_from_str;
+pub use iter::ColorIter;
 
 pub enum Hs {
   Hsv,

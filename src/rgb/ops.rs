@@ -1,5 +1,6 @@
 use super::Rgb;
-use crate::common::simple_rand;
+// use crate::common::simple_rand;
+#[allow(unused_imports)]
 use crate::{common::approx::*, ColorAlpha, ColorTuple, ColorTupleA, Hsl};
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};

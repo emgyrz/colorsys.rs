@@ -27,29 +27,27 @@ impl From<ColorTupleA> for Rgb {
   }
 }
 
+fn from_hsl(hsl: &Hsl) -> Rgb {
+  let a = hsl.get_alpha();
+  let tuple: ColorTuple = hsl.into();
+  let mut rgb = Rgb::from(hsl_to_rgb(&tuple));
+  rgb.set_alpha(a);
+  rgb
+}
+
 impl From<&Hsl> for Rgb {
   fn from(hsl: &Hsl) -> Self {
-    let a = hsl.get_alpha();
-    let tuple: ColorTuple = hsl.into();
-    let mut rgb = Rgb::from(hsl_to_rgb(&tuple));
-    rgb.set_alpha(a);
-    rgb
+    from_hsl(hsl)
   }
 }
-
 impl From<&mut Hsl> for Rgb {
   fn from(hsl: &mut Hsl) -> Self {
-    let a = hsl.get_alpha();
-    let tuple: ColorTuple = hsl.into();
-    let mut rgb = Rgb::from(hsl_to_rgb(&tuple));
-    rgb.set_alpha(a);
-    rgb
+    from_hsl(hsl)
   }
 }
-
 impl From<Hsl> for Rgb {
   fn from(hsl: Hsl) -> Self {
-    Rgb::from(&hsl)
+    from_hsl(&hsl)
   }
 }
 
@@ -92,31 +90,6 @@ impl<'a> Into<ColorTupleA> for &'a mut Rgb {
 
 impl Into<ColorTupleA> for Rgb {
   fn into(self) -> ColorTupleA {
-    self.as_ref().into()
-  }
-}
-
-impl<'a> Into<Hsl> for &'a Rgb {
-  fn into(self) -> Hsl {
-    let a = self.get_alpha();
-    let tuple: ColorTuple = self.into();
-    let mut hsl = Hsl::from(rgb_to_hsl(&tuple));
-    hsl.set_alpha(a);
-    hsl
-  }
-}
-
-impl<'a> Into<Hsl> for &'a mut Rgb {
-  fn into(self) -> Hsl {
-    let a = self.get_alpha();
-    let tuple: ColorTuple = self.into();
-    let mut hsl = Hsl::from(rgb_to_hsl(&tuple));
-    hsl.set_alpha(a);
-    hsl
-  }
-}
-impl Into<Hsl> for Rgb {
-  fn into(self) -> Hsl {
     self.as_ref().into()
   }
 }

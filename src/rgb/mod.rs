@@ -1,21 +1,20 @@
 #[cfg(test)]
 mod tests;
 
-use crate::common::approx::approx_def;
-use crate::consts::{RATIO_MAX, RGB_UNIT_MAX};
+use crate::common::{approx::approx_def, ColorIter};
+use crate::consts::RATIO_MAX;
 use crate::err::ParseError;
 use crate::normalize::{normalize_ratio, normalize_rgb_unit};
-use crate::{converters, ColorAlpha, ColorTuple, Hsl, SaturationInSpace};
+use crate::{converters, ColorAlpha, ColorTuple, Hsl};
 
 mod from;
 mod from_str;
 mod grayscale;
-mod iter;
 mod ops;
+mod transform;
 
 use grayscale::rgb_grayscale;
 pub use grayscale::GrayScaleMethod;
-use iter::RgbIter;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Rgb {
@@ -68,60 +67,42 @@ impl Rgb {
     converters::rgb_to_css_string(self)
   }
 
-  pub fn lighten(&mut self, amt: f64) {
-    let mut hsl: Hsl = self.into();
-    hsl.lighten(amt);
-    let lightened_rgb = hsl.to_rgb();
-    self._apply_tuple(&lightened_rgb.into());
-  }
-
-  pub fn saturate(&mut self, sat: SaturationInSpace) {
-    match sat {
-      SaturationInSpace::Hsl(amt) => {
-        let mut hsl: Hsl = self.into();
-        hsl.set_saturation(hsl.get_saturation() + amt);
-        self._apply_tuple(&hsl.to_rgb().into());
-      }
-      SaturationInSpace::Hsv(amt) => {
-        println!("{}", amt);
-        unimplemented!();
-      }
-    }
-  }
-
-  pub fn adjust_hue(&mut self, hue: f64) {
-    let mut hsl: Hsl = self.into();
-    hsl.adjust_hue(hue);
-    self._apply_tuple(&hsl.to_rgb().into());
-  }
-
   pub fn grayscale(&mut self, method: GrayScaleMethod) {
     rgb_grayscale(self, method);
   }
 
-  pub fn invert(&mut self) {
-    self.r = RGB_UNIT_MAX - self.r;
-    self.g = RGB_UNIT_MAX - self.g;
-    self.b = RGB_UNIT_MAX - self.b;
-  }
-
-  pub fn iter(&self) -> RgbIter {
-    RgbIter::new(self.into(), self.a)
+  pub fn iter(&self) -> ColorIter {
+    ColorIter::from_tuple_w_alpha(self.into(), self.a)
   }
 }
 
+//
+//
+//
+// Default
+//
 impl Default for Rgb {
   fn default() -> Rgb {
     Rgb { r: 0.0, g: 0.0, b: 0.0, a: None }
   }
 }
 
+//
+//
+//
+// AsRef<Rgb>
+//
 impl AsRef<Rgb> for Rgb {
   fn as_ref(&self) -> &Rgb {
     &self
   }
 }
 
+//
+//
+//
+// FromStr
+//
 impl std::str::FromStr for Rgb {
   type Err = ParseError;
   fn from_str(s: &str) -> Result<Rgb, ParseError> {
@@ -134,6 +115,11 @@ impl std::str::FromStr for Rgb {
   }
 }
 
+//
+//
+//
+// ColorAlpha
+//
 impl ColorAlpha for Rgb {
   fn get_alpha(&self) -> f64 {
     self.a.unwrap_or(1.0)
@@ -145,5 +131,26 @@ impl ColorAlpha for Rgb {
 
   fn opacify(&mut self, val: f64) {
     self.set_alpha(self.get_alpha() + val);
+  }
+}
+
+//
+//
+//
+// Iter
+//
+impl<'a> std::iter::IntoIterator for &'a Rgb {
+  type Item = f64;
+  type IntoIter = ColorIter;
+  fn into_iter(self) -> ColorIter {
+    self.iter()
+  }
+}
+
+impl std::iter::IntoIterator for Rgb {
+  type Item = f64;
+  type IntoIter = ColorIter;
+  fn into_iter(self) -> ColorIter {
+    self.iter()
   }
 }

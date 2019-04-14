@@ -4,10 +4,10 @@ mod converters;
 mod err;
 mod hsl;
 mod normalize;
-pub mod ratio_converters;
 mod rgb;
 
-pub use common::alpha::ColorAlpha;
+pub mod prelude;
+pub mod ratio_converters;
 pub use common::approx::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 pub use err::ParseError;
 pub use hsl::Hsl;
@@ -22,4 +22,18 @@ pub type ColorTupleA = (f64, f64, f64, f64);
 pub enum SaturationInSpace {
   Hsl(f64),
   Hsv(f64),
+}
+
+pub trait ColorAlpha {
+  fn get_alpha(&self) -> f64;
+  fn set_alpha(&mut self, val: f64);
+  fn opacify(&mut self, val: f64);
+}
+
+pub trait ColorTransform {
+  fn lighten(&mut self, amt: f64);
+  fn saturate(&mut self, sat: SaturationInSpace);
+  fn adjust_hue(&mut self, hue: f64);
+  fn grayscale_simple(&mut self);
+  fn invert(&mut self);
 }

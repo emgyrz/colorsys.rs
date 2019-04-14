@@ -1,4 +1,4 @@
-use crate::{ColorTuple, ColorTupleA, ParseError, Rgb};
+use crate::{ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb};
 
 fn round(n: f64) -> u32 {
   n.round() as u32
@@ -58,6 +58,7 @@ fn rgb_iter() {
   let t: ColorTuple = rgb1.as_ref().into();
   let rgb3 = &rgb1 + &rgb2;
   println!(">>> {:?}", rgb3);
+  println!(">>> {:?}", t);
 }
 
 // #[test]
