@@ -42,7 +42,7 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
 
   let max_min_delta = max - min;
   let saturation = if luminace > 0.5 {
-    max_min_delta / (2.0 - max_min_delta)
+    max_min_delta / (2.0 - max_plus_min)
   } else {
     max_min_delta / (max_plus_min)
   };

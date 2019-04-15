@@ -2,6 +2,7 @@
 mod tests;
 
 mod from;
+mod opts;
 mod transform;
 
 use crate::common::{approx::approx_def, hsl_hsv_from_str, ColorIter, Hs};

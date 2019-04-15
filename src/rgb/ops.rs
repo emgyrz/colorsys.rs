@@ -1,51 +1,29 @@
 use super::Rgb;
+
 // use crate::common::simple_rand;
+
 #[allow(unused_imports)]
-use crate::{common::approx::*, ColorAlpha, ColorTuple, ColorTupleA, Hsl};
+use crate::{common, normalize::normalize_opt_ratio, ColorAlpha, ColorTuple, ColorTupleA, Hsl};
+use common::{approx::*, ops};
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
 
-fn calc(rgb1: &Rgb, rgb2: &Rgb, is_add: bool) -> (ColorTuple, Option<f64>) {
-  let Rgb { r: r1, g: g1, b: b1, a: a1 } = rgb1;
-  let Rgb { r: r2, g: g2, b: b2, a: a2 } = rgb2;
-
-  let t = if is_add { (r1 + r2, g1 + g2, b1 + b2) } else { (r1 - r2, g1 - g2, b1 - b2) };
-
-  let a = compute_add_alpha(*a1, *a2, is_add);
-  (t, a)
-}
-
-fn compute_add_alpha(a1: Option<f64>, a2: Option<f64>, is_add: bool) -> Option<f64> {
-  let has1 = a1.is_some();
-  let has2 = a2.is_some();
-  if !has1 && !has2 {
-    return None;
-  } else if has1 && has2 {
-    let val1 = a1.unwrap();
-    let val2 = a2.unwrap();
-    let val = if is_add { val1 + val2 } else { val1 - val2 };
-    return Some(val);
-  }
-
-  if has1 {
-    a1
-  } else {
-    a2
-  }
+fn add_sub(rgb1: &Rgb, rgb2: &Rgb, is_add: bool) -> Rgb {
+  type TA = (ColorTuple, Option<f64>);
+  let ta1: TA = (rgb1.into(), rgb1.a);
+  let ta2: TA = (rgb2.into(), rgb2.a);
+  let (t, a) = ops::add_sub_tuples_a(&ta1, &ta2, is_add);
+  let mut rgb = Rgb::from(t);
+  rgb.a = normalize_opt_ratio(a);
+  rgb
 }
 
 fn add(rgb1: &Rgb, rgb2: &Rgb) -> Rgb {
-  let (t, a) = calc(rgb1, rgb2, true);
-  let mut rgb = Rgb::from(t);
-  rgb.a = a;
-  rgb
+  add_sub(rgb1, rgb2, true)
 }
 
 fn sub(rgb1: &Rgb, rgb2: &Rgb) -> Rgb {
-  let (t, a) = calc(rgb1, rgb2, false);
-  let mut rgb = Rgb::from(t);
-  rgb.a = a;
-  rgb
+  add_sub(rgb1, rgb2, false)
 }
 
 impl<'a> Add for &'a Rgb {

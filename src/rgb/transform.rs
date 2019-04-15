@@ -1,12 +1,12 @@
 use super::{grayscale, Hsl, Rgb};
-use crate::{consts, ColorTransform, SaturationInSpace};
+use crate::{consts, ColorTransform, ColorTuple, SaturationInSpace};
 use consts::RGB_UNIT_MAX;
 
 impl ColorTransform for Rgb {
   fn lighten(&mut self, amt: f64) {
     let mut hsl: Hsl = self.into();
     hsl.lighten(amt);
-    let lightened_rgb: Rgb = hsl.into();
+    let lightened_rgb: Rgb = hsl.as_ref().into();
     self._apply_tuple(&lightened_rgb.into());
   }
 
