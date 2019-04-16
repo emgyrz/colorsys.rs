@@ -5,6 +5,8 @@
 
 A module for color conversion and mutation written in Rust.
 
+### Deprecated! Use `colorsys` package instead.
+
 [Online documentation](https://docs.rs/colors-transform/0.2.11/colors_transform/)
 
 For now you can work with four color representation options: Rgb (Rgba), Hsl (Hsla). Each of them has a variety of methods to modify and convert. See the [Color](https://docs.rs/colors-transform/0.2.11/colors_transform/trait.Color.html) trait they implement. There are also a couple of methods for hex string color.
