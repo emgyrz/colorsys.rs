@@ -1,13 +1,13 @@
 [package]
 name = "colors-transform"
-version = "0.2.10"
+version = "0.2.11"
 description = "Module for convert and transform colors"
 authors = ["mz <emgyrz@gmail.com>"]
 license = "MIT"
-homepage = "https://github.com/emgyrz/colors.rs"
+homepage = "https://github.com/emgyrz/colorsys.rs/tree/0.2"
 repository = "https://github.com/emgyrz/colors.rs.git"
 keywords = ["colors", "converter", "css", "rgb", "hsl"]
-graphics = [ "graphics"]
+categories = [ "graphics"]
 edition = "2018"
 readme = "README.md"
 
