@@ -1,7 +1,10 @@
 use crate::ColorTuple;
 
+/// Default precision used for color comparsion.
+/// It is `0.000_000_001`
 pub static DEFAULT_APPROX_EQ_PRECISION: f64 = 0.000_000_001;
 
+/// Methods to compare two colors
 pub trait ApproxEq<T> {
   fn approx_eq(&self, other: &T) -> bool;
   fn approx_eq_clarify(&self, other: &T, precision: f64) -> bool;

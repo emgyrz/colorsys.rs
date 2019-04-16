@@ -11,6 +11,7 @@ use crate::normalize::{normalize_hue, normalize_percent, normalize_ratio};
 
 use crate::{ColorAlpha, ColorTuple, ParseError, Rgb};
 
+/// The HSL or HSI (hue, saturation, lightness (intensity)) color model
 #[derive(Debug, PartialEq, Clone)]
 pub struct Hsl {
   h: f64,
