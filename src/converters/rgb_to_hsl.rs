@@ -58,3 +58,23 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
 
   (hue * 60.0, saturation * PERCENT_MAX, luminace * PERCENT_MAX)
 }
+
+#[test]
+fn rgb_to_hsl_tst() {
+  use crate::common::approx::approx_tuple;
+  fn a(x: ColorTuple, y: ColorTuple) -> bool {
+    approx_tuple(&rgb_to_hsl(&x), &y, 0.5)
+  }
+  let asserts = [
+    ((255.0, 255.0, 255.0), (0.0, 0.0, 100.0)),
+    ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0)),
+    ((215.0, 231.0, 236.0), (194.0, 36.0, 88.0)),
+    ((108.0, 225.0, 36.0), (97.0, 76.0, 51.0)),
+    ((215.0, 0.0, 99.0), (332.0, 100.0, 42.0)),
+    ((10.0, 10.0, 10.0), (0.0, 0.0, 4.0)),
+  ];
+
+  asserts.iter().for_each(|tuples| {
+    assert!(a(tuples.0, tuples.1));
+  });
+}

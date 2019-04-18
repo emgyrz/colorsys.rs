@@ -36,16 +36,38 @@ fn from_hsl(hsl: &Hsl) -> Rgb {
 }
 
 impl From<&Hsl> for Rgb {
+  /// # Example
+  /// ```
+  /// use colorsys::{Rgb,Hsl,prelude::*};
+  /// let hsl = Hsl::from(&(48.0, 70.0, 50.0));
+  /// let rgb: Rgb = Rgb::from(&hsl);
+  /// assert_eq!(rgb.to_css_string(), "rgb(217,181,38)");
+  /// ```
   fn from(hsl: &Hsl) -> Self {
     from_hsl(hsl)
   }
 }
+
 impl From<&mut Hsl> for Rgb {
+  /// # Example
+  /// ```
+  /// use colorsys::{Rgb,Hsl,prelude::*};
+  /// let mut hsl = Hsl::from(&(359.0, 33.0, 77.0));
+  /// let rgb_string = Rgb::from(&mut hsl).to_css_string();
+  /// assert_eq!(rgb_string, "rgb(216,177,178)");
+  /// ```
   fn from(hsl: &mut Hsl) -> Self {
     from_hsl(hsl)
   }
 }
 impl From<Hsl> for Rgb {
+  /// # Example
+  /// ```
+  /// use colorsys::{Rgb,Hsl,prelude::*};
+  /// let hsl = Hsl::from(&(192.0, 67.0, 28.0));
+  /// let rgb_string = Rgb::from(hsl).to_css_string();
+  /// assert_eq!(rgb_string, "rgb(24,100,119)");
+  /// ```
   fn from(hsl: Hsl) -> Self {
     from_hsl(&hsl)
   }

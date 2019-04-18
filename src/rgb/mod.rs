@@ -1,11 +1,11 @@
 #[cfg(test)]
 mod tests;
 
-use crate::common::{approx::approx_def, ColorIter};
+use crate::common::{approx::approx_def, tuple_to_string, ColorIter};
 use crate::consts::RATIO_MAX;
 use crate::err::ParseError;
 use crate::normalize::{normalize_ratio, normalize_rgb_unit};
-use crate::{converters, ColorAlpha, ColorTuple, Hsl};
+use crate::{converters, ColorAlpha, ColorTuple, ColorTupleA, Hsl};
 
 mod from;
 mod from_str;
@@ -118,7 +118,8 @@ impl Rgb {
   }
 
   pub fn to_css_string(&self) -> String {
-    converters::rgb_to_css_string(self)
+    let t: ColorTupleA = self.into();
+    tuple_to_string(&t, "rgb")
   }
 
   pub fn grayscale(&mut self, method: GrayScaleMethod) {

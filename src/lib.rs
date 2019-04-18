@@ -60,14 +60,16 @@ pub trait ColorAlpha {
 /// Some methods (like saturate, lighten, etc.) requires (inside implementation)
 /// converting to another color space and converting back.
 pub trait ColorTransform {
-  /// Makes color lighter or (if amt is negative) darker. Amt is percent - `0..100`
+  /// Makes color lighter or (if amt is negative) darker.
+  /// Amt is percent - `1..100` to make color lighter; `-100..-1` for blacking-out
   fn lighten(&mut self, amt: f64);
 
-  /// Saturate/desaturate color. Value is percent - `0..100`.
+  /// Saturate/desaturate color.
+  /// Value is percent: `-100..100`.
   /// You need specify in what color space you want to increase/decrease saturation.
   fn saturate(&mut self, sat: SaturationInSpace);
 
-  /// increase/decrease color tone. Value is degree - `0..360`.
+  /// increase/decrease color tone. Value is degree - `-360..360`.
   fn adjust_hue(&mut self, hue: f64);
 
   /// Brings color to a shade of gray. For more specific grayscale methods see `Rgb.grayscale`

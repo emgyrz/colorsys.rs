@@ -5,11 +5,11 @@ mod from;
 mod opts;
 mod transform;
 
-use crate::common::{approx::approx_def, hsl_hsv_from_str, ColorIter, Hs};
+use crate::common::{approx::approx_def, hsl_hsv_from_str, tuple_to_string, ColorIter, Hs};
 use crate::consts::RATIO_MAX;
 use crate::normalize::{normalize_hue, normalize_percent, normalize_ratio};
 
-use crate::{ColorAlpha, ColorTuple, ParseError, Rgb};
+use crate::{ColorAlpha, ColorTuple, ColorTupleA, ParseError, Rgb};
 
 /// The HSL or HSI (hue, saturation, lightness (intensity)) color model
 #[derive(Debug, PartialEq, Clone)]
@@ -31,6 +31,11 @@ impl Hsl {
     let a = a.map(normalize_ratio).filter(|al| !approx_def(*al, RATIO_MAX));
     let np = normalize_percent;
     Hsl { h: normalize_hue(h), s: np(s), l: np(l), a }
+  }
+
+  pub fn to_css_string(&self) -> String {
+    let t: ColorTupleA = self.into();
+    tuple_to_string(&t, "hsl")
   }
 
   pub fn get_hue(&self) -> f64 {
