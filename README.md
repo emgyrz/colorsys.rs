@@ -1,4 +1,4 @@
-# colors_transform
+# colorsys
 
 [![Crates.io](https://img.shields.io/crates/v/colorsys.svg)](https://crates.io/crates/colorsys/)
 
