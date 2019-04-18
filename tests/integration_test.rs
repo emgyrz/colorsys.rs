@@ -1,5 +1,5 @@
-
-use colorsys::{Rgb, Hsl, prelude::*};
+#[allow(unused_imports)]
+use colorsys::{prelude::*, Hsl, Rgb};
 
 #[test]
 fn for_docs() {
@@ -23,7 +23,6 @@ fn for_docs() {
   // let rgb2tuple: (f64,f64,f64) = rgb2.as_ref().into();
   // println!("<><><>{:?}", rgb2tuple);
 
-
   // rgb2 += Rgb::from_hex_str("#35f15b").unwrap();
 
   // println!(">>> {:?}", rgb2);
@@ -38,9 +37,5 @@ fn for_docs() {
   // let css_string = rgb2.to_css_string();
   // println!(">>> CSS {:?}", css_string);
 
-
-
   // assert_eq!(rgb2.to_css_string(), "");
 }
-
-

@@ -1,5 +1,5 @@
 use super::{grayscale, Hsl, Rgb};
-use crate::{consts, ColorTransform, ColorTuple, SaturationInSpace};
+use crate::{consts, ColorTransform, SaturationInSpace};
 use consts::RGB_UNIT_MAX;
 
 impl ColorTransform for Rgb {

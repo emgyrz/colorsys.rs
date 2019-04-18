@@ -89,8 +89,12 @@ impl Rgb {
   }
 
   pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
-    let tuple = from_str::hex(s)?;
+    let tuple = converters::hex_to_rgb(s)?;
     Ok(Rgb::from(&tuple))
+  }
+
+  pub fn to_hex_string(&self) -> String {
+    converters::rgb_to_hex(&self.into())
   }
 
   pub fn get_red(&self) -> f64 {

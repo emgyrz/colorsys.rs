@@ -1,26 +1,7 @@
 use crate::err::{make_parse_err, ParseError};
-use crate::{consts, converters, ColorTuple};
+use crate::{consts, ColorTuple};
 
 use consts::{ALL_MIN, RATIO_MAX, RGB_UNIT_MAX};
-
-use converters::hex_num_to_rgb;
-
-pub fn hex(s: &str) -> Result<ColorTuple, ParseError> {
-  let mut hex = s.replace("#", "").to_lowercase();
-  let hex_chars = hex.chars().collect::<Vec<char>>();
-  let count = hex_chars.len();
-
-  if count == 3 {
-    hex = hex_chars.iter().map(|c| c.to_string().repeat(2)).collect::<Vec<String>>().join("");
-  } else if count != 6 {
-    return Err(make_parse_err(s, "hex"));
-  }
-
-  match usize::from_str_radix(&hex, 16) {
-    Ok(num) => Ok(hex_num_to_rgb(num)),
-    Err(_) => Err(make_parse_err(s, "hex")),
-  }
-}
 
 pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f64>), ParseError> {
   let make_err = || Err(make_parse_err(s, "rgb or rgba"));

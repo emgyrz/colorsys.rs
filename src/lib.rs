@@ -1,3 +1,4 @@
+#![allow(clippy::many_single_char_names)]
 
 mod common;
 mod consts;
@@ -23,7 +24,6 @@ pub type ColorTuple = (f64, f64, f64);
 
 /// For example `($hue,$saturation,$lightness,$alpha)`
 pub type ColorTupleA = (f64, f64, f64, f64);
-
 
 pub enum SaturationInSpace {
   Hsl(f64),
@@ -56,8 +56,6 @@ pub trait ColorAlpha {
   fn opacify(&mut self, val: f64);
 }
 
-
-
 /// A collection of methods to some special modification of color.
 /// Some methods (like saturate, lighten, etc.) requires (inside implementation)
 /// converting to another color space and converting back.
@@ -77,5 +75,4 @@ pub trait ColorTransform {
 
   /// Just inverts color
   fn invert(&mut self);
-
 }
