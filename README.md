@@ -4,7 +4,7 @@
 
 A module for color conversion and mutation written in Rust. For now works with RGB(a), HSL(a) color models
 
-[Online documentation](https://docs.rs/colorsys/0.5.2/colorsys/)
+[Online documentation](https://docs.rs/colorsys/0.5.3/colorsys/)
 
 
 
@@ -18,7 +18,7 @@ let rgb = Rgb::from((57.3, 12.7, 53.0));
 let r = rgb.get_red();
 // 57.3
 
-let mut hsla = Hsl::default();
+let mut hsl = Hsl::default();
 // Hsl { h: 0, s: 0, l: 0, a: 1 }
 hsl.set_saturation(13.98);
 hsl.set_saturation(305.71);
