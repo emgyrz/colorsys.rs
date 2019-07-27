@@ -9,8 +9,19 @@ pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
     round_ratio(*a).to_string()
   };
 
-  let mut vals =
-    [x, y, z].iter().map(|u| (u.round() as u8).to_string()).collect::<Vec<String>>().join(",");
+  let is_hsl = prefix == "hsl";
+  let mut vals = [x, y, z]
+    .iter()
+    .enumerate()
+    .map(|(ind, u)| {
+      let mut s = u.round().to_string();
+      if is_hsl && (ind == 1 || ind == 2) {
+        s.push('%');
+      }
+      s
+    })
+    .collect::<Vec<String>>()
+    .join(",");
 
   if a != "1" {
     start.push('a');
