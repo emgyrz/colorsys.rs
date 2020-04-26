@@ -17,6 +17,7 @@ use crate::{ColorAlpha, ColorTuple, ColorTupleA, ParseError, Rgb};
 /// * h (hue): 0.0 - 360.0
 /// * s (saturation): 0.0 - 100.0
 /// * l (saturation): 0.0 - 100.0
+/// * a (alpha): 0.0 - 1.0
 #[derive(Debug, PartialEq, Clone)]
 pub struct Hsl {
   h: f64,
