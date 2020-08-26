@@ -4,7 +4,7 @@
 
 A module for color conversion and mutation written in Rust. For now works with RGB(a)( as hexadecimal too), HSL(a) color models
 
-[Online documentation](https://docs.rs/colorsys/0.5.3/colorsys/)
+[Online documentation](https://docs.rs/colorsys/0.5.4/colorsys/)
 
 
 
@@ -104,9 +104,6 @@ Hsl::from_str("hsl(168, 52%, 42%)").unwrap().to_css_string();
 // String: hsl(168,52%,42%)
 
 ```
-
-As you see it is completely chainable.
-
 
 ## Color unit ranges
 All color units is f64. Here are their ranges:
