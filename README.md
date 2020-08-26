@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/colorsys.svg)](https://crates.io/crates/colorsys/)
 
-A module for color conversion and mutation written in Rust. For now works with RGB(a), HSL(a) color models
+A module for color conversion and mutation written in Rust. For now works with RGB(a)( as hexadecimal too), HSL(a) color models
 
 [Online documentation](https://docs.rs/colorsys/0.5.3/colorsys/)
 
