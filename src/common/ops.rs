@@ -22,7 +22,11 @@ pub fn add_sub_alpha(a1: &Op, a2: &Op, is_add: bool) -> Op {
   }
 }
 
-pub fn add_sub_tuples(t1: &ColorTuple, t2: &ColorTuple, is_add: bool) -> ColorTuple {
+pub fn add_sub_tuples(
+  t1: &ColorTuple,
+  t2: &ColorTuple,
+  is_add: bool,
+) -> ColorTuple {
   let (x1, y1, z1) = t1;
   let (x2, y2, z2) = t2;
 

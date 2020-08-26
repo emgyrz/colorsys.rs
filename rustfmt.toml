@@ -1,3 +1,5 @@
 use_small_heuristics = "Max"
-fn_single_line = true
 edition= "2018"
+tab_spaces = 2
+max_width = 80
+

@@ -26,7 +26,10 @@ fn strings_from_name(space: Hs) -> (String, String, String) {
   (format!("hs{}(", x), format!("hs{}a(", x), format!("hs{} or hs{}a", x, x))
 }
 
-pub fn hsl_hsv_from_str(s: &str, col_space: Hs) -> Result<(ColorTuple, Option<f64>), ParseError> {
+pub fn hsl_hsv_from_str(
+  s: &str,
+  col_space: Hs,
+) -> Result<(ColorTuple, Option<f64>), ParseError> {
   let (start, start_a, err_name) = strings_from_name(col_space);
 
   let make_err = || Err(make_parse_err(s, &err_name));

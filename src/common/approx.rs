@@ -18,7 +18,9 @@ pub fn approx_def(x: f64, y: f64) -> bool {
 }
 
 pub fn approx_tuple(x: &ColorTuple, y: &ColorTuple, precision: f64) -> bool {
-  approx(x.0, y.0, precision) && approx(x.1, y.1, precision) && approx(x.2, y.2, precision)
+  approx(x.0, y.0, precision)
+    && approx(x.1, y.1, precision)
+    && approx(x.2, y.2, precision)
 }
 
 pub fn approx_tuple_def(x: &ColorTuple, y: &ColorTuple) -> bool {

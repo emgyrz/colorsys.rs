@@ -5,7 +5,9 @@ mod from;
 mod opts;
 mod transform;
 
-use crate::common::{approx::approx_def, hsl_hsv_from_str, tuple_to_string, ColorIter, Hs};
+use crate::common::{
+  approx::approx_def, hsl_hsv_from_str, tuple_to_string, ColorIter, Hs,
+};
 use crate::consts::RATIO_MAX;
 use crate::normalize::{normalize_hue, normalize_percent, normalize_ratio};
 

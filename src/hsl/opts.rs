@@ -3,7 +3,10 @@ use super::Hsl;
 // use crate::common::simple_rand;
 
 #[allow(unused_imports)]
-use crate::{common, normalize::normalize_opt_ratio, ColorAlpha, ColorTuple, ColorTupleA, Rgb};
+use crate::{
+  common, normalize::normalize_opt_ratio, ColorAlpha, ColorTuple, ColorTupleA,
+  Rgb,
+};
 use common::{approx::*, ops};
 
 use std::ops::{Add, AddAssign, Sub, SubAssign};
@@ -84,12 +87,14 @@ impl ApproxEq<Hsl> for Hsl {
   fn approx_eq(&self, other: &Hsl) -> bool {
     let t1: ColorTuple = self.into();
     let t2: ColorTuple = other.into();
-    approx_tuple_def(&t1, &t2) && approx_def(self.get_alpha(), other.get_alpha())
+    approx_tuple_def(&t1, &t2)
+      && approx_def(self.get_alpha(), other.get_alpha())
   }
   fn approx_eq_clarify(&self, other: &Hsl, precision: f64) -> bool {
     let t1: ColorTuple = self.into();
     let t2: ColorTuple = other.into();
-    approx_tuple(&t1, &t2, precision) && approx(self.get_alpha(), other.get_alpha(), precision)
+    approx_tuple(&t1, &t2, precision)
+      && approx(self.get_alpha(), other.get_alpha(), precision)
   }
 }
 
@@ -100,7 +105,8 @@ impl ApproxEq<Rgb> for Hsl {
   fn approx_eq_clarify(&self, rgb: &Rgb, precision: f64) -> bool {
     let t1: ColorTuple = self.into();
     let t2: ColorTuple = Hsl::from(rgb).into();
-    approx_tuple(&t1, &t2, precision) && approx(self.get_alpha(), rgb.get_alpha(), precision)
+    approx_tuple(&t1, &t2, precision)
+      && approx(self.get_alpha(), rgb.get_alpha(), precision)
   }
 }
 

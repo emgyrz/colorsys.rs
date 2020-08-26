@@ -51,7 +51,10 @@ impl ColorTransform for Rgb {
   }
 
   fn grayscale_simple(&mut self) {
-    grayscale::rgb_grayscale(self, grayscale::GrayScaleMethod::AverageProminent);
+    grayscale::rgb_grayscale(
+      self,
+      grayscale::GrayScaleMethod::AverageProminent,
+    );
   }
 
   fn invert(&mut self) {

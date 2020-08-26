@@ -41,10 +41,15 @@ fn from_str_tst() {
   );
 
   assert_eq!(
-    Into::<ColorTupleA>::into(parse_rgb("rgba(134.9,11.1,250.55, 0.9)").unwrap()),
+    Into::<ColorTupleA>::into(
+      parse_rgb("rgba(134.9,11.1,250.55, 0.9)").unwrap()
+    ),
     Rgb::from((134.9, 11.1, 250.55, 0.9)).into()
   );
-  assert_eq!(Into::<ColorTuple>::into(parse_rgb("rgb (0,   0,0)").unwrap()), Rgb::default().into());
+  assert_eq!(
+    Into::<ColorTuple>::into(parse_rgb("rgb (0,   0,0)").unwrap()),
+    Rgb::default().into()
+  );
 
   assert!(parse_rgb("12,1,97)").is_err());
   assert!(parse_rgb("").is_err());
