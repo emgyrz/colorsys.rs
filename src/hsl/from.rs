@@ -1,31 +1,50 @@
 use super::{Hsl, Rgb};
 use crate::{converters::*, ColorAlpha, ColorTuple, ColorTupleA};
 
-impl From<&ColorTuple> for Hsl {
-  fn from(t: &ColorTuple) -> Hsl {
-    let (h, s, l) = *t;
-    Hsl::new(h, s, l, None)
-  }
+macro_rules! from_for_hsl {
+  ($from_type: ty, $val: ident, $conv: block) => {
+    impl From<&$from_type> for Hsl {
+      fn from($val: &$from_type) -> Hsl {
+        ($conv)
+      }
+    }
+    impl From<$from_type> for Hsl {
+      fn from($val: $from_type) -> Hsl {
+        Hsl::from(&$val)
+      }
+    }
+  };
 }
 
-impl From<ColorTuple> for Hsl {
-  fn from(t: ColorTuple) -> Hsl {
-    Hsl::from(&t)
-  }
+macro_rules! from_for_hsl_all {
+  ($t: ty) => {
+    from_for_hsl!(($t, $t, $t), v, {
+      let (h, s, l) = *v;
+      Hsl::new(h as f64, s as f64, l as f64, None)
+    });
+    from_for_hsl!(($t, $t, $t, $t), v, {
+      let (h, s, l, a) = *v;
+      Hsl::new(h as f64, s as f64, l as f64, Some(a as f64))
+    });
+    from_for_hsl!([$t; 3], v, {
+      let [h, s, l] = *v;
+      Hsl::new(h as f64, s as f64, l as f64, None)
+    });
+    from_for_hsl!([$t; 4], v, {
+      let [h, s, l, a] = *v;
+      Hsl::new(h as f64, s as f64, l as f64, Some(a as f64))
+    });
+  };
 }
 
-impl From<&ColorTupleA> for Hsl {
-  fn from(t: &ColorTupleA) -> Hsl {
-    let (h, s, l, a) = *t;
-    Hsl::new(h, s, l, Some(a))
-  }
-}
-
-impl From<ColorTupleA> for Hsl {
-  fn from(t: ColorTupleA) -> Hsl {
-    Hsl::from(&t)
-  }
-}
+from_for_hsl_all!(f32);
+from_for_hsl_all!(f64);
+from_for_hsl_all!(i16);
+from_for_hsl_all!(i32);
+from_for_hsl_all!(i64);
+from_for_hsl_all!(u16);
+from_for_hsl_all!(u32);
+from_for_hsl_all!(u64);
 
 fn from_rgb(rgb: &Rgb) -> Hsl {
   let a = rgb.get_alpha();
@@ -79,40 +98,54 @@ impl From<Rgb> for Hsl {
 //
 // INTO
 //
-impl<'a> Into<ColorTuple> for &'a mut Hsl {
-  fn into(self) -> ColorTuple {
-    let Hsl { h, s, l, .. } = *self;
-    (h, s, l)
-  }
-}
-impl<'a> Into<ColorTuple> for &'a Hsl {
-  fn into(self) -> ColorTuple {
-    let Hsl { h, s, l, .. } = *self;
-    (h, s, l)
-  }
+macro_rules! into_for_hsl {
+  ($into: ty, $sel: ident, $conv: block) => {
+    impl<'a> Into<$into> for &'a Hsl {
+      fn into($sel) -> $into {
+        ($conv)
+      }
+    }
+
+    impl<'a> Into<$into> for &'a mut Hsl {
+      fn into($sel) -> $into {
+        ($conv)
+      }
+    }
+
+    impl Into<$into> for Hsl {
+      fn into($sel) -> $into {
+        $sel.as_ref().into()
+      }
+    }
+  };
 }
 
-impl Into<ColorTuple> for Hsl {
-  fn into(self) -> ColorTuple {
-    self.as_ref().into()
-  }
+macro_rules! into_for_hsl_all {
+  ($t: ty) => {
+    into_for_hsl!(($t, $t, $t), self, {
+      let Hsl { h, s, l, .. } = *self;
+      (h as $t, s as $t, l as $t)
+    });
+    into_for_hsl!(($t, $t, $t, $t), self, {
+      let Hsl { h, s, l, .. } = *self;
+      (h as $t, s as $t, l as $t, self.get_alpha() as $t)
+    });
+    into_for_hsl!([$t; 3], self, {
+      let Hsl { h, s, l, .. } = *self;
+      [h as $t, s as $t, l as $t]
+    });
+    into_for_hsl!([$t; 4], self, {
+      let Hsl { h, s, l, .. } = *self;
+      [h as $t, s as $t, l as $t, self.get_alpha() as $t]
+    });
+  };
 }
 
-impl<'a> Into<ColorTupleA> for &'a Hsl {
-  fn into(self) -> ColorTupleA {
-    let Hsl { h, s, l, .. } = *self;
-    (h, s, l, self.get_alpha())
-  }
-}
-impl<'a> Into<ColorTupleA> for &'a mut Hsl {
-  fn into(self) -> ColorTupleA {
-    let Hsl { h, s, l, .. } = *self;
-    (h, s, l, self.get_alpha())
-  }
-}
-
-impl Into<ColorTupleA> for Hsl {
-  fn into(self) -> ColorTupleA {
-    self.as_ref().into()
-  }
-}
+into_for_hsl_all!(f32);
+into_for_hsl_all!(f64);
+into_for_hsl_all!(i16);
+into_for_hsl_all!(i32);
+into_for_hsl_all!(i64);
+into_for_hsl_all!(u16);
+into_for_hsl_all!(u32);
+into_for_hsl_all!(u64);

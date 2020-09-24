@@ -4,7 +4,7 @@
 
 A module for color conversion and mutation written in Rust. For now works with RGB(a)( as hexadecimal too), HSL(a) color models
 
-[Online documentation](https://docs.rs/colorsys/0.5.4/colorsys/)
+[Online documentation](https://docs.rs/colorsys/0.5.5/colorsys/)
 
 
 
@@ -44,6 +44,25 @@ let hsla_tuple: (f64,f64,f64,f64) = Hsl::from( Rgb::from(rgb_tuple) ).into();
 
 let hex: String = rgba.to_hex_string();
 // #390d35
+
+// From/Into
+let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
+  
+let rgb2 = Rgb::from(
+Into::<[f32; 4]>::into(Rgb::from(
+  Into::<[u8; 4]>::into(
+    Rgb::from(
+      Into::<(i32,i32,i32)>::into(
+        Rgb::from(
+          Into::<[i64; 3]>::into(&rgb1)
+        )
+      )
+    )
+  )
+))
+);
+
+assert_eq!(rgb1, rgb2);
 
 ```
 #### modification

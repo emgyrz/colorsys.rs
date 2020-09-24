@@ -1,31 +1,52 @@
 use crate::converters::*;
+// use crate::rgb::RgbRatio;
 use crate::{ColorAlpha, ColorTuple, ColorTupleA, Hsl, Rgb};
 
-impl std::convert::From<&ColorTuple> for Rgb {
-  fn from(t: &ColorTuple) -> Rgb {
-    let (h, s, l) = *t;
-    Rgb::new(h, s, l, None)
-  }
+macro_rules! from_for_rgb {
+  ($from_type: ty, $val: ident, $conv: block) => {
+    impl From<&$from_type> for Rgb {
+      fn from($val: &$from_type) -> Rgb {
+        ($conv)
+      }
+    }
+    impl From<$from_type> for Rgb {
+      fn from($val: $from_type) -> Rgb {
+        Rgb::from(&$val)
+      }
+    }
+  };
 }
 
-impl std::convert::From<ColorTuple> for Rgb {
-  fn from(t: ColorTuple) -> Rgb {
-    Rgb::from(&t)
-  }
+macro_rules! from_for_rgb_all {
+  ($t: ty) => {
+    from_for_rgb!(($t, $t, $t), v, {
+      let (r, g, b) = *v;
+      Rgb::new(r as f64, g as f64, b as f64, None)
+    });
+    from_for_rgb!(($t, $t, $t, $t), v, {
+      let (r, g, b, a) = *v;
+      Rgb::new(r as f64, g as f64, b as f64, Some(a as f64))
+    });
+    from_for_rgb!([$t; 3], v, {
+      let [r, g, b] = *v;
+      Rgb::new(r as f64, g as f64, b as f64, None)
+    });
+    from_for_rgb!([$t; 4], v, {
+      let [r, g, b, a] = *v;
+      Rgb::new(r as f64, g as f64, b as f64, Some(a as f64))
+    });
+  };
 }
 
-impl From<&ColorTupleA> for Rgb {
-  fn from(t: &ColorTupleA) -> Rgb {
-    let (h, s, l, a) = *t;
-    Rgb::new(h, s, l, Some(a))
-  }
-}
-
-impl From<ColorTupleA> for Rgb {
-  fn from(t: ColorTupleA) -> Rgb {
-    Rgb::from(&t)
-  }
-}
+from_for_rgb_all!(f32);
+from_for_rgb_all!(f64);
+from_for_rgb_all!(i16);
+from_for_rgb_all!(i32);
+from_for_rgb_all!(i64);
+from_for_rgb_all!(u8);
+from_for_rgb_all!(u16);
+from_for_rgb_all!(u32);
+from_for_rgb_all!(u64);
 
 fn from_hsl(hsl: &Hsl) -> Rgb {
   let a = hsl.get_alpha();
@@ -60,6 +81,7 @@ impl From<&mut Hsl> for Rgb {
     from_hsl(hsl)
   }
 }
+
 impl From<Hsl> for Rgb {
   /// # Example
   /// ```
@@ -79,39 +101,55 @@ impl From<Hsl> for Rgb {
 // INTO
 //
 
-impl<'a> Into<ColorTuple> for &'a Rgb {
-  fn into(self) -> ColorTuple {
-    let Rgb { r, g, b, .. } = *self;
-    (r, g, b)
-  }
-}
-impl<'a> Into<ColorTuple> for &'a mut Rgb {
-  fn into(self) -> ColorTuple {
-    let Rgb { r, g, b, .. } = *self;
-    (r, g, b)
-  }
-}
-impl Into<ColorTuple> for Rgb {
-  fn into(self) -> ColorTuple {
-    self.as_ref().into()
-  }
+macro_rules! into_for_rgb {
+  ($into: ty, $sel: ident, $conv: block) => {
+    impl<'a> Into<$into> for &'a Rgb {
+      fn into($sel) -> $into {
+        ($conv)
+      }
+    }
+
+    impl<'a> Into<$into> for &'a mut Rgb {
+      fn into($sel) -> $into {
+        ($conv)
+      }
+    }
+
+    impl Into<$into> for Rgb {
+      fn into($sel) -> $into {
+        $sel.as_ref().into()
+      }
+    }
+  };
 }
 
-impl<'a> Into<ColorTupleA> for &'a Rgb {
-  fn into(self) -> ColorTupleA {
-    let Rgb { r, g, b, .. } = *self;
-    (r, g, b, self.get_alpha())
-  }
-}
-impl<'a> Into<ColorTupleA> for &'a mut Rgb {
-  fn into(self) -> ColorTupleA {
-    let Rgb { r, g, b, .. } = *self;
-    (r, g, b, self.get_alpha())
-  }
+macro_rules! into_for_rgb_all {
+  ($t: ty) => {
+    into_for_rgb!(($t, $t, $t), self, {
+      let Rgb { r, g, b, .. } = *self;
+      (r as $t, g as $t, b as $t)
+    });
+    into_for_rgb!(($t, $t, $t, $t), self, {
+      let Rgb { r, g, b, .. } = *self;
+      (r as $t, g as $t, b as $t, self.get_alpha() as $t)
+    });
+    into_for_rgb!([$t; 3], self, {
+      let Rgb { r, g, b, .. } = *self;
+      [r as $t, g as $t, b as $t]
+    });
+    into_for_rgb!([$t; 4], self, {
+      let Rgb { r, g, b, .. } = *self;
+      [r as $t, g as $t, b as $t, self.get_alpha() as $t]
+    });
+  };
 }
 
-impl Into<ColorTupleA> for Rgb {
-  fn into(self) -> ColorTupleA {
-    self.as_ref().into()
-  }
-}
+into_for_rgb_all!(f32);
+into_for_rgb_all!(f64);
+into_for_rgb_all!(i16);
+into_for_rgb_all!(i32);
+into_for_rgb_all!(i64);
+into_for_rgb_all!(u8);
+into_for_rgb_all!(u16);
+into_for_rgb_all!(u32);
+into_for_rgb_all!(u64);

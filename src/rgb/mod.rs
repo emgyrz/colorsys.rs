@@ -12,9 +12,12 @@ mod from_str;
 mod grayscale;
 mod ops;
 mod transform;
+// mod ratio;
 
 use grayscale::rgb_grayscale;
 pub use grayscale::GrayScaleMethod;
+// pub use ratio::RgbRatio;
+use crate::ratio_converters::rgba_to_ratio;
 
 /// The RGB color model.
 ///
@@ -129,6 +132,11 @@ impl Rgb {
   pub fn iter(&self) -> ColorIter {
     ColorIter::from_tuple_w_alpha(self.into(), self.a)
   }
+  //
+  // pub fn as_ratio(&self) -> RgbRatio {
+  //   let t = rgba_to_ratio(&self.into());
+  //   RgbRatio { r: t.0, g: t.1, b: t.2, a: t.3 }
+  // }
 }
 
 //

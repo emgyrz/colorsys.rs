@@ -66,6 +66,28 @@ fn rgb_iter() {
   println!(">>> {:?}", t);
 }
 
+#[test]
+#[rustfmt::skip]
+fn rgb_from() {
+  let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
+  
+  let rgb2 = Rgb::from(
+    Into::<[f32; 4]>::into(Rgb::from(
+      Into::<[u8; 4]>::into(
+        Rgb::from(
+          Into::<(i32,i32,i32)>::into(
+            Rgb::from(
+              Into::<[i64; 3]>::into(&rgb1)
+            )
+          )
+        )
+      )
+    ))
+  );
+
+  assert_eq!(rgb1, rgb2);
+}
+
 // #[test]
 // fn tst() {
 //   use std::time::Duration;
