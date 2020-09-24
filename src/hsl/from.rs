@@ -98,43 +98,22 @@ impl From<Rgb> for Hsl {
 //
 // INTO
 //
-macro_rules! into_for_hsl {
-  ($into: ty, $sel: ident, $conv: block) => {
-    impl<'a> Into<$into> for &'a Hsl {
-      fn into($sel) -> $into {
-        ($conv)
-      }
-    }
-
-    impl<'a> Into<$into> for &'a mut Hsl {
-      fn into($sel) -> $into {
-        ($conv)
-      }
-    }
-
-    impl Into<$into> for Hsl {
-      fn into($sel) -> $into {
-        $sel.as_ref().into()
-      }
-    }
-  };
-}
 
 macro_rules! into_for_hsl_all {
   ($t: ty) => {
-    into_for_hsl!(($t, $t, $t), self, {
+    into_for_some!(($t, $t, $t), Hsl, self, {
       let Hsl { h, s, l, .. } = *self;
       (h as $t, s as $t, l as $t)
     });
-    into_for_hsl!(($t, $t, $t, $t), self, {
+    into_for_some!(($t, $t, $t, $t), Hsl, self, {
       let Hsl { h, s, l, .. } = *self;
       (h as $t, s as $t, l as $t, self.get_alpha() as $t)
     });
-    into_for_hsl!([$t; 3], self, {
+    into_for_some!([$t; 3], Hsl, self, {
       let Hsl { h, s, l, .. } = *self;
       [h as $t, s as $t, l as $t]
     });
-    into_for_hsl!([$t; 4], self, {
+    into_for_some!([$t; 4], Hsl, self, {
       let Hsl { h, s, l, .. } = *self;
       [h as $t, s as $t, l as $t, self.get_alpha() as $t]
     });

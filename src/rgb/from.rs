@@ -1,6 +1,6 @@
 use crate::converters::*;
-// use crate::rgb::RgbRatio;
-use crate::{ColorAlpha, ColorTuple, ColorTupleA, Hsl, Rgb};
+use crate::rgb::RgbRatio;
+use crate::{ColorAlpha, ColorTuple, Hsl, Rgb};
 
 macro_rules! from_for_rgb {
   ($from_type: ty, $val: ident, $conv: block) => {
@@ -95,49 +95,50 @@ impl From<Hsl> for Rgb {
   }
 }
 
+fn from_rgb_ratio(ratio: &RgbRatio) -> Rgb {
+  Rgb { r: ratio.r, g: ratio.g, b: ratio.b, a: Some(ratio.a) }
+}
+impl From<&RgbRatio> for Rgb {
+  fn from(r: &RgbRatio) -> Self {
+    from_rgb_ratio(r)
+  }
+}
+
+impl From<&mut RgbRatio> for Rgb {
+  fn from(r: &mut RgbRatio) -> Self {
+    from_rgb_ratio(r)
+  }
+}
+
+impl From<RgbRatio> for Rgb {
+  fn from(r: RgbRatio) -> Self {
+    from_rgb_ratio(&r)
+  }
+}
+
 //
 //
 //
 // INTO
 //
 
-macro_rules! into_for_rgb {
-  ($into: ty, $sel: ident, $conv: block) => {
-    impl<'a> Into<$into> for &'a Rgb {
-      fn into($sel) -> $into {
-        ($conv)
-      }
-    }
-
-    impl<'a> Into<$into> for &'a mut Rgb {
-      fn into($sel) -> $into {
-        ($conv)
-      }
-    }
-
-    impl Into<$into> for Rgb {
-      fn into($sel) -> $into {
-        $sel.as_ref().into()
-      }
-    }
-  };
-}
+into_for_some!(RgbRatio, Rgb, self, { self.as_ratio() });
 
 macro_rules! into_for_rgb_all {
   ($t: ty) => {
-    into_for_rgb!(($t, $t, $t), self, {
+    into_for_some!(($t, $t, $t), Rgb, self, {
       let Rgb { r, g, b, .. } = *self;
       (r as $t, g as $t, b as $t)
     });
-    into_for_rgb!(($t, $t, $t, $t), self, {
+    into_for_some!(($t, $t, $t, $t), Rgb, self, {
       let Rgb { r, g, b, .. } = *self;
       (r as $t, g as $t, b as $t, self.get_alpha() as $t)
     });
-    into_for_rgb!([$t; 3], self, {
+    into_for_some!([$t; 3], Rgb, self, {
       let Rgb { r, g, b, .. } = *self;
       [r as $t, g as $t, b as $t]
     });
-    into_for_rgb!([$t; 4], self, {
+    into_for_some!([$t; 4], Rgb, self, {
       let Rgb { r, g, b, .. } = *self;
       [r as $t, g as $t, b as $t, self.get_alpha() as $t]
     });

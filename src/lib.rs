@@ -1,5 +1,7 @@
 #![allow(clippy::many_single_char_names)]
 
+mod macros;
+
 mod common;
 mod consts;
 mod converters;
@@ -13,7 +15,7 @@ pub mod ratio_converters;
 pub use common::approx::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 pub use err::ParseError;
 pub use hsl::Hsl;
-pub use rgb::{GrayScaleMethod, Rgb};
+pub use rgb::{GrayScaleMethod, Rgb, RgbRatio};
 
 // pub type ColorArr = [f64; 3];
 // pub type ColorArrA = [f64; 4];

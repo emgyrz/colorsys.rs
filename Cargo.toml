@@ -1,6 +1,6 @@
 [package]
 name = "colorsys"
-version = "0.5.5"
+version = "0.5.6"
 description = "Module for convert and transform colors"
 authors = ["mz <emgyrz@gmail.com>"]
 license = "MIT"
