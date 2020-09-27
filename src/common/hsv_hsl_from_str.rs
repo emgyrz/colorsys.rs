@@ -36,9 +36,9 @@ pub fn hsl_hsv_from_str(
   let s = s.trim().to_lowercase().replace(" ", "").replace("%", "");
   let is_hsl = s.starts_with(&start);
   let is_hsla = s.starts_with(&start_a);
-  let is_ends_with_braket = s.ends_with(')');
+  let is_ends_with_bracket = s.ends_with(')');
 
-  if (!is_hsl && !is_hsla) || !is_ends_with_braket {
+  if (!is_hsl && !is_hsla) || !is_ends_with_bracket {
     return make_err();
   }
   let start_ind = if is_hsl { 4 } else { 5 };

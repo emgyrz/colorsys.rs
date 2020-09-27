@@ -1,5 +1,28 @@
 use crate::normalize::normalize_ratio;
 
+///
+/// Rgb representation as ratio (from `0.0` to `1.0`).
+/// Cannot be modified, added, subtracted, etc. Can be converted to `Rgb` and vice versa.
+/// Used for compatibility in various libraries.
+///
+/// # Example
+/// ```rust
+///  use colorsys::{ApproxEq, Rgb, RgbRatio};
+///
+///  let origin = Rgb::from([134.9, 11.1, 250.55, 1.0]);
+///
+///  let ratio_f32: [f32; 4] = origin.as_ratio().into();
+///  let ratio_f64: [f64; 3] = origin.as_ratio().into();
+///  // ~[0.5290196, 0.04352941, 0.982549]
+///
+///  let converted_f32: Rgb = RgbRatio::from(&ratio_f32).into();
+///  let converted_f64: Rgb = RgbRatio::from(&ratio_f64).into();
+///
+///  assert!(origin.approx_eq_clarify(&converted_f32, 0.0001));
+///  assert!(origin.approx_eq(&converted_f64));
+///
+/// ```
+///
 #[derive(Clone)]
 pub struct RgbRatio {
   pub(super) r: f64,
@@ -16,6 +39,19 @@ impl RgbRatio {
       b: normalize_ratio(b),
       a: normalize_ratio(a),
     }
+  }
+
+  pub fn r(&self) -> f64 {
+    self.r
+  }
+  pub fn g(&self) -> f64 {
+    self.g
+  }
+  pub fn b(&self) -> f64 {
+    self.b
+  }
+  pub fn a(&self) -> f64 {
+    self.a
   }
 }
 

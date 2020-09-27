@@ -8,9 +8,9 @@ pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f64>), ParseError> {
   let s = s.trim().to_lowercase().replace(" ", "");
   let is_rgb = s.starts_with("rgb(");
   let is_rgba = s.starts_with("rgba(");
-  let is_ends_with_braket = s.ends_with(')');
+  let is_ends_with_bracket = s.ends_with(')');
 
-  if (!is_rgb && !is_rgba) || !is_ends_with_braket {
+  if (!is_rgb && !is_rgba) || !is_ends_with_bracket {
     return make_err();
   }
   let start_ind = if is_rgb { 4 } else { 5 };

@@ -4,7 +4,7 @@
 
 A module for color conversion and mutation written in Rust. For now works with RGB(a)( as hexadecimal too), HSL(a) color models
 
-[Online documentation](https://docs.rs/colorsys/0.5.6/colorsys/)
+[Online documentation](https://docs.rs/colorsys/0.5.7/colorsys/)
 
 
 
@@ -36,8 +36,8 @@ let rgba = Rgb::from(&rbga_tuple);
 let hsla: Hsl = rgba.as_ref().into();
 // ~Hsl { h: 305.78, s: 63.71, l: 13.73, a: 0.33 }
 
-let rgb_tuple: (f64,f64,f64) = Rgb::from(&hsla).into();
-// ~(57.3, 12.7, 53.0)
+let rgb_arr: [u8, u8, u8] = Rgb::from(&hsla).into();
+// ~[57, 13, 53]
 
 let hsla_tuple: (f64,f64,f64,f64) = Hsl::from( Rgb::from(rgb_tuple) ).into();
 // ~Hsl { h: 305.78, s: 63.71, l: 13.73, a: 1 }
@@ -45,7 +45,9 @@ let hsla_tuple: (f64,f64,f64,f64) = Hsl::from( Rgb::from(rgb_tuple) ).into();
 let hex: String = rgba.to_hex_string();
 // #390d35
 
+//
 // From/Into
+//
 let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
   
 let rgb2 = Rgb::from(
@@ -64,7 +66,20 @@ Into::<[f32; 4]>::into(Rgb::from(
 
 assert_eq!(rgb1, rgb2);
 
+//
+// Ratio
+//
+use colorsys::{RgbRatio, ApproxEq};
+let blue = Rgb::from([34, 111, 235]);
+
+let ratio: [f32; 4] = blue.as_ratio().into();
+// ~[0.133, 0.435, 0.922, 1.0]
+
+let converted: Rgb = RgbRatio::from(&ratio).into();
+assert!(blue.approx_eq_clarify(&converted, 0.0001));
 ```
+
+
 #### modification
 See `ColorTransform/Add*/Sub*..` traits in docs for more
 ```Rust

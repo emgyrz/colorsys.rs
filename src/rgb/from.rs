@@ -1,6 +1,8 @@
 use crate::converters::*;
 use crate::rgb::RgbRatio;
-use crate::{ColorAlpha, ColorTuple, Hsl, Rgb};
+use crate::{
+  ratio_converters::ratio_to_rgba, ColorAlpha, ColorTuple, Hsl, Rgb,
+};
 
 macro_rules! from_for_rgb {
   ($from_type: ty, $val: ident, $conv: block) => {
@@ -96,7 +98,8 @@ impl From<Hsl> for Rgb {
 }
 
 fn from_rgb_ratio(ratio: &RgbRatio) -> Rgb {
-  Rgb { r: ratio.r, g: ratio.g, b: ratio.b, a: Some(ratio.a) }
+  let t = ratio_to_rgba(&(ratio.r, ratio.g, ratio.b, ratio.a));
+  Rgb { r: t.0, g: t.1, b: t.2, a: Some(t.3) }
 }
 impl From<&RgbRatio> for Rgb {
   fn from(r: &RgbRatio) -> Self {

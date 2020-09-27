@@ -1,4 +1,6 @@
-use crate::{ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb};
+use crate::{
+  ApproxEq, ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb, RgbRatio,
+};
 
 fn round(n: f64) -> u32 {
   n.round() as u32

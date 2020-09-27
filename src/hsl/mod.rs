@@ -1,17 +1,20 @@
-#[cfg(test)]
-mod tests;
-
-mod from;
-mod opts;
-mod transform;
+pub use ratio::HslRatio;
 
 use crate::common::{
   approx::approx_def, hsl_hsv_from_str, tuple_to_string, ColorIter, Hs,
 };
 use crate::consts::RATIO_MAX;
 use crate::normalize::{normalize_hue, normalize_percent, normalize_ratio};
-
+use crate::ratio_converters::hsla_to_ratio;
 use crate::{ColorAlpha, ColorTuple, ColorTupleA, ParseError, Rgb};
+
+#[cfg(test)]
+mod tests;
+
+mod from;
+mod opts;
+mod ratio;
+mod transform;
 
 /// The HSL or HSI (hue, saturation, lightness (intensity)) color model
 ///
@@ -68,6 +71,11 @@ impl Hsl {
 
   pub fn iter(&self) -> ColorIter {
     ColorIter::from_tuple_w_alpha(self.into(), self.a)
+  }
+
+  pub fn as_ratio(&self) -> HslRatio {
+    let t = hsla_to_ratio(&self.into());
+    HslRatio { h: t.0, s: t.1, l: t.2, a: t.3 }
   }
 }
 

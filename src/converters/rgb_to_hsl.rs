@@ -34,14 +34,14 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
   let (max, max_unit) = get_max(red, green, blue);
   let min = get_min(red, green, blue);
   let max_plus_min = max + min;
-  let luminace = (max_plus_min) / 2.0;
+  let luminance = (max_plus_min) / 2.0;
 
   if max.eq(&min) {
-    return (ALL_MIN, ALL_MIN, luminace * PERCENT_MAX);
+    return (ALL_MIN, ALL_MIN, luminance * PERCENT_MAX);
   }
 
   let max_min_delta = max - min;
-  let saturation = if luminace > 0.5 {
+  let saturation = if luminance > 0.5 {
     max_min_delta / (2.0 - max_plus_min)
   } else {
     max_min_delta / (max_plus_min)
@@ -56,7 +56,7 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
     RgbUnit::Blue => (red - green) / max_min_delta + 4.0,
   };
 
-  (hue * 60.0, saturation * PERCENT_MAX, luminace * PERCENT_MAX)
+  (hue * 60.0, saturation * PERCENT_MAX, luminance * PERCENT_MAX)
 }
 
 #[test]

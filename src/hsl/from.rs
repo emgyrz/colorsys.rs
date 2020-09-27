@@ -1,5 +1,7 @@
-use super::{Hsl, Rgb};
-use crate::{converters::*, ColorAlpha, ColorTuple, ColorTupleA};
+use super::{Hsl, HslRatio, Rgb};
+use crate::{
+  converters::*, ratio_converters::ratio_to_hsla, ColorAlpha, ColorTuple,
+};
 
 macro_rules! from_for_hsl {
   ($from_type: ty, $val: ident, $conv: block) => {
@@ -90,6 +92,28 @@ impl From<Rgb> for Hsl {
   /// ```
   fn from(rgb: Rgb) -> Self {
     from_rgb(&rgb)
+  }
+}
+
+fn from_hsl_ratio(ratio: &HslRatio) -> Hsl {
+  let t = ratio_to_hsla(&(ratio.h, ratio.s, ratio.l, ratio.a));
+  Hsl { h: t.0, s: t.1, l: t.2, a: Some(t.3) }
+}
+impl From<&HslRatio> for Hsl {
+  fn from(r: &HslRatio) -> Self {
+    from_hsl_ratio(r)
+  }
+}
+
+impl From<&mut HslRatio> for Hsl {
+  fn from(r: &mut HslRatio) -> Self {
+    from_hsl_ratio(r)
+  }
+}
+
+impl From<HslRatio> for Hsl {
+  fn from(r: HslRatio) -> Self {
+    from_hsl_ratio(&r)
   }
 }
 

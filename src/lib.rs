@@ -1,5 +1,7 @@
-#![allow(clippy::many_single_char_names)]
+//! A module for color conversion, mutation, modification.
+//! For now works with RGB(a)( as hexadecimal too), HSL(a) color models
 
+#![allow(clippy::many_single_char_names)]
 mod macros;
 
 mod common;
@@ -14,11 +16,8 @@ pub mod prelude;
 pub mod ratio_converters;
 pub use common::approx::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 pub use err::ParseError;
-pub use hsl::Hsl;
+pub use hsl::{Hsl, HslRatio};
 pub use rgb::{GrayScaleMethod, Rgb, RgbRatio};
-
-// pub type ColorArr = [f64; 3];
-// pub type ColorArrA = [f64; 4];
 
 /// Use to transfer nad collect color values.
 /// May be for example `($red,$green,$blue)` or `($hue,$saturation,$value)`
@@ -34,7 +33,7 @@ pub enum SaturationInSpace {
 
 /// Methods to work with alpha channel in color.
 pub trait ColorAlpha {
-  /// Returns alpha channel. If it not setted will returns 1.0
+  /// Returns alpha channel. If it not set will returns 1.0
   fn get_alpha(&self) -> f64;
 
   /// Sets alpha channel
@@ -60,7 +59,7 @@ pub trait ColorAlpha {
 
 /// A collection of methods to some special modification of color.
 /// Some methods (like saturate, lighten, etc.) requires (inside implementation)
-/// converting to another color space and converting back.
+/// converting to another color space and vice versa.
 pub trait ColorTransform {
   /// Makes color lighter or (if amt is negative) darker.
   /// Amt is percent - `1..100` to make color lighter; `-100..-1` for blacking-out
