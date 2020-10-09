@@ -1,6 +1,4 @@
-use crate::{
-  ApproxEq, ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb, RgbRatio,
-};
+use crate::{ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb};
 
 fn round(n: f64) -> u32 {
   n.round() as u32
@@ -72,10 +70,10 @@ fn rgb_iter() {
 #[rustfmt::skip]
 fn rgb_from() {
   let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
-  
+
   let rgb2 = Rgb::from(
     Into::<[f32; 4]>::into(Rgb::from(
-      Into::<[u8; 4]>::into(
+      Into::<[u8; 3]>::into(
         Rgb::from(
           Into::<(i32,i32,i32)>::into(
             Rgb::from(

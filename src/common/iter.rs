@@ -15,7 +15,7 @@ impl std::iter::Iterator for ColorIter {
   type Item = f64;
   fn next(&mut self) -> Option<Self::Item> {
     match self.ind {
-      0...3 => {
+      0..=3 => {
         let val = self.vals[self.ind];
         self.ind += 1;
         val

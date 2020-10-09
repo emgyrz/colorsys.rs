@@ -24,13 +24,18 @@ macro_rules! from_for_hsl_all {
       let (h, s, l) = *v;
       Hsl::new(h as f64, s as f64, l as f64, None)
     });
-    from_for_hsl!(($t, $t, $t, $t), v, {
-      let (h, s, l, a) = *v;
-      Hsl::new(h as f64, s as f64, l as f64, Some(a as f64))
-    });
     from_for_hsl!([$t; 3], v, {
       let [h, s, l] = *v;
       Hsl::new(h as f64, s as f64, l as f64, None)
+    });
+  };
+}
+
+macro_rules! from_for_hsl_all_with_alpha {
+  ($t: ty) => {
+    from_for_hsl!(($t, $t, $t, $t), v, {
+      let (h, s, l, a) = *v;
+      Hsl::new(h as f64, s as f64, l as f64, Some(a as f64))
     });
     from_for_hsl!([$t; 4], v, {
       let [h, s, l, a] = *v;
@@ -41,6 +46,8 @@ macro_rules! from_for_hsl_all {
 
 from_for_hsl_all!(f32);
 from_for_hsl_all!(f64);
+from_for_hsl_all_with_alpha!(f32);
+from_for_hsl_all_with_alpha!(f64);
 from_for_hsl_all!(i16);
 from_for_hsl_all!(i32);
 from_for_hsl_all!(i64);
@@ -129,13 +136,18 @@ macro_rules! into_for_hsl_all {
       let Hsl { h, s, l, .. } = *self;
       (h as $t, s as $t, l as $t)
     });
-    into_for_some!(($t, $t, $t, $t), Hsl, self, {
-      let Hsl { h, s, l, .. } = *self;
-      (h as $t, s as $t, l as $t, self.get_alpha() as $t)
-    });
     into_for_some!([$t; 3], Hsl, self, {
       let Hsl { h, s, l, .. } = *self;
       [h as $t, s as $t, l as $t]
+    });
+  };
+}
+
+macro_rules! into_for_hsl_all_with_alpha {
+  ($t: ty) => {
+    into_for_some!(($t, $t, $t, $t), Hsl, self, {
+      let Hsl { h, s, l, .. } = *self;
+      (h as $t, s as $t, l as $t, self.get_alpha() as $t)
     });
     into_for_some!([$t; 4], Hsl, self, {
       let Hsl { h, s, l, .. } = *self;
@@ -146,6 +158,8 @@ macro_rules! into_for_hsl_all {
 
 into_for_hsl_all!(f32);
 into_for_hsl_all!(f64);
+into_for_hsl_all_with_alpha!(f32);
+into_for_hsl_all_with_alpha!(f64);
 into_for_hsl_all!(i16);
 into_for_hsl_all!(i32);
 into_for_hsl_all!(i64);

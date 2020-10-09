@@ -25,13 +25,18 @@ macro_rules! from_for_rgb_all {
       let (r, g, b) = *v;
       Rgb::new(r as f64, g as f64, b as f64, None)
     });
-    from_for_rgb!(($t, $t, $t, $t), v, {
-      let (r, g, b, a) = *v;
-      Rgb::new(r as f64, g as f64, b as f64, Some(a as f64))
-    });
     from_for_rgb!([$t; 3], v, {
       let [r, g, b] = *v;
       Rgb::new(r as f64, g as f64, b as f64, None)
+    });
+  };
+}
+
+macro_rules! from_for_rgb_all_with_alpha {
+  ($t: ty) => {
+    from_for_rgb!(($t, $t, $t, $t), v, {
+      let (r, g, b, a) = *v;
+      Rgb::new(r as f64, g as f64, b as f64, Some(a as f64))
     });
     from_for_rgb!([$t; 4], v, {
       let [r, g, b, a] = *v;
@@ -42,6 +47,8 @@ macro_rules! from_for_rgb_all {
 
 from_for_rgb_all!(f32);
 from_for_rgb_all!(f64);
+from_for_rgb_all_with_alpha!(f32);
+from_for_rgb_all_with_alpha!(f64);
 from_for_rgb_all!(i16);
 from_for_rgb_all!(i32);
 from_for_rgb_all!(i64);
@@ -133,13 +140,18 @@ macro_rules! into_for_rgb_all {
       let Rgb { r, g, b, .. } = *self;
       (r as $t, g as $t, b as $t)
     });
-    into_for_some!(($t, $t, $t, $t), Rgb, self, {
-      let Rgb { r, g, b, .. } = *self;
-      (r as $t, g as $t, b as $t, self.get_alpha() as $t)
-    });
     into_for_some!([$t; 3], Rgb, self, {
       let Rgb { r, g, b, .. } = *self;
       [r as $t, g as $t, b as $t]
+    });
+  };
+}
+
+macro_rules! into_for_rgb_all_with_alpha {
+  ($t: ty) => {
+    into_for_some!(($t, $t, $t, $t), Rgb, self, {
+      let Rgb { r, g, b, .. } = *self;
+      (r as $t, g as $t, b as $t, self.get_alpha() as $t)
     });
     into_for_some!([$t; 4], Rgb, self, {
       let Rgb { r, g, b, .. } = *self;
@@ -150,6 +162,8 @@ macro_rules! into_for_rgb_all {
 
 into_for_rgb_all!(f32);
 into_for_rgb_all!(f64);
+into_for_rgb_all_with_alpha!(f32);
+into_for_rgb_all_with_alpha!(f64);
 into_for_rgb_all!(i16);
 into_for_rgb_all!(i32);
 into_for_rgb_all!(i64);
