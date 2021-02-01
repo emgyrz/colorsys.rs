@@ -28,9 +28,10 @@ static REC2100_FACTORS: ColorTuple =
   (R_REC2100_FACTOR, G_REC2100_FACTOR, B_REC2100_FACTOR);
 
 fn mul(rgb: &mut Rgb, factors: ColorTuple) {
-  rgb.r *= factors.0;
-  rgb.g *= factors.1;
-  rgb.b *= factors.2;
+  let mut vals = &mut rgb.units.list;
+  vals[0].value *= factors.0;
+  vals[1].value *= factors.1;
+  vals[2].value *= factors.2;
 }
 
 fn rgb_to_grayscale_lum(rgb: &mut Rgb) {
@@ -40,25 +41,27 @@ fn rgb_to_grayscale_lum(rgb: &mut Rgb) {
 fn rgb_to_grayscale_rec709(rgb: &mut Rgb) {
   mul(rgb, REC709_FACTORS);
 }
+
 fn rgb_to_grayscale_rec2100(rgb: &mut Rgb) {
   mul(rgb, REC2100_FACTORS);
 }
 
 fn rgb_to_grayscale_avg(rgb: &mut Rgb) {
-  let y = (rgb.r + rgb.g + rgb.b) / 3.0;
-  rgb.r = y;
-  rgb.g = y;
-  rgb.b = y;
+  let mut vals = &mut rgb.units.list;
+  let y = (vals[0].value + vals[1].value + vals[2].value) / 3.0;
+  vals[0].value = y;
+  vals[1].value = y;
+  vals[2].value = y;
 }
 
 fn rgb_to_grayscale_avg_prom(rgb: &mut Rgb) {
-  let rgb_vec = vec![rgb.r, rgb.g, rgb.b];
-  let max = rgb_vec.iter().fold(core::f64::MIN, |a, &b| a.max(b));
-  let min = rgb_vec.iter().fold(core::f64::MAX, |a, &b| a.min(b));
-  let y = (max + min) / 2.0;
-  rgb.r = y;
-  rgb.g = y;
-  rgb.b = y;
+  let max = rgb.units.max();
+  let min = rgb.units.min();
+  let y = (max.0 + min.0) / 2.0;
+  let mut vals = &mut rgb.units.list;
+  vals[0].value = y;
+  vals[1].value = y;
+  vals[2].value = y;
 }
 
 pub fn rgb_grayscale(rgb: &mut Rgb, method: GrayScaleMethod) {

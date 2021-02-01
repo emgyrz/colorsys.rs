@@ -2,7 +2,7 @@ use crate::{ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb};
 use crate::common::f64_round;
 
 fn round(n: f64) -> u32 {
-  f64_round( n ) as u32
+  f64_round(n) as u32
 }
 
 fn round_tuple(t: &ColorTuple) -> (u32, u32, u32) {
@@ -85,7 +85,7 @@ fn rgb_from() {
     Into::<[f32; 4]>::into(Rgb::from(
       Into::<[u8; 3]>::into(
         Rgb::from(
-          Into::<(i32,i32,i32)>::into(
+          Into::<(i32, i32, i32)>::into(
             Rgb::from(
               Into::<[i64; 3]>::into(&rgb1)
             )

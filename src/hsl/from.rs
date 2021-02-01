@@ -1,7 +1,8 @@
-use super::{Hsl, HslRatio, Rgb};
 use crate::{
-  converters::*, ratio_converters::ratio_to_hsla, ColorAlpha, ColorTuple,
+  ColorAlpha, converters::*, ratio_converters::ratio_to_hsla,
 };
+
+use super::{Hsl, HslRatio, Rgb};
 
 macro_rules! from_for_hsl {
   ($from_type: ty, $val: ident, $conv: block) => {
@@ -56,9 +57,8 @@ from_for_hsl_all!(u32);
 from_for_hsl_all!(u64);
 
 fn from_rgb(rgb: &Rgb) -> Hsl {
-  let a = rgb.get_alpha();
-  let tuple: ColorTuple = rgb.into();
-  let mut hsl = Hsl::from(rgb_to_hsl(&tuple));
+  let a = rgb.alpha();
+  let mut hsl = Hsl::from_units(rgb_to_hsl(&rgb));
   hsl.set_alpha(a);
   hsl
 }
@@ -103,9 +103,11 @@ impl From<Rgb> for Hsl {
 }
 
 fn from_hsl_ratio(ratio: &HslRatio) -> Hsl {
-  let t = ratio_to_hsla(&(ratio.h, ratio.s, ratio.l, ratio.a));
-  Hsl { h: t.0, s: t.1, l: t.2, a: Some(t.3) }
+  let ru = &ratio.units;
+  let t = ratio_to_hsla(&(ru[0], ru[1], ru[2], ru.alpha.get_f64()));
+  Hsl::new(t.0, t.1, t.2, Some(t.3))
 }
+
 impl From<&HslRatio> for Hsl {
   fn from(r: &HslRatio) -> Self {
     from_hsl_ratio(r)
@@ -133,12 +135,12 @@ impl From<HslRatio> for Hsl {
 macro_rules! into_for_hsl_all {
   ($t: ty) => {
     into_for_some!(($t, $t, $t), Hsl, self, {
-      let Hsl { h, s, l, .. } = *self;
-      (h as $t, s as $t, l as $t)
+      let u = &self.units;
+      (u[0] as $t, u[1] as $t, u[2] as $t)
     });
     into_for_some!([$t; 3], Hsl, self, {
-      let Hsl { h, s, l, .. } = *self;
-      [h as $t, s as $t, l as $t]
+      let u = &self.units;
+      [u[0] as $t, u[1] as $t, u[2] as $t]
     });
   };
 }
@@ -146,12 +148,12 @@ macro_rules! into_for_hsl_all {
 macro_rules! into_for_hsl_all_with_alpha {
   ($t: ty) => {
     into_for_some!(($t, $t, $t, $t), Hsl, self, {
-      let Hsl { h, s, l, .. } = *self;
-      (h as $t, s as $t, l as $t, self.get_alpha() as $t)
+      let u = &self.units;
+      (u[0] as $t, u[1] as $t, u[2] as $t, self.units.alpha.get_f64() as $t)
     });
     into_for_some!([$t; 4], Hsl, self, {
-      let Hsl { h, s, l, .. } = *self;
-      [h as $t, s as $t, l as $t, self.get_alpha() as $t]
+      let u = &self.units;
+      [u[0] as $t, u[1] as $t, u[2] as $t, self.units.alpha.get_f64() as $t]
     });
   };
 }

@@ -1,9 +1,10 @@
-#[cfg(not(feature = "std"))] use alloc::vec::Vec;
-
-use crate::err::{make_parse_err, ParseError};
-use crate::{consts, ColorTuple};
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
 
 use consts::{ALL_MIN, RATIO_MAX, RGB_UNIT_MAX};
+
+use crate::{ColorTuple, consts};
+use crate::err::{make_parse_err, ParseError};
 
 pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f64>), ParseError> {
   let make_err = || Err(make_parse_err(s, "rgb or rgba"));

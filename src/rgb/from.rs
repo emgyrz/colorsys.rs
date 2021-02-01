@@ -1,8 +1,8 @@
+use crate::{
+  ColorAlpha, Hsl, ratio_converters::ratio_to_rgba, Rgb,
+};
 use crate::converters::*;
 use crate::rgb::RgbRatio;
-use crate::{
-  ratio_converters::ratio_to_rgba, ColorAlpha, ColorTuple, Hsl, Rgb,
-};
 
 macro_rules! from_for_rgb {
   ($from_type: ty, $val: ident, $conv: block) => {
@@ -58,9 +58,8 @@ from_for_rgb_all!(u32);
 from_for_rgb_all!(u64);
 
 fn from_hsl(hsl: &Hsl) -> Rgb {
-  let a = hsl.get_alpha();
-  let tuple: ColorTuple = hsl.into();
-  let mut rgb = Rgb::from(hsl_to_rgb(&tuple));
+  let a = hsl.alpha();
+  let mut rgb = Rgb::from_units(hsl_to_rgb(&hsl));
   rgb.set_alpha(a);
   rgb
 }
@@ -105,9 +104,11 @@ impl From<Hsl> for Rgb {
 }
 
 fn from_rgb_ratio(ratio: &RgbRatio) -> Rgb {
-  let t = ratio_to_rgba(&(ratio.r, ratio.g, ratio.b, ratio.a));
-  Rgb { r: t.0, g: t.1, b: t.2, a: Some(t.3) }
+  let ru = &ratio.units;
+  let t = ratio_to_rgba(&(ru[0], ru[1], ru[2], ru.alpha.get_f64()));
+  Rgb::new(t.0, t.1, t.2,Some(t.3))
 }
+
 impl From<&RgbRatio> for Rgb {
   fn from(r: &RgbRatio) -> Self {
     from_rgb_ratio(r)
@@ -137,12 +138,12 @@ into_for_some!(RgbRatio, Rgb, self, { self.as_ratio() });
 macro_rules! into_for_rgb_all {
   ($t: ty) => {
     into_for_some!(($t, $t, $t), Rgb, self, {
-      let Rgb { r, g, b, .. } = *self;
-      (r as $t, g as $t, b as $t)
+      let u = &self.units;
+      (u[0] as $t, u[1] as $t, u[2] as $t)
     });
     into_for_some!([$t; 3], Rgb, self, {
-      let Rgb { r, g, b, .. } = *self;
-      [r as $t, g as $t, b as $t]
+      let u = &self.units;
+      [u[0] as $t, u[1] as $t, u[2] as $t]
     });
   };
 }
@@ -150,12 +151,12 @@ macro_rules! into_for_rgb_all {
 macro_rules! into_for_rgb_all_with_alpha {
   ($t: ty) => {
     into_for_some!(($t, $t, $t, $t), Rgb, self, {
-      let Rgb { r, g, b, .. } = *self;
-      (r as $t, g as $t, b as $t, self.get_alpha() as $t)
+      let u = &self.units;
+      (u[0] as $t, u[1] as $t, u[2] as $t, self.units.alpha.get_f64() as $t)
     });
     into_for_some!([$t; 4], Rgb, self, {
-      let Rgb { r, g, b, .. } = *self;
-      [r as $t, g as $t, b as $t, self.get_alpha() as $t]
+      let u = &self.units;
+      [u[0] as $t, u[1] as $t, u[2] as $t, self.units.alpha.get_f64() as $t]
     });
   };
 }

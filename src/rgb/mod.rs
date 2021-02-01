@@ -1,13 +1,17 @@
-#[cfg(not(feature = "std"))] use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
+
+pub use grayscale::GrayScaleMethod;
+use grayscale::rgb_grayscale;
+pub use ratio::RgbRatio;
+
+use crate::{ColorAlpha, ColorTuple, ColorTupleA, converters, Hsl, ColorUnitsIter};
+use crate::common::{tuple_to_string};
+use crate::err::ParseError;
+use crate::units::{Alpha, GetColorUnits, Unit, Units};
 
 #[cfg(test)]
 mod tests;
-
-use crate::common::{approx::approx_def, tuple_to_string, ColorIter};
-use crate::consts::RATIO_MAX;
-use crate::err::ParseError;
-use crate::normalize::{normalize_ratio, normalize_rgb_unit};
-use crate::{converters, ColorAlpha, ColorTuple, ColorTupleA, Hsl};
 
 mod from;
 mod from_str;
@@ -16,20 +20,12 @@ mod ops;
 mod ratio;
 mod transform;
 
-use crate::ratio_converters::rgba_to_ratio;
-use grayscale::rgb_grayscale;
-pub use grayscale::GrayScaleMethod;
-pub use ratio::RgbRatio;
-
 /// The RGB color model.
 ///
-/// Has r (red), g (green), b(blue) and optional a(alpha channel) fields.
+/// Has red, green, blue and optional `alpha` channel fields.
 /// Red, green, blue values are stored between 0.0 and 255.0, alpha is between 0.0 and 1.0.
-/// If inputed or recieved values are exceeds the allowed value, or is less than zero
+/// If inputted or received values are exceeds the allowed value, or is less than zero
 /// it will be equalize to limit.
-///
-/// Can be converted into (and from) other color models.
-///
 ///
 /// # Example
 /// ```
@@ -73,24 +69,30 @@ pub use ratio::RgbRatio;
 ///
 #[derive(Debug, PartialEq, Clone)]
 pub struct Rgb {
-  r: f64,
-  g: f64,
-  b: f64,
-  a: Option<f64>,
+  pub(crate) units: Units,
+}
+
+iter_def!(Rgb);
+
+pub(crate) fn new_rgb_units(r: f64, g: f64, b: f64) -> Units {
+  let ul = [Unit::new_rgb(r), Unit::new_rgb(g), Unit::new_rgb(b), Unit::default()];
+  Units { len: 3, list: ul, alpha: Alpha::default() }
 }
 
 impl Rgb {
   fn _apply_tuple(&mut self, t: &ColorTuple) {
-    self.r = t.0;
-    self.g = t.1;
-    self.b = t.2;
+    self.units.list[0].value = t.0;
+    self.units.list[1].value = t.1;
+    self.units.list[2].value = t.2;
   }
 
-  pub fn new(r: f64, g: f64, b: f64, a: Option<f64>) -> Rgb {
-    let n = normalize_rgb_unit;
+  pub(crate) fn from_units(u: Units) -> Self { Rgb { units: u } }
 
-    let a = a.map(normalize_ratio).filter(|al| !approx_def(*al, RATIO_MAX));
-    Rgb { r: n(r), g: n(g), b: n(b), a }
+  pub fn new(r: f64, g: f64, b: f64, a: Option<f64>) -> Rgb {
+    let mut units = new_rgb_units(r, g, b);
+    units.alpha.set_opt(a);
+    units.restrict();
+    Rgb { units }
   }
 
   pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
@@ -102,14 +104,12 @@ impl Rgb {
     converters::rgb_to_hex(&self.into())
   }
 
-  pub fn red(&self) -> f64 {
-    self.r
-  }
+  pub fn red(&self) -> f64 { self.units[0] }
   pub fn green(&self) -> f64 {
-    self.g
+    self.units[1]
   }
   pub fn blue(&self) -> f64 {
-    self.b
+    self.units[2]
   }
 
   #[deprecated(since = "0.7.0", note = "Please use `red` instead")]
@@ -123,16 +123,18 @@ impl Rgb {
     self.blue()
   }
 
-  pub fn set_red(&mut self, val: f64) {
-    self.r = normalize_rgb_unit(val);
-  }
-  pub fn set_green(&mut self, val: f64) {
-    self.g = normalize_rgb_unit(val);
-  }
-  pub fn set_blue(&mut self, val: f64) {
-    self.b = normalize_rgb_unit(val);
-  }
+  pub fn set_red(&mut self, val: f64) { self.units.list[0].set(val); }
+  pub fn set_green(&mut self, val: f64) { self.units.list[1].set(val); }
+  pub fn set_blue(&mut self, val: f64) { self.units.list[2].set(val); }
 
+  /// Returns a String that can be used in CSS.
+  /// # Example
+  /// ```
+  /// use colorsys::{Rgb};
+  ///
+  /// let rgb = Rgb::from([55.0,31.1, 201.9]);
+  /// assert_eq!(rgb.to_css_string(), "rgb(55,31,202)");
+  /// ```
   pub fn to_css_string(&self) -> String {
     let t: ColorTupleA = self.into();
     tuple_to_string(&t, "rgb")
@@ -142,13 +144,14 @@ impl Rgb {
     rgb_grayscale(self, method);
   }
 
-  pub fn iter(&self) -> ColorIter {
-    ColorIter::from_tuple_w_alpha(self.into(), self.a)
+  /// Returns an iterator over three color units and the possibly alpha value.
+  pub fn iter(&self) -> ColorUnitsIter {
+    ColorUnitsIter::from_units(&self.units)
   }
 
+  /// Returns an RGB representation with values converted to floar from 0.0 to 1.0
   pub fn as_ratio(&self) -> RgbRatio {
-    let t = rgba_to_ratio(&self.into());
-    RgbRatio { r: t.0, g: t.1, b: t.2, a: t.3 }
+    RgbRatio::from_units(self.units.as_ratio())
   }
 }
 
@@ -159,7 +162,7 @@ impl Rgb {
 //
 impl Default for Rgb {
   fn default() -> Rgb {
-    Rgb { r: 0.0, g: 0.0, b: 0.0, a: None }
+    Rgb::from_units(new_rgb_units(0.0, 0.0, 0.0))
   }
 }
 
@@ -171,6 +174,15 @@ impl Default for Rgb {
 impl AsRef<Rgb> for Rgb {
   fn as_ref(&self) -> &Rgb {
     &self
+  }
+}
+
+impl GetColorUnits for Rgb {
+  fn get_units(&self) -> &Units {
+    &self.units
+  }
+  fn get_units_mut(&mut self) -> &mut Units {
+    &mut self.units
   }
 }
 
@@ -188,45 +200,5 @@ impl core::str::FromStr for Rgb {
       rgb.set_alpha(a);
     }
     Ok(rgb)
-  }
-}
-
-//
-//
-//
-// ColorAlpha
-//
-impl ColorAlpha for Rgb {
-  fn get_alpha(&self) -> f64 {
-    self.a.unwrap_or(1.0)
-  }
-
-  fn set_alpha(&mut self, val: f64) {
-    self.a = Some(normalize_ratio(val));
-  }
-
-  fn opacify(&mut self, val: f64) {
-    self.set_alpha(self.get_alpha() + val);
-  }
-}
-
-//
-//
-//
-// Iter
-//
-impl<'a> core::iter::IntoIterator for &'a Rgb {
-  type Item = f64;
-  type IntoIter = ColorIter;
-  fn into_iter(self) -> ColorIter {
-    self.iter()
-  }
-}
-
-impl core::iter::IntoIterator for Rgb {
-  type Item = f64;
-  type IntoIter = ColorIter;
-  fn into_iter(self) -> ColorIter {
-    self.iter()
   }
 }

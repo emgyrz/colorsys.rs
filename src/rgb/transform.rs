@@ -1,6 +1,8 @@
-use super::{grayscale, Hsl, Rgb};
-use crate::{consts, ColorTransform, SaturationInSpace};
 use consts::RGB_UNIT_MAX;
+
+use crate::{ColorTransform, consts, SaturationInSpace};
+
+use super::{grayscale, Hsl, Rgb};
 
 impl ColorTransform for Rgb {
   /// Lighten or darken color. amt is a percent with negative values - `-100..100`
@@ -38,7 +40,7 @@ impl ColorTransform for Rgb {
         self._apply_tuple(&new_rgb.into());
       }
       SaturationInSpace::Hsv(amt) => {
-        unimplemented!("{}", amt );
+        unimplemented!("{}", amt);
       }
     }
   }
@@ -57,46 +59,45 @@ impl ColorTransform for Rgb {
   }
 
   fn invert(&mut self) {
-    self.r = RGB_UNIT_MAX - self.r;
-    self.g = RGB_UNIT_MAX - self.g;
-    self.b = RGB_UNIT_MAX - self.b;
+    self.units.list[0].value = RGB_UNIT_MAX - self.units[0];
+    self.units.list[1].value = RGB_UNIT_MAX - self.units[1];
+    self.units.list[2].value = RGB_UNIT_MAX - self.units[2];
   }
 }
 
-#[test]
-fn lighten_darken_test() {
-  use crate::ColorTuple;
-  use crate::common::f64_round;
+#[cfg(test)]
+mod test {
+  use crate::{Rgb, ColorTransform};
 
-  pub fn as_rounded_rgb_tuple(t: &ColorTuple) -> (u16, u16, u16) {
-    let (r, g, b) = *t;
-    (f64_round(r) as u16, f64_round(g) as u16, f64_round(b) as u16)
-  }
+  #[test]
+  fn lighten_darken_test() {
+    use crate::ColorTuple;
+    use crate::common::f64_round;
 
-  let asserts = [
-    #[cfg(feature = "std")]
-    ((30.0, 108.0, 77.0), 20.0, (52, 188, 134)),
+    pub fn as_rounded_rgb_tuple(t: &ColorTuple) -> (u16, u16, u16) {
+      let (r, g, b) = *t;
+      (f64_round(r) as u16, f64_round(g) as u16, f64_round(b) as u16)
+    }
 
-    ((30.0, 108.0, 77.0), 90.0, (255, 255, 255)),
+    let asserts = [
+        #[cfg(feature = "std")]
+      ((30.0, 108.0, 77.0), 20.0, (52, 188, 134)),
+      ((30.0, 108.0, 77.0), 90.0, (255, 255, 255)),
+        #[cfg(feature = "std")]
+      ((30.0, 108.0, 77.0), -20.0, (8, 28, 20)),
+        #[cfg(feature = "std")]
+      ((0.0, 0.0, 0.0), 50.0, (128, 128, 128)),
+        #[cfg(not(feature = "std"))]
+      ((0.0, 0.0, 0.0), 50.0, (127, 127, 127)),
+      ((0.0, 0.0, 0.0), -50.0, (0, 0, 0)),
+      ((0.0, 0.0, 0.0), 300.5, (255, 255, 255)),
+    ];
 
-    #[cfg(feature = "std")]
-    ((30.0, 108.0, 77.0), -20.0, (8, 28, 20)),
-
-    #[cfg(feature = "std")]
-    ((0.0, 0.0, 0.0), 50.0, (128, 128, 128)),
-
-    #[cfg(not(feature = "std"))]
-    ((0.0, 0.0, 0.0), 50.0, (127, 127, 127)),
-
-
-    ((0.0, 0.0, 0.0), -50.0, (0, 0, 0)),
-    ((0.0, 0.0, 0.0), 300.5, (255, 255, 255)),
-  ];
-
-  for a in asserts.iter() {
-    let (origin, amt, result) = *a;
-    let mut rgb = Rgb::from(&origin);
-    rgb.lighten(amt);
-    assert_eq!(as_rounded_rgb_tuple(&rgb.into()), result);
+    for a in asserts.iter() {
+      let (origin, amt, result) = *a;
+      let mut rgb = Rgb::from(&origin);
+      rgb.lighten(amt);
+      assert_eq!(as_rounded_rgb_tuple(&rgb.into()), result);
+    }
   }
 }

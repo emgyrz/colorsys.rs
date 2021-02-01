@@ -1,4 +1,4 @@
-use crate::normalize::normalize_ratio;
+use crate::units::{Units, GetColorUnits};
 
 ///
 /// Hsl representation as ratio (from `0.0` to `1.0`).
@@ -24,39 +24,36 @@ use crate::normalize::normalize_ratio;
 ///
 #[derive(Clone)]
 pub struct HslRatio {
-  pub(super) h: f64,
-  pub(super) s: f64,
-  pub(super) l: f64,
-  pub(super) a: f64,
+  pub(super) units: Units,
 }
 
 impl HslRatio {
   pub fn new(h: f64, s: f64, l: f64, a: f64) -> Self {
-    HslRatio {
-      h: normalize_ratio(h),
-      s: normalize_ratio(s),
-      l: normalize_ratio(l),
-      a: normalize_ratio(a),
-    }
+    let mut units = Units::new_ratios(&[h, s, l]);
+    units.alpha.set(a);
+    HslRatio::from_units(units)
   }
 
-  pub fn h(&self) -> f64 {
-    self.h
-  }
-  pub fn s(&self) -> f64 {
-    self.s
-  }
-  pub fn l(&self) -> f64 {
-    self.l
-  }
-  pub fn a(&self) -> f64 {
-    self.a
-  }
+  pub fn h(&self) -> f64 { self.units[0] }
+  pub fn s(&self) -> f64 { self.units[1] }
+  pub fn l(&self) -> f64 { self.units[2] }
+  pub fn a(&self) -> f64 { self.units.alpha.get_f64() }
+
+  pub(crate) fn from_units(u: Units) -> Self { HslRatio { units: u } }
 }
 
 impl AsRef<HslRatio> for HslRatio {
   fn as_ref(&self) -> &HslRatio {
     &self
+  }
+}
+
+impl GetColorUnits for HslRatio {
+  fn get_units(&self) -> &Units {
+    &self.units
+  }
+  fn get_units_mut(&mut self) -> &mut Units {
+    &mut self.units
   }
 }
 
@@ -102,20 +99,20 @@ from_for_hsl_ratio_all!(f64);
 macro_rules! into_for_hsl_ratio_all {
   ($t: ty) => {
     into_for_some!(($t, $t, $t), HslRatio, self, {
-      let HslRatio { h, s, l, .. } = *self;
-      (h as $t, s as $t, l as $t)
+      let u = &self.get_units();
+      (u[0] as $t, u[1] as $t, u[2] as $t)
     });
     into_for_some!(($t, $t, $t, $t), HslRatio, self, {
-      let HslRatio { h, s, l, a } = *self;
-      (h as $t, s as $t, l as $t, a as $t)
+      let u = &self.get_units();
+      (u[0] as $t, u[1] as $t, u[2] as $t, u.alpha.get_f64() as $t)
     });
     into_for_some!([$t; 3], HslRatio, self, {
-      let HslRatio { h, s, l, .. } = *self;
-      [h as $t, s as $t, l as $t]
+      let u = &self.get_units();
+      [u[0] as $t, u[1] as $t, u[2] as $t]
     });
     into_for_some!([$t; 4], HslRatio, self, {
-      let HslRatio { h, s, l, a } = *self;
-      [h as $t, s as $t, l as $t, a as $t]
+      let u = &self.get_units();
+      [u[0] as $t, u[1] as $t, u[2] as $t, u.alpha.get_f64() as $t]
     });
   };
 }

@@ -1,65 +1,57 @@
-#[cfg(not(feature = "std"))] use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
 
 pub use ratio::HslRatio;
 
-use crate::common::{
-  approx::approx_def, hsl_hsv_from_str, tuple_to_string, ColorIter, Hs,
-};
-use crate::consts::RATIO_MAX;
-use crate::normalize::{normalize_hue, normalize_percent, normalize_ratio};
-use crate::ratio_converters::hsla_to_ratio;
-use crate::{ColorAlpha, ColorTuple, ColorTupleA, ParseError, Rgb};
+use crate::{ColorAlpha, ColorTupleA, ColorUnitsIter, ParseError, Rgb};
+use crate::common::{Hs, hsl_hsv_from_str, tuple_to_string, };
+use crate::units::{Alpha, GetColorUnits, Unit, Units};
 
 #[cfg(test)]
 mod tests;
 
 mod from;
-mod opts;
+mod ops;
 mod ratio;
 mod transform;
 
 /// The HSL or HSI (hue, saturation, lightness (intensity)) color model
 ///
 /// Ranges:
-/// * h (hue): 0.0 - 360.0
-/// * s (saturation): 0.0 - 100.0
-/// * l (saturation): 0.0 - 100.0
-/// * a (alpha): 0.0 - 1.0
+/// * hue: 0.0 - 360.0
+/// * saturation: 0.0 - 100.0
+/// * saturation: 0.0 - 100.0
+/// * alpha: 0.0 - 1.0
 #[derive(Debug, PartialEq, Clone)]
 pub struct Hsl {
-  h: f64,
-  s: f64,
-  l: f64,
-  a: Option<f64>,
+  pub(crate) units: Units,
 }
 
+iter_def!(Hsl);
+pub(crate) fn new_hsl_units(h: f64, s: f64, l: f64) -> Units {
+  let ul = [Unit::new_hue(h), Unit::new_percent(s), Unit::new_percent(l), Unit::default()];
+  Units { len: 3, list: ul, alpha: Alpha::default() }
+}
+
+
 impl Hsl {
-  fn _apply_tuple(&mut self, t: &ColorTuple) {
-    self.h = t.0;
-    self.s = t.1;
-    self.l = t.2;
+  pub fn new(h: f64, s: f64, l: f64, a: Option<f64>) -> Hsl {
+    let mut units = new_hsl_units(h, s, l);
+    units.alpha.set_opt(a);
+    units.restrict();
+    Hsl { units }
   }
 
-  pub fn new(h: f64, s: f64, l: f64, a: Option<f64>) -> Hsl {
-    let a = a.map(normalize_ratio).filter(|al| !approx_def(*al, RATIO_MAX));
-    let np = normalize_percent;
-    Hsl { h: normalize_hue(h), s: np(s), l: np(l), a }
-  }
+  pub(crate) fn from_units(u: Units) -> Self { Hsl { units: u } }
 
   pub fn to_css_string(&self) -> String {
     let t: ColorTupleA = self.into();
     tuple_to_string(&t, "hsl")
   }
 
-  pub fn hue(&self) -> f64 {
-    self.h
-  }
-  pub fn saturation(&self) -> f64 {
-    self.s
-  }
-  pub fn lightness(&self) -> f64 {
-    self.l
-  }
+  pub fn hue(&self) -> f64 { self.units[0] }
+  pub fn saturation(&self) -> f64 { self.units[1] }
+  pub fn lightness(&self) -> f64 { self.units[2] }
 
   #[deprecated(since = "0.7.0", note = "Please use `hue` instead")]
   pub fn get_hue(&self) -> f64 {
@@ -74,23 +66,18 @@ impl Hsl {
     self.lightness()
   }
 
-  pub fn set_hue(&mut self, val: f64) {
-    self.h = normalize_hue(val);
-  }
-  pub fn set_saturation(&mut self, val: f64) {
-    self.s = normalize_percent(val);
-  }
-  pub fn set_lightness(&mut self, val: f64) {
-    self.l = normalize_percent(val);
+  pub fn set_hue(&mut self, val: f64) { self.units.list[0].set(val); }
+  pub fn set_saturation(&mut self, val: f64) { self.units.list[1].set(val); }
+  pub fn set_lightness(&mut self, val: f64) { self.units.list[2].set(val); }
+
+  /// Returns an iterator over three color units and the possibly alpha value.
+  pub fn iter(&self) -> ColorUnitsIter {
+    ColorUnitsIter::from_units(&self.units)
   }
 
-  pub fn iter(&self) -> ColorIter {
-    ColorIter::from_tuple_w_alpha(self.into(), self.a)
-  }
-
+  /// Returns an HSL representation with values converted to floar from 0.0 to 1.0
   pub fn as_ratio(&self) -> HslRatio {
-    let t = hsla_to_ratio(&self.into());
-    HslRatio { h: t.0, s: t.1, l: t.2, a: t.3 }
+    HslRatio::from_units(self.units.as_ratio())
   }
 }
 
@@ -101,7 +88,7 @@ impl Hsl {
 //
 impl Default for Hsl {
   fn default() -> Hsl {
-    Hsl { h: 0.0, s: 0.0, l: 0.0, a: None }
+    Hsl::from_units(new_hsl_units(0.0, 0.0, 0.0))
   }
 }
 
@@ -133,42 +120,12 @@ impl core::str::FromStr for Hsl {
   }
 }
 
-//
-//
-//
-// ColorAlpha
-//
-impl ColorAlpha for Hsl {
-  fn get_alpha(&self) -> f64 {
-    self.a.unwrap_or(1.0)
-  }
 
-  fn set_alpha(&mut self, val: f64) {
-    self.a = Some(normalize_ratio(val));
+impl GetColorUnits for Hsl {
+  fn get_units(&self) -> &Units {
+    &self.units
   }
-
-  fn opacify(&mut self, val: f64) {
-    self.set_alpha(self.get_alpha() + val);
-  }
-}
-
-//
-//
-//
-// Iter
-//
-impl<'a> core::iter::IntoIterator for &'a Hsl {
-  type Item = f64;
-  type IntoIter = ColorIter;
-  fn into_iter(self) -> ColorIter {
-    self.iter()
-  }
-}
-
-impl core::iter::IntoIterator for Hsl {
-  type Item = f64;
-  type IntoIter = ColorIter;
-  fn into_iter(self) -> ColorIter {
-    self.iter()
+  fn get_units_mut(&mut self) -> &mut Units {
+    &mut self.units
   }
 }

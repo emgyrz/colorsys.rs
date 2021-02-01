@@ -1,43 +1,18 @@
+use crate::Rgb;
 use crate::consts::{ALL_MIN, PERCENT_MAX};
-use crate::ratio_converters::rgb_to_ratio;
-use crate::ColorTuple;
+use crate::hsl::new_hsl_units;
+use crate::units::Units;
 
-enum RgbUnit {
-  Red,
-  Green,
-  Blue,
-}
+pub fn rgb_to_hsl(rgb: &Rgb) -> Units {
+  let rgb_r = rgb.units.as_ratio();
 
-fn get_max(red: f64, green: f64, blue: f64) -> (f64, RgbUnit) {
-  if (red > green) && (red > blue) {
-    return (red, RgbUnit::Red);
-  }
-  if green > blue {
-    (green, RgbUnit::Green)
-  } else {
-    (blue, RgbUnit::Blue)
-  }
-}
-
-fn get_min(red: f64, green: f64, blue: f64) -> f64 {
-  if (red < green) && (red < blue) {
-    red
-  } else if green < blue {
-    green
-  } else {
-    blue
-  }
-}
-
-pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
-  let (red, green, blue) = rgb_to_ratio(&rgb);
-  let (max, max_unit) = get_max(red, green, blue);
-  let min = get_min(red, green, blue);
+  let (max, max_unit) = rgb_r.max();
+  let (min, _) = rgb_r.min();
   let max_plus_min = max + min;
   let luminance = (max_plus_min) / 2.0;
 
   if max.eq(&min) {
-    return (ALL_MIN, ALL_MIN, luminance * PERCENT_MAX);
+    return new_hsl_units(ALL_MIN, ALL_MIN, luminance * PERCENT_MAX);
   }
 
   let max_min_delta = max - min;
@@ -47,23 +22,34 @@ pub fn rgb_to_hsl(rgb: &ColorTuple) -> ColorTuple {
     max_min_delta / (max_plus_min)
   };
 
+  let [red, green, blue]: [f64; 3] = rgb_r.into();
+
   let hue = match max_unit {
-    RgbUnit::Red => {
+    // red
+    0 => {
       let x = if green < blue { 6.0 } else { ALL_MIN };
       (green - blue) / max_min_delta + x
     }
-    RgbUnit::Green => (blue - red) / max_min_delta + 2.0,
-    RgbUnit::Blue => (red - green) / max_min_delta + 4.0,
+    // green
+    1 => (blue - red) / max_min_delta + 2.0,
+    // blue
+    2 => (red - green) / max_min_delta + 4.0,
+    _ => { unreachable!() }
   };
 
-  (hue * 60.0, saturation * PERCENT_MAX, luminance * PERCENT_MAX)
+  new_hsl_units(hue * 60.0, saturation * PERCENT_MAX, luminance * PERCENT_MAX)
 }
 
 #[test]
 fn rgb_to_hsl_tst() {
-  use crate::common::approx::approx_tuple;
+  use crate::{ColorTuple, Rgb, Hsl, ApproxEq};
   fn a(x: ColorTuple, y: ColorTuple) -> bool {
-    approx_tuple(&rgb_to_hsl(&x), &y, 0.5)
+    let from_rgb_u = rgb_to_hsl(&Rgb::from(x));
+    let hsl_u = new_hsl_units(y.0, y.1, y.2);
+    println!("rgb {:?}\n\n", Into::<Hsl>::into(Rgb::from(x)));
+    from_rgb_u.approx_eq_clarify(&hsl_u, 0.5)
+    // Rgb::from(x).approx_eq_clarify(&Hsl::from(y), 0.5)
+    // approx_tuple(&rgb_to_hsl(&Rgb::from(x)), &y, 0.5)
   }
   let asserts = [
     ((255.0, 255.0, 255.0), (0.0, 0.0, 100.0)),

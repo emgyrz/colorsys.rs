@@ -1,4 +1,4 @@
-use crate::normalize::normalize_ratio;
+use crate::units::{GetColorUnits, Units};
 
 ///
 /// Rgb representation as ratio (from `0.0` to `1.0`).
@@ -23,41 +23,39 @@ use crate::normalize::normalize_ratio;
 ///
 /// ```
 ///
-#[derive(Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct RgbRatio {
-  pub(super) r: f64,
-  pub(super) g: f64,
-  pub(super) b: f64,
-  pub(super) a: f64,
+  pub(crate) units: Units,
 }
 
 impl RgbRatio {
   pub fn new(r: f64, g: f64, b: f64, a: f64) -> Self {
-    RgbRatio {
-      r: normalize_ratio(r),
-      g: normalize_ratio(g),
-      b: normalize_ratio(b),
-      a: normalize_ratio(a),
-    }
+    let mut units = Units::new_ratios(&[r, g, b]);
+    units.alpha.set(a);
+    RgbRatio { units }
   }
 
-  pub fn r(&self) -> f64 {
-    self.r
-  }
-  pub fn g(&self) -> f64 {
-    self.g
-  }
-  pub fn b(&self) -> f64 {
-    self.b
-  }
-  pub fn a(&self) -> f64 {
-    self.a
-  }
+  pub fn r(&self) -> f64 { self.units[0] }
+  pub fn g(&self) -> f64 { self.units[1] }
+  pub fn b(&self) -> f64 { self.units[2] }
+  pub fn a(&self) -> f64 { self.units.alpha.get_f64() }
+
+  pub(crate) fn from_units(u: Units) -> Self { RgbRatio { units: u } }
 }
 
 impl AsRef<RgbRatio> for RgbRatio {
   fn as_ref(&self) -> &RgbRatio {
     &self
+  }
+}
+
+
+impl GetColorUnits for RgbRatio {
+  fn get_units(&self) -> &Units {
+    &self.units
+  }
+  fn get_units_mut(&mut self) -> &mut Units {
+    &mut self.units
   }
 }
 
@@ -103,20 +101,20 @@ from_for_rgb_ratio_all!(f64);
 macro_rules! into_for_rgb_ratio_all {
   ($t: ty) => {
     into_for_some!(($t, $t, $t), RgbRatio, self, {
-      let RgbRatio { r, g, b, .. } = *self;
-      (r as $t, g as $t, b as $t)
+      let u = &self.get_units();
+      (u[0] as $t, u[1] as $t, u[2] as $t)
     });
     into_for_some!(($t, $t, $t, $t), RgbRatio, self, {
-      let RgbRatio { r, g, b, a } = *self;
-      (r as $t, g as $t, b as $t, a as $t)
+      let u = &self.get_units();
+      (u[0] as $t, u[1] as $t, u[2] as $t, u.alpha.get_f64() as $t)
     });
     into_for_some!([$t; 3], RgbRatio, self, {
-      let RgbRatio { r, g, b, .. } = *self;
-      [r as $t, g as $t, b as $t]
+      let u = &self.get_units();
+      [u[0] as $t, u[1] as $t, u[2] as $t]
     });
     into_for_some!([$t; 4], RgbRatio, self, {
-      let RgbRatio { r, g, b, a } = *self;
-      [r as $t, g as $t, b as $t, a as $t]
+      let u = &self.get_units();
+      [u[0] as $t, u[1] as $t, u[2] as $t, u.alpha.get_f64() as $t]
     });
   };
 }
