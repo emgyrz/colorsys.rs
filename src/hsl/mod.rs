@@ -1,3 +1,5 @@
+#[cfg(not(feature = "std"))] use alloc::string::String;
+
 pub use ratio::HslRatio;
 
 use crate::common::{
@@ -49,14 +51,27 @@ impl Hsl {
     tuple_to_string(&t, "hsl")
   }
 
-  pub fn get_hue(&self) -> f64 {
+  pub fn hue(&self) -> f64 {
     self.h
   }
-  pub fn get_saturation(&self) -> f64 {
+  pub fn saturation(&self) -> f64 {
     self.s
   }
-  pub fn get_lightness(&self) -> f64 {
+  pub fn lightness(&self) -> f64 {
     self.l
+  }
+
+  #[deprecated(since = "0.7.0", note = "Please use `hue` instead")]
+  pub fn get_hue(&self) -> f64 {
+    self.hue()
+  }
+  #[deprecated(since = "0.7.0", note = "Please use `saturation` instead")]
+  pub fn get_saturation(&self) -> f64 {
+    self.saturation()
+  }
+  #[deprecated(since = "0.7.0", note = "Please use `lightness` instead")]
+  pub fn get_lightness(&self) -> f64 {
+    self.lightness()
   }
 
   pub fn set_hue(&mut self, val: f64) {
@@ -106,7 +121,7 @@ impl AsRef<Hsl> for Hsl {
 //
 // FromStr
 //
-impl std::str::FromStr for Hsl {
+impl core::str::FromStr for Hsl {
   type Err = ParseError;
   fn from_str(s: &str) -> Result<Hsl, ParseError> {
     let (tuple, alpha) = hsl_hsv_from_str(s, Hs::Hsl)?;
@@ -142,7 +157,7 @@ impl ColorAlpha for Hsl {
 //
 // Iter
 //
-impl<'a> std::iter::IntoIterator for &'a Hsl {
+impl<'a> core::iter::IntoIterator for &'a Hsl {
   type Item = f64;
   type IntoIter = ColorIter;
   fn into_iter(self) -> ColorIter {
@@ -150,7 +165,7 @@ impl<'a> std::iter::IntoIterator for &'a Hsl {
   }
 }
 
-impl std::iter::IntoIterator for Hsl {
+impl core::iter::IntoIterator for Hsl {
   type Item = f64;
   type IntoIter = ColorIter;
   fn into_iter(self) -> ColorIter {

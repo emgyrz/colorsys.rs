@@ -9,7 +9,7 @@ use crate::{
 };
 use common::{approx::*, ops};
 
-use std::ops::{Add, AddAssign, Sub, SubAssign};
+use core::ops::{Add, AddAssign, Sub, SubAssign};
 
 fn add_sub(rgb1: &Rgb, rgb2: &Rgb, is_add: bool) -> Rgb {
   type TA = (ColorTuple, Option<f64>);

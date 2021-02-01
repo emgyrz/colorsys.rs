@@ -9,7 +9,7 @@ use crate::{
 };
 use common::{approx::*, ops};
 
-use std::ops::{Add, AddAssign, Sub, SubAssign};
+use core::ops::{Add, AddAssign, Sub, SubAssign};
 
 fn add_sub(hsl1: &Hsl, hsl2: &Hsl, is_add: bool) -> Hsl {
   type TA = (ColorTuple, Option<f64>);

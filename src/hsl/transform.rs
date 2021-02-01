@@ -13,8 +13,7 @@ impl ColorTransform for Hsl {
     match sat {
       SaturationInSpace::Hsl(s) => self.set_saturation(self.s + s),
       SaturationInSpace::Hsv(s) => {
-        println!("{}", s);
-        unimplemented!();
+        unimplemented!("{}", s );
       }
     }
   }

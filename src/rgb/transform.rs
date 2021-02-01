@@ -33,13 +33,12 @@ impl ColorTransform for Rgb {
     match sat {
       SaturationInSpace::Hsl(amt) => {
         let mut hsl: Hsl = self.into();
-        hsl.set_saturation(hsl.get_saturation() + amt);
+        hsl.set_saturation(hsl.saturation() + amt);
         let new_rgb = Rgb::from(hsl);
         self._apply_tuple(&new_rgb.into());
       }
       SaturationInSpace::Hsv(amt) => {
-        println!("{}", amt);
-        unimplemented!();
+        unimplemented!("{}", amt );
       }
     }
   }
@@ -67,16 +66,29 @@ impl ColorTransform for Rgb {
 #[test]
 fn lighten_darken_test() {
   use crate::ColorTuple;
+  use crate::common::f64_round;
+
   pub fn as_rounded_rgb_tuple(t: &ColorTuple) -> (u16, u16, u16) {
     let (r, g, b) = *t;
-    (r.round() as u16, g.round() as u16, b.round() as u16)
+    (f64_round(r) as u16, f64_round(g) as u16, f64_round(b) as u16)
   }
 
   let asserts = [
+    #[cfg(feature = "std")]
     ((30.0, 108.0, 77.0), 20.0, (52, 188, 134)),
+
     ((30.0, 108.0, 77.0), 90.0, (255, 255, 255)),
+
+    #[cfg(feature = "std")]
     ((30.0, 108.0, 77.0), -20.0, (8, 28, 20)),
+
+    #[cfg(feature = "std")]
     ((0.0, 0.0, 0.0), 50.0, (128, 128, 128)),
+
+    #[cfg(not(feature = "std"))]
+    ((0.0, 0.0, 0.0), 50.0, (127, 127, 127)),
+
+
     ((0.0, 0.0, 0.0), -50.0, (0, 0, 0)),
     ((0.0, 0.0, 0.0), 300.5, (255, 255, 255)),
   ];

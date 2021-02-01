@@ -1,3 +1,5 @@
+#[cfg(not(feature = "std"))] use alloc::string::String;
+
 #[cfg(test)]
 mod tests;
 
@@ -35,7 +37,7 @@ pub use ratio::RgbRatio;
 /// let mut rgb1 = Rgb::from((100.0, 255.0, 17.0));
 /// // Rgb { r: 100.0, g: 255.0, b: 17.0, a: None }
 ///
-/// let green = rgb1.get_green();
+/// let green = rgb1.green();
 /// // 255.0
 ///
 /// rgb1.set_red(108.3);
@@ -57,7 +59,7 @@ pub use ratio::RgbRatio;
 /// // ~Rgb { r: 177.33, g: 255.0, b: 176.902, .. }
 ///
 /// rgb2.set_green(-150.0);
-/// assert_eq!(rgb2.get_green(), 0.0);
+/// assert_eq!(rgb2.green(), 0.0);
 ///
 /// rgb2.lighten(-13.123);
 /// // ~Rgb { r: 110.41, g: 0.0, b: 110.1, .. }
@@ -100,14 +102,25 @@ impl Rgb {
     converters::rgb_to_hex(&self.into())
   }
 
-  pub fn get_red(&self) -> f64 {
+  pub fn red(&self) -> f64 {
     self.r
   }
-  pub fn get_green(&self) -> f64 {
+  pub fn green(&self) -> f64 {
     self.g
   }
-  pub fn get_blue(&self) -> f64 {
+  pub fn blue(&self) -> f64 {
     self.b
+  }
+
+  #[deprecated(since = "0.7.0", note = "Please use `red` instead")]
+  pub fn get_red(&self) -> f64 { self.red() }
+  #[deprecated(since = "0.7.0", note = "Please use `green` instead")]
+  pub fn get_green(&self) -> f64 {
+    self.green()
+  }
+  #[deprecated(since = "0.7.0", note = "Please use `blue` instead")]
+  pub fn get_blue(&self) -> f64 {
+    self.blue()
   }
 
   pub fn set_red(&mut self, val: f64) {
@@ -166,7 +179,7 @@ impl AsRef<Rgb> for Rgb {
 //
 // FromStr
 //
-impl std::str::FromStr for Rgb {
+impl core::str::FromStr for Rgb {
   type Err = ParseError;
   fn from_str(s: &str) -> Result<Rgb, ParseError> {
     let (tuple, alpha) = from_str::rgb(s)?;
@@ -202,7 +215,7 @@ impl ColorAlpha for Rgb {
 //
 // Iter
 //
-impl<'a> std::iter::IntoIterator for &'a Rgb {
+impl<'a> core::iter::IntoIterator for &'a Rgb {
   type Item = f64;
   type IntoIter = ColorIter;
   fn into_iter(self) -> ColorIter {
@@ -210,7 +223,7 @@ impl<'a> std::iter::IntoIterator for &'a Rgb {
   }
 }
 
-impl std::iter::IntoIterator for Rgb {
+impl core::iter::IntoIterator for Rgb {
   type Item = f64;
   type IntoIter = ColorIter;
   fn into_iter(self) -> ColorIter {

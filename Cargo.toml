@@ -1,6 +1,6 @@
 [package]
 name = "colorsys"
-version = "0.6.0"
+version = "0.6.1"
 description = "A module for color conversion and mutation. For now works with RGB(a)( as hexadecimal too), HSL(a) color models"
 authors = ["mz <emgyrz@gmail.com>"]
 license = "MIT"
@@ -12,3 +12,8 @@ edition = "2018"
 readme = "README.md"
 
 [dependencies]
+
+
+[features]
+default = [ "std" ]
+std = []

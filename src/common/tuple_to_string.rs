@@ -1,32 +1,37 @@
+#[cfg(not(feature = "std"))] use alloc::string::String;
 use crate::{normalize::round_ratio, ColorTupleA};
+use crate::common::{f64_abs, f64_round};
 
 pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
   let (x, y, z, a) = tuple;
   let mut start = String::from(prefix);
-  let a = if (a - 1.0).abs() < std::f64::EPSILON {
+  let a = if f64_abs(a - 1.0) < core::f64::EPSILON {
     String::from("1")
   } else {
-    round_ratio(*a).to_string()
+    format!("{}", round_ratio(*a))
   };
 
   let is_hsl = prefix == "hsl";
-  let mut vals = [x, y, z]
+  let mut result = String::new();
+  [x, y, z]
     .iter()
     .enumerate()
-    .map(|(ind, u)| {
-      let mut s = u.round().to_string();
+    .for_each(|(ind, u)| {
+      result.push_str(&format!("{}",  f64_round(**u)));
       if is_hsl && (ind == 1 || ind == 2) {
-        s.push('%');
+        result.push('%');
       }
-      s
-    })
-    .collect::<Vec<String>>()
-    .join(",");
+      if ind != 2 {
+        result.push(',');
+      }
+    });
 
   if a != "1" {
     start.push('a');
-    vals.push_str(&(",".to_owned() + &a));
+    result.push_str(&(","));
+    result.push_str(&a);
   }
 
-  format!("{}({})", start, vals)
+  format!("{}({})", start, result)
 }
+

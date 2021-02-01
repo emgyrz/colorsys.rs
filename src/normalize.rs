@@ -1,6 +1,7 @@
 use crate::common::approx::approx_def;
 
 use super::consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX, RGB_UNIT_MAX};
+use crate::common::{f64_abs, f64_round};
 
 fn normalize(val: f64, max: f64) -> f64 {
   if val < ALL_MIN {
@@ -18,7 +19,7 @@ pub fn normalize_percent(val: f64) -> f64 {
 
 pub fn normalize_hue(h: f64) -> f64 {
   let h = normalize(h, HUE_MAX);
-  if (h - HUE_MAX).abs() < std::f64::EPSILON {
+  if f64_abs(h - HUE_MAX) < core::f64::EPSILON {
     0.0
   } else {
     h
@@ -62,5 +63,5 @@ pub fn bound_hue(h: f64) -> f64 {
 }
 
 pub fn round_ratio(r: f64) -> f64 {
-  (r * 100.0).round() / 100.0
+  f64_round(r * 100.0) / 100.0
 }

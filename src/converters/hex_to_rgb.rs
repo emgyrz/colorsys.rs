@@ -1,5 +1,8 @@
+#[cfg(not(feature = "std"))] use alloc::string::String;
+#[cfg(not(feature = "std"))] use alloc::vec::Vec;
 use crate::{err, ColorTuple};
 use err::{make_parse_err, ParseError};
+
 
 pub fn hex_to_rgb(s: &str) -> Result<ColorTuple, ParseError> {
   let mut hex = s.replace("#", "").to_lowercase();
@@ -9,7 +12,7 @@ pub fn hex_to_rgb(s: &str) -> Result<ColorTuple, ParseError> {
   if count == 3 {
     hex = hex_chars
       .iter()
-      .map(|c| c.to_string().repeat(2))
+      .map(|c| format!("{}", &c).repeat(2))
       .collect::<Vec<String>>()
       .join("");
   } else if count != 6 {

@@ -10,6 +10,27 @@ pub use iter::ColorIter;
 pub use tuple_to_string::tuple_to_string;
 
 pub enum Hs {
+  #[allow(dead_code)]
   Hsv,
+
   Hsl,
+}
+
+
+#[cfg(feature = "std")]
+pub(crate) fn f64_abs(n: f64) -> f64 {
+  n.abs()
+}
+#[cfg(not(feature = "std"))]
+pub(crate) fn f64_abs(n: f64) -> f64 {
+  if n < 0.0 { -n } else { n }
+}
+
+#[cfg(feature = "std")]
+pub(crate) fn f64_round(n: f64) -> f64 {
+  n.round()
+}
+#[cfg(not(feature = "std"))]
+pub(crate) fn f64_round(n: f64) -> f64 {
+  f64::from(n as i32)
 }

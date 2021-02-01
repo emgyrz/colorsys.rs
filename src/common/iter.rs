@@ -6,12 +6,12 @@ pub struct ColorIter {
 }
 
 impl ColorIter {
-  pub fn from_tuple_w_alpha(t: ColorTuple, a: Option<f64>) -> ColorIter {
+  pub(crate) fn from_tuple_w_alpha(t: ColorTuple, a: Option<f64>) -> ColorIter {
     ColorIter { ind: 0, vals: [Some(t.0), Some(t.1), Some(t.2), a] }
   }
 }
 
-impl std::iter::Iterator for ColorIter {
+impl core::iter::Iterator for ColorIter {
   type Item = f64;
   fn next(&mut self) -> Option<Self::Item> {
     match self.ind {

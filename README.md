@@ -4,18 +4,18 @@
 
 A module for color conversion and mutation written in Rust. For now works with RGB(a)( as hexadecimal too), HSL(a) color models
 
-[Online documentation](https://docs.rs/colorsys/0.6.0/colorsys/)
+[Online documentation](https://docs.rs/colorsys)
 
 
 
 ## What It Can Do
 
 #### getters & setters
-```Rust
-use colorsys::{Rgb, Hsl};
+```rust
+use colorsys::{Rgb, Hsl, ColorAlpha};
 
 let rgb = Rgb::from((57.3, 12.7, 53.0));
-let r = rgb.get_red();
+let r = rgb.red();
 // 57.3
 
 let mut hsl = Hsl::default();
@@ -28,7 +28,7 @@ hsl.set_alpha(0.75);
 
 #### conversion
 See `From/FromStr/Into` traits implementation in docs for more info
-```Rust
+```rust
 use colorsys::{Rgb, Hsl};
 
 let rbga_tuple = (57.3, 12.7, 53.0, 0.33);
@@ -36,7 +36,7 @@ let rgba = Rgb::from(&rbga_tuple);
 let hsla: Hsl = rgba.as_ref().into();
 // ~Hsl { h: 305.78, s: 63.71, l: 13.73, a: 0.33 }
 
-let rgb_arr: [u8, u8, u8] = Rgb::from(&hsla).into();
+let rgb_arr: [u8; 3] = Rgb::from(&hsla).into();
 // ~[57, 13, 53]
 
 let hsla_tuple: (f64,f64,f64,f64) = Hsl::from( Rgb::from(rgb_tuple) ).into();
@@ -52,7 +52,7 @@ let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
   
 let rgb2 = Rgb::from(
 Into::<[f32; 4]>::into(Rgb::from(
-  Into::<[u8; 4]>::into(
+  Into::<[u8; 3]>::into(
     Rgb::from(
       Into::<(i32,i32,i32)>::into(
         Rgb::from(
@@ -82,7 +82,7 @@ assert!(blue.approx_eq_clarify(&converted, 0.0001));
 
 #### modification
 See `ColorTransform/Add*/Sub*..` traits in docs for more
-```Rust
+```rust
 use colorsys::{Hsl, Rgb, ColorTransform,ColorAlpha, SaturationInSpace};
 
 let mut rgb: Rgb = (245.0,152.0,53.0).into();
@@ -120,7 +120,7 @@ let hsl2 = hsl + rgb3.into();
 ```
 
 #### parsing from string & css string representation
-```Rust
+```rust
 use colorsys::{Hsl, Rgb};
 use std::str::FromStr;
 
@@ -139,6 +139,15 @@ Hsl::from_str("hsl(168, 52%, 42%)").unwrap().to_css_string();
 
 ```
 
+## `no_std`
+Crate has a Cargo feature named `"std"` that is enabled by default.
+In order to use `colorsys` in a `no_std` context this feature needs to be disabled.
+Modify your dependency to opt out of enabled-by-default features.
+```toml
+[dependencies]
+colorsys = { version = "*", default-features = false }
+```
+
 ## Color unit ranges
 All color units is f64. Here are their ranges:
  - red - 0.0 .. 255.0
@@ -150,9 +159,6 @@ All color units is f64. Here are their ranges:
  - alpha - 0.0 .. 1.0
 
 If you specify a value that does not fit within these ranges, they are replaced with a minimum or maximum value.
-
-
-
 
 ##### Enjoy using!
 

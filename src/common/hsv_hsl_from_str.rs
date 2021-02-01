@@ -1,3 +1,7 @@
+
+#[cfg(not(feature = "std"))] use alloc::string::String;
+#[cfg(not(feature = "std"))] use alloc::vec::Vec;
+
 use super::Hs;
 use crate::err::{make_parse_err, ParseError};
 use crate::{consts, ColorTuple};

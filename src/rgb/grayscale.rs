@@ -53,8 +53,8 @@ fn rgb_to_grayscale_avg(rgb: &mut Rgb) {
 
 fn rgb_to_grayscale_avg_prom(rgb: &mut Rgb) {
   let rgb_vec = vec![rgb.r, rgb.g, rgb.b];
-  let max = rgb_vec.iter().fold(std::f64::MIN, |a, &b| a.max(b));
-  let min = rgb_vec.iter().fold(std::f64::MAX, |a, &b| a.min(b));
+  let max = rgb_vec.iter().fold(core::f64::MIN, |a, &b| a.max(b));
+  let min = rgb_vec.iter().fold(core::f64::MAX, |a, &b| a.min(b));
   let y = (max + min) / 2.0;
   rgb.r = y;
   rgb.g = y;

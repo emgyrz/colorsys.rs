@@ -1,4 +1,5 @@
-use std::fmt;
+use core::fmt;
+#[cfg(not(feature = "std"))] use alloc::string::String;
 
 #[derive(Clone)]
 pub struct ParseError {
@@ -25,4 +26,5 @@ pub fn make_parse_err(s: &str, col_type: &str) -> ParseError {
   ParseError { message: format!("cannot parse string `{}` as {}", s, col_type) }
 }
 
+#[cfg(feature = "std")]
 impl std::error::Error for ParseError {}
