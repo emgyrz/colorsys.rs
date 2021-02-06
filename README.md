@@ -155,13 +155,16 @@ colorsys = { version = "*", default-features = false }
 
 ## Color unit ranges
 All color units is f64. Here are their ranges:
- - red - 0.0 .. 255.0
- - green - 0.0 .. 255.0
- - blue - 0.0 .. 255.0
- - hue - 0.0 .. 360.0
- - saturation - 0.0 .. 100.0
- - lightness - 0.0 .. 100.0
- - alpha - 0.0 .. 1.0
+ - red: 0.0 - 255.0
+ - green: 0.0 - 255.0
+ - blue: 0.0 - 255.0
+ - hue: 0.0 - 360.0
+ - saturation: 0.0 - 100.0
+ - lightness: 0.0 - 100.0
+ - all in cmyk are: 0.0 - 100.0  
+ - alpha: 0.0 - 1.0
+ - ansi256 code is `u8`
+
 
 If you specify a value that does not fit within these ranges, they are replaced with a minimum or maximum value.
 
