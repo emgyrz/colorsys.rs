@@ -7,6 +7,7 @@ pub use crate::units::iter::ColorUnitsIter;
 mod hsv_hsl_from_str;
 mod tuple_to_string;
 mod alpha;
+mod from_str;
 
 pub mod approx;
 

@@ -170,6 +170,7 @@ mod err;
 mod hsl;
 mod normalize;
 mod rgb;
+mod ansi;
 mod cmyk;
 mod units;
 
@@ -182,6 +183,7 @@ pub use err::ParseError;
 pub use hsl::{Hsl, HslRatio};
 pub use rgb::{GrayScaleMethod, Rgb, RgbRatio};
 pub use cmyk::{Cmyk,CmykRatio};
+pub use ansi::{Ansi256};
 
 /// Use to transfer nad collect color values.
 /// May be for example `($red,$green,$blue)` or `($hue,$saturation,$value)`

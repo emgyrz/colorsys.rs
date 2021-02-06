@@ -3,9 +3,13 @@
 [![Crates.io](https://img.shields.io/crates/v/colorsys.svg)](https://crates.io/crates/colorsys/)
 
 A module for color conversion and mutation written in Rust. 
-For now works with RGB(a)( as hexadecimal too), HSL(a) and CMYK color models
+For now works with next color models:
+ - RGB(a)( as hexadecimal too)
+ - HSL(a)
+ - CMYK(a)
+ - ANSI256 codes
 
-[Online documentation](https://docs.rs/colorsys)
+[Documentation](https://docs.rs/colorsys)
 
 
 
