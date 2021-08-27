@@ -185,7 +185,7 @@ pub use rgb::{GrayScaleMethod, Rgb, RgbRatio};
 pub use cmyk::{Cmyk,CmykRatio};
 pub use ansi::{Ansi256};
 
-/// Use to transfer nad collect color values.
+/// Use to transfer and collect color values.
 /// May be for example `($red,$green,$blue)` or `($hue,$saturation,$value)`
 pub type ColorTuple = (f64, f64, f64);
 
