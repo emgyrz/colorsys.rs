@@ -173,7 +173,7 @@ impl Default for Rgb {
 //
 impl AsRef<Rgb> for Rgb {
   fn as_ref(&self) -> &Rgb {
-    &self
+    self
   }
 }
 

@@ -93,7 +93,7 @@ impl GetColorUnits for Cmyk {
 
 
 impl AsRef<Cmyk> for Cmyk {
-  fn as_ref(&self) -> &Cmyk { &self }
+  fn as_ref(&self) -> &Cmyk { self }
 }
 
 impl Default for Cmyk {

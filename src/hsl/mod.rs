@@ -99,7 +99,7 @@ impl Default for Hsl {
 //
 impl AsRef<Hsl> for Hsl {
   fn as_ref(&self) -> &Hsl {
-    &self
+    self
   }
 }
 

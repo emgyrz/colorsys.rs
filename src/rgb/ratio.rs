@@ -44,9 +44,7 @@ impl RgbRatio {
 }
 
 impl AsRef<RgbRatio> for RgbRatio {
-  fn as_ref(&self) -> &RgbRatio {
-    &self
-  }
+  fn as_ref(&self) -> &RgbRatio { self }
 }
 
 

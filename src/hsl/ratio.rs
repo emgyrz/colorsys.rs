@@ -44,7 +44,7 @@ impl HslRatio {
 
 impl AsRef<HslRatio> for HslRatio {
   fn as_ref(&self) -> &HslRatio {
-    &self
+    self
   }
 }
 

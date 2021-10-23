@@ -155,6 +155,7 @@
 //!
 
 #![allow(clippy::many_single_char_names)]
+#![allow(clippy::from_over_into)]
 #![cfg_attr(not(feature = "std"), no_std)]
 
 #[cfg(not(feature = "std"))]

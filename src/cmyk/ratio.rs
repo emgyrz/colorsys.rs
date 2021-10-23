@@ -29,9 +29,7 @@ impl CmykRatio {
 
 
 impl AsRef<CmykRatio> for CmykRatio {
-  fn as_ref(&self) -> &CmykRatio {
-    &self
-  }
+  fn as_ref(&self) -> &CmykRatio { self }
 }
 
 impl Default for CmykRatio {

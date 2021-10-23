@@ -28,7 +28,7 @@ pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
 
   if a != "1" {
     start.push('a');
-    result.push_str(&(","));
+    result.push(',');
     result.push_str(&a);
   }
 

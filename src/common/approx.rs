@@ -17,9 +17,9 @@ pub fn approx(x: f64, y: f64, precision: f64) -> bool {
 
 impl<T> ApproxEq<T> for T where T: GetColorUnits {
   fn approx_eq(&self, other: &T) -> bool {
-    self.get_units().approx_eq(&other.get_units())
+    self.get_units().approx_eq(other.get_units())
   }
   fn approx_eq_clarify(&self, other: &T, precision: f64) -> bool {
-    self.get_units().approx_eq_clarify(&other.get_units(), precision)
+    self.get_units().approx_eq_clarify(other.get_units(), precision)
   }
 }

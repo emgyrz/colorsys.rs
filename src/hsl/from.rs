@@ -58,7 +58,7 @@ from_for_hsl_all!(u64);
 
 fn from_rgb(rgb: &Rgb) -> Hsl {
   let a = rgb.alpha();
-  let mut hsl = Hsl::from_units(rgb_to_hsl(&rgb));
+  let mut hsl = Hsl::from_units(rgb_to_hsl(rgb));
   hsl.set_alpha(a);
   hsl
 }
