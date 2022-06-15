@@ -19,20 +19,12 @@ fn lighten() {
 
   rgb.lighten(15.0);
 
-  #[cfg(feature = "std")]
   assert_eq!(round_tuple(&rgb.into()), (135, 208, 142));
-  #[cfg(not(feature = "std"))]
-  assert_eq!(round_tuple(&rgb.into()), (134, 207, 141));
 
   rgb2.lighten(45.0);
-  #[cfg(feature = "std")]
   assert_eq!(round_tuple(&rgb2.into()), (245, 251, 245));
-  #[cfg(not(feature = "std"))]
-  assert_eq!(round_tuple(&rgb2.into()), (244, 250, 245));
-
 
   rgb3.lighten(-23.0);
-  #[cfg(feature = "std")]
   assert_eq!(round_tuple(&rgb3.into()), (42, 107, 48));
 
   rgb4.lighten(-203.0);

@@ -37,7 +37,7 @@ pub fn hsl_hsv_from_str(
   let (start, start_a, err_name) = strings_from_name(col_space);
 
   let make_err = || Err(make_parse_err(s, &err_name));
-  let s = s.trim().to_lowercase().replace(" ", "").replace("%", "");
+  let s = s.trim().to_lowercase().replace(' ', "").replace('%', "");
   let is_hsl = s.starts_with(&start);
   let is_hsla = s.starts_with(&start_a);
   let is_ends_with_bracket = s.ends_with(')');

@@ -42,11 +42,10 @@ pub fn rgb_to_hsl(rgb: &Rgb) -> Units {
 
 #[test]
 fn rgb_to_hsl_tst() {
-  use crate::{ColorTuple, Rgb, Hsl, ApproxEq};
+  use crate::{ColorTuple, Rgb, ApproxEq};
   fn a(x: ColorTuple, y: ColorTuple) -> bool {
     let from_rgb_u = rgb_to_hsl(&Rgb::from(x));
     let hsl_u = new_hsl_units(y.0, y.1, y.2);
-    println!("rgb {:?}\n\n", Into::<Hsl>::into(Rgb::from(x)));
     from_rgb_u.approx_eq_clarify(&hsl_u, 0.5)
     // Rgb::from(x).approx_eq_clarify(&Hsl::from(y), 0.5)
     // approx_tuple(&rgb_to_hsl(&Rgb::from(x)), &y, 0.5)

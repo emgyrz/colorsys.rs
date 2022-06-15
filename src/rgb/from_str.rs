@@ -8,7 +8,7 @@ use crate::err::{make_parse_err, ParseError};
 
 pub fn rgb(s: &str) -> Result<(ColorTuple, Option<f64>), ParseError> {
   let make_err = || Err(make_parse_err(s, "rgb or rgba"));
-  let s = s.trim().to_lowercase().replace(" ", "");
+  let s = s.trim().to_lowercase().replace(' ', "");
   let is_rgb = s.starts_with("rgb(");
   let is_rgba = s.starts_with("rgba(");
   let is_ends_with_bracket = s.ends_with(')');

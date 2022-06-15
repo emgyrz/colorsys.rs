@@ -40,7 +40,7 @@ ops_def!(Cmyk);
 
 
 pub(crate) fn new_cmyk_units(c: f64, m: f64, y: f64, k: f64) -> Units {
-  let p = |v: f64| Unit::new_percent(v);
+  let p = Unit::new_percent;
   let ul = [p(c), p(m), p(y), p(k)];
   Units { len: 4, list: ul, alpha: Alpha::default() }
 }

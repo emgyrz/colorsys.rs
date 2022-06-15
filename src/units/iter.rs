@@ -39,6 +39,9 @@ impl core::iter::Iterator for ColorUnitsIter {
 #[cfg(test)]
 mod test {
   use crate::Rgb;
+  #[cfg(not(feature = "std"))]
+  use alloc::vec::Vec;
+
 
   #[test]
   fn color_iter_collect_test() {
