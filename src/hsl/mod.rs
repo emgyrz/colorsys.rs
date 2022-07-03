@@ -4,7 +4,7 @@ use alloc::string::String;
 pub use ratio::HslRatio;
 
 use crate::{ColorAlpha, ColorTupleA, ColorUnitsIter, ParseError, Rgb};
-use crate::common::{Hs, hsl_hsv_from_str, tuple_to_string, };
+use crate::common::{Hs, hsl_hsv_from_str, tuple_to_string};
 use crate::units::{Alpha, GetColorUnits, Unit, Units};
 
 #[cfg(test)]

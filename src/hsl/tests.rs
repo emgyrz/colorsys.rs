@@ -2,8 +2,9 @@ use crate::{ApproxEq, ColorTuple, Hsl, Rgb};
 use crate::common::f64_round;
 
 fn round(n: f64) -> u32 {
-  f64_round( n ) as u32
+  f64_round(n) as u32
 }
+
 fn round_tuple(t: &ColorTuple) -> (u32, u32, u32) {
   let (x, y, z) = *t;
   (round(x), round(y), round(z))

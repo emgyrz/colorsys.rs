@@ -16,7 +16,7 @@ pub(crate) fn rgb_to_cmyk(rgb: &Rgb) -> Cmyk {
 }
 
 pub(crate) fn cmyk_to_rgb(cmyk: &Cmyk) -> Rgb {
-  let [ c, m, y, k ]: [f64;4] = cmyk.units.as_ratio().into();
+  let [ c, m, y, k ]: [f64; 4] = cmyk.units.as_ratio().into();
   let x = RGB_UNIT_MAX * (1.0 - k);
 
   Rgb::new((1.0 - c) * x, (1.0 - m) * x, (1.0 - y) * x, cmyk.units.alpha.get())

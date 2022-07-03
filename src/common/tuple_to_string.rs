@@ -1,8 +1,11 @@
-#[cfg(not(feature = "std"))] use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
 use crate::{normalize::round_ratio, ColorTupleA};
 use crate::common::{f64_abs, f64_round};
 
 pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
+  use core::fmt::Write; // import without risk of name clashing
+
   let (x, y, z, a) = tuple;
   let mut start = String::from(prefix);
   let a = if f64_abs(a - 1.0) < core::f64::EPSILON {
@@ -17,7 +20,7 @@ pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
     .iter()
     .enumerate()
     .for_each(|(ind, u)| {
-      result.push_str(&format!("{}",  f64_round(**u)));
+      let _ = write!(result, "{}", f64_round(**u));
       if is_hsl && (ind == 1 || ind == 2) {
         result.push('%');
       }

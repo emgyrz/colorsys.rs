@@ -1,5 +1,5 @@
-
-#[cfg(not(feature = "std"))] use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
 
 use crate::ColorTuple;
 use crate::common::f64_round;

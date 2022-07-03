@@ -6,13 +6,13 @@ use crate::consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX, RGB_UNIT_MAX};
 #[derive(Clone, Copy)]
 pub struct Unit {
   pub(crate) value: f64,
-  highest: &'static f64
+  highest: &'static f64,
 }
 
 
 impl Default for Unit {
   fn default() -> Self {
-    Unit::new_ratio(0.0 )
+    Unit::new_ratio(0.0)
   }
 }
 
@@ -36,7 +36,7 @@ impl Unit {
   fn new(value: f64, highest: &'static f64) -> Self {
     Unit {
       value,
-      highest
+      highest,
     }
   }
   fn new_checked(value: f64, highest: &'static f64) -> Self {

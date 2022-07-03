@@ -1,4 +1,3 @@
-
 use super::unit::Unit;
 
 use crate::consts::{RATIO_MAX};
@@ -50,16 +49,16 @@ impl Alpha {
 
 impl ApproxEq<Alpha> for Alpha {
   fn approx_eq(&self, other: &Alpha) -> bool {
-    self.approx_eq_clarify(other,DEFAULT_APPROX_EQ_PRECISION)
+    self.approx_eq_clarify(other, DEFAULT_APPROX_EQ_PRECISION)
   }
 
   fn approx_eq_clarify(&self, other: &Alpha, precision: f64) -> bool {
     if let Some(su) = &self.value {
       if let Some(ou) = &other.value {
-        return approx(su.value, ou.value, precision)
+        return approx(su.value, ou.value, precision);
       }
     } else {
-      return other.value.is_none()
+      return other.value.is_none();
     }
     false
   }

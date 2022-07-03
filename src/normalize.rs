@@ -1,4 +1,3 @@
-
 use super::consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX, RGB_UNIT_MAX};
 use crate::common::{f64_round};
 

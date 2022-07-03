@@ -49,6 +49,7 @@ impl<'a> From<&'a [f64; 4]> for CmykRatio {
 impl Into<[f64; 4]> for CmykRatio {
   fn into(self: CmykRatio) -> [f64; 4] { self.units.into() }
 }
+
 impl<'a> Into<[f64; 4]> for &'a CmykRatio {
   fn into(self) -> [f64; 4] { self.units.clone().into() }
 }

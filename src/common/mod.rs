@@ -22,6 +22,7 @@ pub enum Hs {
 pub(crate) fn f64_abs(n: f64) -> f64 {
   n.abs()
 }
+
 #[cfg(not(feature = "std"))]
 pub(crate) fn f64_abs(n: f64) -> f64 {
   if n < 0.0 {
@@ -35,6 +36,7 @@ pub(crate) fn f64_abs(n: f64) -> f64 {
 pub(crate) fn f64_round(n: f64) -> f64 {
   n.round()
 }
+
 #[cfg(not(feature = "std"))]
 pub(crate) fn f64_round(n: f64) -> f64 {
   let f = if n == 0.0 { 0.0 } else { n % 1.0 };
@@ -47,12 +49,10 @@ pub(crate) fn f64_round(n: f64) -> f64 {
     } else {
       n - f + 1.0
     }
+  } else if -f < 0.5 {
+    n - f
   } else {
-    if -f < 0.5 {
-      n - f
-    } else {
-      n - f - 1.0
-    }
+    n - f - 1.0
   }
 }
 

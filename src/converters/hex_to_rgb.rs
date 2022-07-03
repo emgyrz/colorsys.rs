@@ -1,8 +1,3 @@
-#[cfg(not(feature = "std"))]
-use alloc::string::String;
-#[cfg(not(feature = "std"))]
-use alloc::vec::Vec;
-
 use err::{make_parse_err, ParseError};
 
 use crate::err;
@@ -25,7 +20,7 @@ pub(crate) fn from_hex(s: &[u8]) -> Result<[u32; 3], ()> {
     }
 
     let bl = b.to_ascii_lowercase();
-    if bl == HASH { continue }
+    if bl == HASH { continue; }
     if bl.is_ascii_hexdigit() {
       buff[buff_len] = bl;
       buff_len += 1;
@@ -53,7 +48,7 @@ fn hex_digit_to_rgb(num: u32) -> [u32; 3] {
 
 #[cfg(test)]
 mod test {
-  use crate::converters::hex_to_rgb::{from_hex, hex_to_rgb};
+  use crate::converters::hex_to_rgb::{from_hex};
 
   #[test]
   fn from_hex_test() {

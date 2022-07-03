@@ -1,5 +1,6 @@
 use core::fmt;
-#[cfg(not(feature = "std"))] use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
 
 #[derive(Clone)]
 pub struct ParseError {

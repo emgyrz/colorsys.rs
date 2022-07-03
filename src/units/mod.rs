@@ -115,11 +115,11 @@ impl ApproxEq<Units> for Units {
 
   fn approx_eq_clarify(&self, other: &Units, precision: f64) -> bool {
     if !self.alpha.approx_eq_clarify(&other.alpha, precision) {
-      return false
+      return false;
     }
     for i in 0..self.len {
       if !approx(self.list[i].value, other.list[i].value, precision) {
-        return false
+        return false;
       }
     }
     true

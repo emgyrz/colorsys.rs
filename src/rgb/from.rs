@@ -106,7 +106,7 @@ impl From<Hsl> for Rgb {
 fn from_rgb_ratio(ratio: &RgbRatio) -> Rgb {
   let ru = &ratio.units;
   let t = ratio_to_rgba(&(ru[0], ru[1], ru[2], ru.alpha.get_f64()));
-  Rgb::new(t.0, t.1, t.2,Some(t.3))
+  Rgb::new(t.0, t.1, t.2, Some(t.3))
 }
 
 impl From<&RgbRatio> for Rgb {

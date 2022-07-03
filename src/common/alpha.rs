@@ -30,7 +30,6 @@ pub trait ColorAlpha {
 }
 
 
-
 impl<T> ColorAlpha for T where T: GetColorUnits {
   fn alpha(&self) -> f64 { self.get_units().alpha.get_f64() }
   fn get_alpha(&self) -> f64 {

@@ -72,11 +72,9 @@ impl From<Ansi256> for Rgb {
       let g = ((base & 2) >> 1) * mul;
       let b = ((base & 4) >> 2) * mul;
       Rgb::from((r, g, b))
-
     } else if code > 231 {
       let gray = (code - 232) * 10 + 8;
       Rgb::from((gray, gray, gray))
-
     } else {
       let b = (code - 16) % 6;
       let b = if b == 0 { 0 } else { b * 40 + 55 };
@@ -101,11 +99,11 @@ mod test {
   #[test]
   fn rgb_to_ansi_test() {
     let test_data = [
-      ([95u8,0,175], 55u8),
-      ([135,95,255], 99),
-      ([135,255,255], 123),
-      ([215,175,95], 179),
-      ([255,215,255], 225),
+      ([95u8, 0, 175], 55u8),
+      ([135, 95, 255], 99),
+      ([135, 255, 255], 123),
+      ([215, 175, 95], 179),
+      ([255, 215, 255], 225),
     ];
     for (rgb_arr, ansi_code) in &test_data {
       let ansi: Ansi256 = Rgb::from(rgb_arr).as_ref().into();
@@ -117,20 +115,19 @@ mod test {
   fn ansi_to_rgb_test() {
     let test_data = [
       (9u8, [255u8, 0, 0]),
-      (211, [255,135,175]),
-      (187, [215,215,175]),
-      (171, [215,95,255]),
-      (77, [95,215,95]),
-      (0, [0,0,0]),
-      (13, [255,0,255]),
-      (249, [178,178,178]),
+      (211, [255, 135, 175]),
+      (187, [215, 215, 175]),
+      (171, [215, 95, 255]),
+      (77, [95, 215, 95]),
+      (0, [0, 0, 0]),
+      (13, [255, 0, 255]),
+      (249, [178, 178, 178]),
     ];
     for (ansi_code, rgb_arr) in &test_data {
       let rgb: Rgb = Ansi256(*ansi_code).into();
-      let arr: [u8;3] = rgb.into();
+      let arr: [u8; 3] = rgb.into();
       assert_eq!(&arr, rgb_arr);
     }
-
   }
 }
 

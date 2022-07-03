@@ -183,7 +183,7 @@ pub use common::{ColorUnitsIter, ColorAlpha};
 pub use err::ParseError;
 pub use hsl::{Hsl, HslRatio};
 pub use rgb::{GrayScaleMethod, Rgb, RgbRatio};
-pub use cmyk::{Cmyk,CmykRatio};
+pub use cmyk::{Cmyk, CmykRatio};
 pub use ansi::{Ansi256};
 
 /// Use to transfer and collect color values.
