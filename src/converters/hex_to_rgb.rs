@@ -24,6 +24,8 @@ pub(crate) fn from_hex(s: &[u8]) -> Result<[u32; 3], ()> {
     if bl.is_ascii_hexdigit() {
       buff[buff_len] = bl;
       buff_len += 1;
+    } else {
+      return Err(());
     }
   }
 
@@ -71,6 +73,7 @@ mod test {
       "тест",
       "ffccfg",
       "",
+      "Magenta"
     ];
 
     for (s, t) in valid.iter() {
