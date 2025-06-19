@@ -39,13 +39,6 @@ mod test {
 
   #[test]
   fn rbg_to_cmyk_test() {
-    // let assert_data = [
-    //   ([35, 75, 89], [61, 16, 0, 65]),
-    //   ([0, 0, 255], [100, 100, 0, 0]),
-    //   ([0, 0, 0], [0, 0, 0, 100]),
-    //   ([255, 255, 255], [0, 0, 0, 0]),
-    // ];
-
     let rgb = Rgb::new(230.0, 19.0, 70.0, None);
     let cmyk: Cmyk = rgb_to_cmyk(&rgb);
     assert_eq!(cmyk.cyan().round(), 0.0);

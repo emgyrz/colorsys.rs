@@ -90,20 +90,3 @@ fn rgb_from() {
   assert_eq!(rgb1, rgb2);
 }
 
-// #[test]
-// fn tst() {
-//   use std::time::Duration;
-//   let count = 10000;
-//   let mut tmp = Vec::new();
-
-//   let start = std::time::Instant::now();
-//   for _ in 0..count {
-//     let mut rgb = Rgb::from(2.0, 55.0, 5.0);
-//     rgb.lighten(13.0);
-//     rgb.set_green(13.0);
-//     tmp.push(rgb);
-//   }
-
-//   println!("Elapsed {:?} for {} times", start.elapsed(), tmp.len());
-//   // }
-// }

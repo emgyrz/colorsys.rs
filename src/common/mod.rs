@@ -5,7 +5,6 @@ pub use tuple_to_string::tuple_to_string;
 pub use crate::units::iter::ColorUnitsIter;
 
 mod alpha;
-mod from_str;
 mod hsv_hsl_from_str;
 mod tuple_to_string;
 
@@ -73,12 +72,6 @@ mod f64_round_test {
   #[test]
   #[cfg(feature = "std")]
   fn f64_round_std_test() {
-    _run()
-  }
-
-  #[test]
-  #[cfg(not(feature = "std"))]
-  fn f64_round_no_std_test() {
     _run()
   }
 }

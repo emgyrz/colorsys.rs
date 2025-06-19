@@ -1,8 +1,8 @@
 use super::unit::Unit;
 
-use crate::consts::{RATIO_MAX};
-use crate::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 use crate::common::approx::approx;
+use crate::consts::RATIO_MAX;
+use crate::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 
 #[derive(Clone, PartialEq, Debug, Default)]
 pub(crate) struct Alpha {
@@ -10,16 +10,8 @@ pub(crate) struct Alpha {
 }
 
 impl Alpha {
-  // pub(crate) fn from_opt(opt: Option<f64>) -> Self {
-  //   if let Some(a) = opt {
-  //     if !a.eq(&RATIO_MAX) {
-  //       return Alpha { value: Some(Unit::new_ratio(a)) }
-  //     }
-  //   }
-  //   Alpha::default()
-  // }
   pub(crate) fn set(&mut self, a: f64) {
-    if let Some(ref mut u) = &mut self.value {
+    if let Some(u) = &mut self.value {
       u.set(a);
     } else {
       self.value = Some(Unit::new_ratio(a));
@@ -31,7 +23,9 @@ impl Alpha {
   pub(crate) fn set_opt(&mut self, av: Option<f64>) {
     if let Some(a) = av {
       self.set(a);
-    } else { self.value = None; }
+    } else {
+      self.value = None;
+    }
   }
 
   pub(crate) fn get(&self) -> Option<f64> {
@@ -45,7 +39,6 @@ impl Alpha {
     self.set(self.get_f64() + v);
   }
 }
-
 
 impl ApproxEq<Alpha> for Alpha {
   fn approx_eq(&self, other: &Alpha) -> bool {

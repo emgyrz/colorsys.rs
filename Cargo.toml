@@ -1,6 +1,6 @@
 [package]
 name = "colorsys"
-version = "0.6.7"
+version = "0.7.0"
 description = "A module for color conversion and mutation. Works with RGB(a)( as hexadecimal too), HSL(a), CMYK color models and with ANSI color codes"
 authors = ["mz <emgyrz@gmail.com>"]
 license = "MIT"
@@ -8,7 +8,7 @@ homepage = "https://github.com/emgyrz/colorsys.rs"
 repository = "https://github.com/emgyrz/colorsys.rs.git"
 keywords = ["colors", "converter", "rgb", "hsl", "cmyk"]
 categories = [ "graphics"]
-edition = "2021"
+edition = "2024"
 readme = "README.md"
 
 [dependencies]

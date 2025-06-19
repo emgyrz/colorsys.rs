@@ -10,9 +10,9 @@ pub struct ColorUnitsIter {
 impl ColorUnitsIter {
   pub(crate) fn from_units(units: &Units) -> ColorUnitsIter {
     let mut values = [0.0; 5];
-    for i in 0..units.len {
+    (0..units.len).for_each(|i| {
       values[i] = units.list[i].value;
-    }
+    });
 
     let mut len = units.len;
     if let Some(a) = units.alpha.get() {

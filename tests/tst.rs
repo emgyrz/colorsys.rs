@@ -13,9 +13,11 @@ fn for_docs() {
   let rgb_arr: [u8; 3] = Rgb::from(&hsla).into();
   // ~[57, 13, 53]
 
+  #[allow(unused_variables)]
   let hsla_tuple: (f64, f64, f64, f64) = Hsl::from(Rgb::from(rgb_arr)).into();
   // ~Hsl { h: 305.78, s: 63.71, l: 13.73, a: 1 }
 
+  #[allow(unused_variables)]
   let hex: String = rgba.to_hex_string();
   // #390d35
 

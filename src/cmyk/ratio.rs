@@ -42,7 +42,7 @@ impl From<[f64; 4]> for CmykRatio {
   fn from(a: [f64; 4]) -> Self { CmykRatio::new(a[0], a[1], a[2], a[3], 1.0) }
 }
 
-impl<'a> From<&'a [f64; 4]> for CmykRatio {
+impl From<&[f64; 4]> for CmykRatio {
   fn from(a: &[f64; 4]) -> Self { CmykRatio::new(a[0], a[1], a[2], a[3], 1.0) }
 }
 
@@ -50,7 +50,7 @@ impl Into<[f64; 4]> for CmykRatio {
   fn into(self: CmykRatio) -> [f64; 4] { self.units.into() }
 }
 
-impl<'a> Into<[f64; 4]> for &'a CmykRatio {
+impl Into<[f64; 4]> for &CmykRatio {
   fn into(self) -> [f64; 4] { self.units.clone().into() }
 }
 

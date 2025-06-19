@@ -95,7 +95,7 @@ impl From<[f64; 4]> for Cmyk {
   fn from(a: [f64; 4]) -> Self { Cmyk::new(a[0], a[1], a[2], a[3], None) }
 }
 
-impl<'a> From<&'a [f64; 4]> for Cmyk {
+impl From<&[f64; 4]> for Cmyk {
   fn from(a: &[f64; 4]) -> Self { Cmyk::new(a[0], a[1], a[2], a[3], None) }
 }
 
@@ -104,6 +104,6 @@ impl Into<[f64; 4]> for Cmyk {
   fn into(self: Cmyk) -> [f64; 4] { self.units.into() }
 }
 
-impl<'a> Into<[f64; 4]> for &'a Cmyk {
+impl Into<[f64; 4]> for &Cmyk {
   fn into(self) -> [f64; 4] { self.units.clone().into() }
 }
