@@ -1,12 +1,11 @@
 use crate::{Cmyk, Rgb};
 use crate::cmyk::CmykRatio;
-use crate::consts::PERCENT_MAX;
 use crate::converters::{cmyk_to_rgb, rgb_to_cmyk};
 
 fn cmyk_from_ratio(r: &CmykRatio) -> Cmyk {
   let mut u = r.units.clone();
   for v in &mut u.list {
-    v.turn_into_whole(&PERCENT_MAX);
+    v.turn_into_percent();
   }
   Cmyk::from_units(u)
 }

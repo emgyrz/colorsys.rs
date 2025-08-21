@@ -6,9 +6,27 @@ use crate::consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX, RGB_UNIT_MAX};
 #[derive(Clone, Copy)]
 pub struct Unit {
   pub(crate) value: f64,
-  highest: &'static f64,
+  kind: UnitType,
 }
 
+#[derive(Clone, Copy)]
+enum UnitType {
+  Rgb,
+  Hue,
+  Percent,
+  Ratio,
+}
+
+impl UnitType {
+  fn get_max_value(&self) -> f64 {
+    match &self {
+      UnitType::Rgb => RGB_UNIT_MAX,
+      UnitType::Hue => HUE_MAX,
+      UnitType::Percent => PERCENT_MAX,
+      UnitType::Ratio => RATIO_MAX,
+    }
+  }
+}
 
 impl Default for Unit {
   fn default() -> Self {
@@ -33,14 +51,11 @@ impl PartialEq for Unit {
 
 
 impl Unit {
-  fn new(value: f64, highest: &'static f64) -> Self {
-    Unit {
-      value,
-      highest,
-    }
+  fn new(value: f64, kind: UnitType) -> Self {
+    Unit { value, kind }
   }
-  fn new_checked(value: f64, highest: &'static f64) -> Self {
-    let mut u = Unit::new(value, highest);
+  fn new_checked(value: f64, kind: UnitType) -> Self {
+    let mut u = Unit::new(value, kind);
     u.restrict();
     u
   }
@@ -50,23 +65,25 @@ impl Unit {
   }
 
   pub(crate) fn new_rgb(v: f64) -> Self {
-    Unit::new(v, &RGB_UNIT_MAX)
+    Unit::new(v, UnitType::Rgb)
   }
   pub(crate) fn new_hue(v: f64) -> Self {
-    Unit::new(v, &HUE_MAX)
+    Unit::new(v, UnitType::Hue)
   }
   pub(crate) fn new_percent(v: f64) -> Self {
-    Unit::new(v, &PERCENT_MAX)
+    Unit::new(v, UnitType::Percent)
   }
   pub(crate) fn new_ratio(v: f64) -> Self {
-    Unit::new(v, &RATIO_MAX)
+    Unit::new(v, UnitType::Ratio)
   }
 
   fn get_restricted(&self, val: f64) -> f64 {
     if val < ALL_MIN {
       return ALL_MIN;
-    } else if &val > self.highest {
-      return *self.highest;
+    }
+    let max = self.kind.get_max_value();
+    if val > max {
+      return max;
     }
     val
   }
@@ -76,13 +93,13 @@ impl Unit {
   }
 
   pub(crate) fn turn_into_ratio(&mut self) {
-    self.value /= self.highest;
-    self.highest = &RATIO_MAX;
+    self.value /= self.kind.get_max_value();
+    self.kind = UnitType::Ratio;
   }
 
-  pub(crate) fn turn_into_whole(&mut self, highest: &'static f64) {
-    self.highest = highest;
-    self.value *= self.highest;
+  pub(crate) fn turn_into_percent(&mut self) {
+    self.kind = UnitType::Percent;
+    self.value *= self.kind.get_max_value();
   }
 
   pub(crate) fn increase(&mut self, v: f64) {
@@ -94,7 +111,7 @@ impl Unit {
 impl Add<Self> for Unit {
   type Output = Unit;
   fn add(self, rhs: Self) -> Self::Output {
-    Unit::new_checked(self.value + rhs.value, self.highest)
+    Unit::new_checked(self.value + rhs.value, self.kind)
   }
 }
 
@@ -102,7 +119,7 @@ impl Add<Self> for Unit {
 impl Sub<Self> for Unit {
   type Output = Unit;
   fn sub(self, rhs: Self) -> Self::Output {
-    Unit::new_checked(self.value - rhs.value, self.highest)
+    Unit::new_checked(self.value - rhs.value, self.kind)
   }
 }
 
