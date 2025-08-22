@@ -7,13 +7,14 @@ license = "MIT"
 homepage = "https://github.com/emgyrz/colorsys.rs"
 repository = "https://github.com/emgyrz/colorsys.rs.git"
 keywords = ["colors", "converter", "rgb", "hsl", "cmyk"]
-categories = [ "graphics"]
+categories = ["graphics"]
 edition = "2024"
 readme = "README.md"
 
 [dependencies]
-
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [features]
-default = [ "std" ]
+default = ["std"]
 std = []
+serde = ["dep:serde", "std"]

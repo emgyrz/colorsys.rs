@@ -4,12 +4,14 @@ use core::ops::{Add, Sub};
 use crate::consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX, RGB_UNIT_MAX};
 
 #[derive(Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Unit {
   pub(crate) value: f64,
   kind: UnitType,
 }
 
 #[derive(Clone, Copy)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 enum UnitType {
   Rgb,
   Hue,
@@ -37,9 +39,7 @@ impl Default for Unit {
 
 impl fmt::Debug for Unit {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    f.debug_struct("ColorUnit")
-      .field("value", &self.value)
-      .finish()
+    f.debug_struct("ColorUnit").field("value", &self.value).finish()
   }
 }
 

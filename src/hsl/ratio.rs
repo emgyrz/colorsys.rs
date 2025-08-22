@@ -1,4 +1,4 @@
-use crate::units::{Units, GetColorUnits};
+use crate::units::{GetColorUnits, Units};
 
 ///
 /// Hsl representation as ratio (from `0.0` to `1.0`).
@@ -23,6 +23,7 @@ use crate::units::{Units, GetColorUnits};
 /// ```
 ///
 #[derive(Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HslRatio {
   pub(super) units: Units,
 }
@@ -34,12 +35,22 @@ impl HslRatio {
     HslRatio::from_units(units)
   }
 
-  pub fn h(&self) -> f64 { self.units[0] }
-  pub fn s(&self) -> f64 { self.units[1] }
-  pub fn l(&self) -> f64 { self.units[2] }
-  pub fn a(&self) -> f64 { self.units.alpha.get_f64() }
+  pub fn h(&self) -> f64 {
+    self.units[0]
+  }
+  pub fn s(&self) -> f64 {
+    self.units[1]
+  }
+  pub fn l(&self) -> f64 {
+    self.units[2]
+  }
+  pub fn a(&self) -> f64 {
+    self.units.alpha.get_f64()
+  }
 
-  pub(crate) fn from_units(u: Units) -> Self { HslRatio { units: u } }
+  pub(crate) fn from_units(u: Units) -> Self {
+    HslRatio { units: u }
+  }
 }
 
 impl AsRef<HslRatio> for HslRatio {

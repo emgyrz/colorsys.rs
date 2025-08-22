@@ -1,5 +1,5 @@
 use super::consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX, RGB_UNIT_MAX};
-use crate::common::{f64_round};
+use crate::common::f64_round;
 
 fn normalize(val: f64, max: f64) -> f64 {
   if val < ALL_MIN {

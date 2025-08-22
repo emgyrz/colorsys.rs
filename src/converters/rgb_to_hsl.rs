@@ -34,7 +34,9 @@ pub fn rgb_to_hsl(rgb: &Rgb) -> Units {
     1 => (blue - red) / max_min_delta + 2.0,
     // blue
     2 => (red - green) / max_min_delta + 4.0,
-    _ => { unreachable!() }
+    _ => {
+      unreachable!()
+    }
   };
 
   new_hsl_units(hue * 60.0, saturation * PERCENT_MAX, luminance * PERCENT_MAX)
@@ -42,7 +44,7 @@ pub fn rgb_to_hsl(rgb: &Rgb) -> Units {
 
 #[test]
 fn rgb_to_hsl_tst() {
-  use crate::{ColorTuple, Rgb, ApproxEq};
+  use crate::{ApproxEq, ColorTuple, Rgb};
   fn a(x: ColorTuple, y: ColorTuple) -> bool {
     let from_rgb_u = rgb_to_hsl(&Rgb::from(x));
     let hsl_u = new_hsl_units(y.0, y.1, y.2);

@@ -1,8 +1,9 @@
-use core::fmt;
 #[cfg(not(feature = "std"))]
 use alloc::string::String;
+use core::fmt;
 
 #[derive(Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ParseError {
   pub message: String,
 }

@@ -1,6 +1,6 @@
-use crate::{Cmyk, Rgb};
 use crate::cmyk::CmykRatio;
 use crate::converters::{cmyk_to_rgb, rgb_to_cmyk};
+use crate::{Cmyk, Rgb};
 
 fn cmyk_from_ratio(r: &CmykRatio) -> Cmyk {
   let mut u = r.units.clone();
@@ -91,18 +91,26 @@ impl From<Cmyk> for Rgb {
 
 
 impl From<[f64; 4]> for Cmyk {
-  fn from(a: [f64; 4]) -> Self { Cmyk::new(a[0], a[1], a[2], a[3], None) }
+  fn from(a: [f64; 4]) -> Self {
+    Cmyk::new(a[0], a[1], a[2], a[3], None)
+  }
 }
 
 impl From<&[f64; 4]> for Cmyk {
-  fn from(a: &[f64; 4]) -> Self { Cmyk::new(a[0], a[1], a[2], a[3], None) }
+  fn from(a: &[f64; 4]) -> Self {
+    Cmyk::new(a[0], a[1], a[2], a[3], None)
+  }
 }
 
 
 impl Into<[f64; 4]> for Cmyk {
-  fn into(self: Cmyk) -> [f64; 4] { self.units.into() }
+  fn into(self: Cmyk) -> [f64; 4] {
+    self.units.into()
+  }
 }
 
 impl Into<[f64; 4]> for &Cmyk {
-  fn into(self) -> [f64; 4] { self.units.clone().into() }
+  fn into(self) -> [f64; 4] {
+    self.units.clone().into()
+  }
 }

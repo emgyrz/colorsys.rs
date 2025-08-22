@@ -1,8 +1,6 @@
-use crate::{
-  ColorAlpha, Hsl, ratio_converters::ratio_to_rgba, Rgb,
-};
 use crate::converters::*;
 use crate::rgb::RgbRatio;
+use crate::{ColorAlpha, Hsl, Rgb, ratio_converters::ratio_to_rgba};
 
 macro_rules! from_for_rgb {
   ($from_type: ty, $val: ident, $conv: block) => {

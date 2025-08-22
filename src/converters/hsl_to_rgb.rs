@@ -1,5 +1,5 @@
-use crate::consts::RGB_UNIT_MAX;
 use crate::Hsl;
+use crate::consts::RGB_UNIT_MAX;
 use crate::normalize::bound_ratio;
 use crate::rgb::new_rgb_units;
 use crate::units::Units;

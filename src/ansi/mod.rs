@@ -24,6 +24,7 @@ use crate::Rgb;
 ///
 /// ```
 #[derive(Debug, Copy, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Ansi256(pub(crate) u8);
 
 impl Ansi256 {
@@ -67,7 +68,13 @@ impl From<Ansi256> for Rgb {
     if code < 16 {
       let mut base = code;
       let mut mul = 128;
-      if code == 7 { mul = 192; } else if code == 8 { base = 7; } else if code > 8 { mul = 255; }
+      if code == 7 {
+        mul = 192;
+      } else if code == 8 {
+        base = 7;
+      } else if code > 8 {
+        mul = 255;
+      }
       let r = (base & 1) * mul;
       let g = ((base & 2) >> 1) * mul;
       let b = ((base & 4) >> 2) * mul;
@@ -93,8 +100,8 @@ impl From<Ansi256> for Rgb {
 
 #[cfg(test)]
 mod test {
-  use crate::ansi::Ansi256;
   use crate::Rgb;
+  use crate::ansi::Ansi256;
 
   #[test]
   fn rgb_to_ansi_test() {
@@ -130,4 +137,3 @@ mod test {
     }
   }
 }
-

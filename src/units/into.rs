@@ -1,4 +1,4 @@
-use crate::units::{Units};
+use crate::units::Units;
 
 
 impl Into<[f64; 3]> for &Units {
@@ -24,4 +24,3 @@ impl Into<[f64; 4]> for Units {
     [self[0], self[1], self[2], self[3]]
   }
 }
-

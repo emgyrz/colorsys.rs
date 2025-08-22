@@ -1,5 +1,5 @@
-use crate::{ApproxEq, ColorTuple, Hsl, Rgb};
 use crate::common::f64_round;
+use crate::{ApproxEq, ColorTuple, Hsl, Rgb};
 
 fn round(n: f64) -> u32 {
   f64_round(n) as u32

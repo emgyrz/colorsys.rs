@@ -1,8 +1,8 @@
 use consts::RGB_UNIT_MAX;
 
-use crate::{ColorTransform, consts, SaturationInSpace};
+use crate::{ColorTransform, SaturationInSpace, consts};
 
-use super::{grayscale, Hsl, Rgb};
+use super::{Hsl, Rgb, grayscale};
 
 impl ColorTransform for Rgb {
   /// Lighten or darken color. amt is a percent with negative values - `-100..100`
@@ -67,7 +67,7 @@ impl ColorTransform for Rgb {
 
 #[cfg(test)]
 mod test {
-  use crate::{Rgb, ColorTransform};
+  use crate::{ColorTransform, Rgb};
 
   #[test]
   fn lighten_darken_test() {

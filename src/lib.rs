@@ -164,6 +164,8 @@ extern crate alloc;
 
 mod macros;
 
+mod ansi;
+mod cmyk;
 mod common;
 mod consts;
 mod converters;
@@ -171,20 +173,18 @@ mod err;
 mod hsl;
 mod normalize;
 mod rgb;
-mod ansi;
-mod cmyk;
 mod units;
 
 pub mod prelude;
 pub mod ratio_converters;
 
+pub use ansi::Ansi256;
+pub use cmyk::{Cmyk, CmykRatio};
 pub use common::approx::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
-pub use common::{ColorUnitsIter, ColorAlpha};
+pub use common::{ColorAlpha, ColorUnitsIter};
 pub use err::ParseError;
 pub use hsl::{Hsl, HslRatio};
 pub use rgb::{GrayScaleMethod, Rgb, RgbRatio};
-pub use cmyk::{Cmyk, CmykRatio};
-pub use ansi::{Ansi256};
 
 /// Use to transfer and collect color values.
 /// May be for example `($red,$green,$blue)` or `($hue,$saturation,$value)`
@@ -193,6 +193,7 @@ pub type ColorTuple = (f64, f64, f64);
 /// For example `($hue,$saturation,$lightness,$alpha)`
 pub type ColorTupleA = (f64, f64, f64, f64);
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SaturationInSpace {
   Hsl(f64),
   Hsv(f64),
@@ -221,4 +222,3 @@ pub trait ColorTransform {
   /// Just inverts color
   fn invert(&mut self);
 }
-

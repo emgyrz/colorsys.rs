@@ -1,4 +1,4 @@
-use err::{make_parse_err, ParseError};
+use err::{ParseError, make_parse_err};
 
 use crate::err;
 
@@ -20,7 +20,9 @@ pub(crate) fn from_hex(s: &[u8]) -> Result<[u32; 3], ()> {
     }
 
     let bl = b.to_ascii_lowercase();
-    if bl == HASH { continue; }
+    if bl == HASH {
+      continue;
+    }
     if bl.is_ascii_hexdigit() {
       buff[buff_len] = bl;
       buff_len += 1;
@@ -50,7 +52,7 @@ fn hex_digit_to_rgb(num: u32) -> [u32; 3] {
 
 #[cfg(test)]
 mod test {
-  use crate::converters::hex_to_rgb::{from_hex};
+  use crate::converters::hex_to_rgb::from_hex;
 
   #[test]
   fn from_hex_test() {
@@ -63,18 +65,11 @@ mod test {
       ("#ffFfff", [255; 3]),
       ("#ffffff", [255; 3]),
       ("#777", [119; 3]),
-      ("F7b3aA", [247, 179, 170])
+      ("F7b3aA", [247, 179, 170]),
     ];
 
-    let invalid = [
-      "0000",
-      "#0000f221",
-      "#000000a",
-      "тест",
-      "ffccfg",
-      "",
-      "Magenta"
-    ];
+    let invalid =
+      ["0000", "#0000f221", "#000000a", "тест", "ffccfg", "", "Magenta"];
 
     for (s, t) in valid.iter() {
       let rgb = from_hex(s.as_bytes()).unwrap();
@@ -87,5 +82,3 @@ mod test {
     }
   }
 }
-
-

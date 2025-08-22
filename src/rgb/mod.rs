@@ -5,10 +5,12 @@ pub use grayscale::GrayScaleMethod;
 use grayscale::rgb_grayscale;
 pub use ratio::RgbRatio;
 
-use crate::{ColorAlpha, ColorTuple, ColorTupleA, converters, Hsl, ColorUnitsIter};
-use crate::common::{tuple_to_string};
+use crate::common::tuple_to_string;
 use crate::err::ParseError;
 use crate::units::{Alpha, GetColorUnits, Unit, Units};
+use crate::{
+  ColorAlpha, ColorTuple, ColorTupleA, ColorUnitsIter, Hsl, converters,
+};
 
 #[cfg(test)]
 mod tests;
@@ -68,6 +70,7 @@ mod transform;
 /// ```
 ///
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Rgb {
   pub(crate) units: Units,
 }
@@ -75,7 +78,8 @@ pub struct Rgb {
 iter_def!(Rgb);
 
 pub(crate) fn new_rgb_units(r: f64, g: f64, b: f64) -> Units {
-  let ul = [Unit::new_rgb(r), Unit::new_rgb(g), Unit::new_rgb(b), Unit::default()];
+  let ul =
+    [Unit::new_rgb(r), Unit::new_rgb(g), Unit::new_rgb(b), Unit::default()];
   Units { len: 3, list: ul, alpha: Alpha::default() }
 }
 
@@ -86,7 +90,9 @@ impl Rgb {
     self.units.list[2].value = t.2;
   }
 
-  pub(crate) fn from_units(u: Units) -> Self { Rgb { units: u } }
+  pub(crate) fn from_units(u: Units) -> Self {
+    Rgb { units: u }
+  }
 
   pub fn new(r: f64, g: f64, b: f64, a: Option<f64>) -> Rgb {
     let mut units = new_rgb_units(r, g, b);
@@ -104,7 +110,9 @@ impl Rgb {
     converters::rgb_to_hex(&self.into())
   }
 
-  pub fn red(&self) -> f64 { self.units[0] }
+  pub fn red(&self) -> f64 {
+    self.units[0]
+  }
   pub fn green(&self) -> f64 {
     self.units[1]
   }
@@ -113,7 +121,9 @@ impl Rgb {
   }
 
   #[deprecated(since = "0.7.0", note = "Please use `red` instead")]
-  pub fn get_red(&self) -> f64 { self.red() }
+  pub fn get_red(&self) -> f64 {
+    self.red()
+  }
   #[deprecated(since = "0.7.0", note = "Please use `green` instead")]
   pub fn get_green(&self) -> f64 {
     self.green()
@@ -123,9 +133,15 @@ impl Rgb {
     self.blue()
   }
 
-  pub fn set_red(&mut self, val: f64) { self.units.list[0].set(val); }
-  pub fn set_green(&mut self, val: f64) { self.units.list[1].set(val); }
-  pub fn set_blue(&mut self, val: f64) { self.units.list[2].set(val); }
+  pub fn set_red(&mut self, val: f64) {
+    self.units.list[0].set(val);
+  }
+  pub fn set_green(&mut self, val: f64) {
+    self.units.list[1].set(val);
+  }
+  pub fn set_blue(&mut self, val: f64) {
+    self.units.list[2].set(val);
+  }
 
   /// Returns a String that can be used in CSS.
   /// # Example

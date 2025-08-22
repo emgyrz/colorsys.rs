@@ -2,12 +2,12 @@ use core::ops::{Add, AddAssign, Sub, SubAssign};
 
 pub use ratio::CmykRatio;
 
-use crate::consts::PERCENT_MAX;
 use crate::Rgb;
+use crate::consts::PERCENT_MAX;
 use crate::units::{Alpha, GetColorUnits, Unit, Units};
 
-mod ratio;
 mod from;
+mod ratio;
 
 
 /// The CMYK color model.
@@ -33,6 +33,7 @@ mod from;
 ///
 /// ```
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Cmyk {
   pub(crate) units: Units,
 }
@@ -53,15 +54,31 @@ impl Cmyk {
     Cmyk::from_units(u)
   }
 
-  pub fn cyan(&self) -> f64 { self.units[0] }
-  pub fn magenta(&self) -> f64 { self.units[1] }
-  pub fn yellow(&self) -> f64 { self.units[2] }
-  pub fn key(&self) -> f64 { self.units[3] }
+  pub fn cyan(&self) -> f64 {
+    self.units[0]
+  }
+  pub fn magenta(&self) -> f64 {
+    self.units[1]
+  }
+  pub fn yellow(&self) -> f64 {
+    self.units[2]
+  }
+  pub fn key(&self) -> f64 {
+    self.units[3]
+  }
 
-  pub fn set_cyan(&mut self, c: f64) { self.units.list[0].set(c); }
-  pub fn set_magenta(&mut self, m: f64) { self.units.list[1].set(m); }
-  pub fn set_yellow(&mut self, y: f64) { self.units.list[2].set(y); }
-  pub fn set_key(&mut self, k: f64) { self.units.list[3].set(k); }
+  pub fn set_cyan(&mut self, c: f64) {
+    self.units.list[0].set(c);
+  }
+  pub fn set_magenta(&mut self, m: f64) {
+    self.units.list[1].set(m);
+  }
+  pub fn set_yellow(&mut self, y: f64) {
+    self.units.list[2].set(y);
+  }
+  pub fn set_key(&mut self, k: f64) {
+    self.units.list[3].set(k);
+  }
 
   /// Returns same color in RGB color model
   /// # Example
@@ -87,13 +104,19 @@ impl Cmyk {
 
 
 impl GetColorUnits for Cmyk {
-  fn get_units(&self) -> &Units { &self.units }
-  fn get_units_mut(&mut self) -> &mut Units { &mut self.units }
+  fn get_units(&self) -> &Units {
+    &self.units
+  }
+  fn get_units_mut(&mut self) -> &mut Units {
+    &mut self.units
+  }
 }
 
 
 impl AsRef<Cmyk> for Cmyk {
-  fn as_ref(&self) -> &Cmyk { self }
+  fn as_ref(&self) -> &Cmyk {
+    self
+  }
 }
 
 impl Default for Cmyk {
@@ -101,6 +124,3 @@ impl Default for Cmyk {
     Cmyk::from_units(new_cmyk_units(0.0, 0.0, 0.0, PERCENT_MAX))
   }
 }
-
-
-

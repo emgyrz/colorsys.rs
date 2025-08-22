@@ -15,7 +15,10 @@ pub fn approx(x: f64, y: f64, precision: f64) -> bool {
   f64_abs(x - y) < precision
 }
 
-impl<T> ApproxEq<T> for T where T: GetColorUnits {
+impl<T> ApproxEq<T> for T
+where
+  T: GetColorUnits,
+{
   fn approx_eq(&self, other: &T) -> bool {
     self.get_units().approx_eq(other.get_units())
   }

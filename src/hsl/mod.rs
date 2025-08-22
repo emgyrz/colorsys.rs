@@ -3,9 +3,9 @@ use alloc::string::String;
 
 pub use ratio::HslRatio;
 
-use crate::{ColorAlpha, ColorTupleA, ColorUnitsIter, ParseError, Rgb};
 use crate::common::{Hs, hsl_hsv_from_str, tuple_to_string};
 use crate::units::{Alpha, GetColorUnits, Unit, Units};
+use crate::{ColorAlpha, ColorTupleA, ColorUnitsIter, ParseError, Rgb};
 
 #[cfg(test)]
 mod tests;
@@ -23,13 +23,19 @@ mod transform;
 /// * saturation: 0.0 - 100.0
 /// * alpha: 0.0 - 1.0
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Hsl {
   pub(crate) units: Units,
 }
 
 iter_def!(Hsl);
 pub(crate) fn new_hsl_units(h: f64, s: f64, l: f64) -> Units {
-  let ul = [Unit::new_hue(h), Unit::new_percent(s), Unit::new_percent(l), Unit::default()];
+  let ul = [
+    Unit::new_hue(h),
+    Unit::new_percent(s),
+    Unit::new_percent(l),
+    Unit::default(),
+  ];
   Units { len: 3, list: ul, alpha: Alpha::default() }
 }
 
@@ -42,16 +48,24 @@ impl Hsl {
     Hsl { units }
   }
 
-  pub(crate) fn from_units(u: Units) -> Self { Hsl { units: u } }
+  pub(crate) fn from_units(u: Units) -> Self {
+    Hsl { units: u }
+  }
 
   pub fn to_css_string(&self) -> String {
     let t: ColorTupleA = self.into();
     tuple_to_string(&t, "hsl")
   }
 
-  pub fn hue(&self) -> f64 { self.units[0] }
-  pub fn saturation(&self) -> f64 { self.units[1] }
-  pub fn lightness(&self) -> f64 { self.units[2] }
+  pub fn hue(&self) -> f64 {
+    self.units[0]
+  }
+  pub fn saturation(&self) -> f64 {
+    self.units[1]
+  }
+  pub fn lightness(&self) -> f64 {
+    self.units[2]
+  }
 
   #[deprecated(since = "0.7.0", note = "Please use `hue` instead")]
   pub fn get_hue(&self) -> f64 {
@@ -66,9 +80,15 @@ impl Hsl {
     self.lightness()
   }
 
-  pub fn set_hue(&mut self, val: f64) { self.units.list[0].set(val); }
-  pub fn set_saturation(&mut self, val: f64) { self.units.list[1].set(val); }
-  pub fn set_lightness(&mut self, val: f64) { self.units.list[2].set(val); }
+  pub fn set_hue(&mut self, val: f64) {
+    self.units.list[0].set(val);
+  }
+  pub fn set_saturation(&mut self, val: f64) {
+    self.units.list[1].set(val);
+  }
+  pub fn set_lightness(&mut self, val: f64) {
+    self.units.list[2].set(val);
+  }
 
   /// Returns an iterator over three color units and the possibly alpha value.
   pub fn iter(&self) -> ColorUnitsIter {

@@ -1,9 +1,9 @@
 #[allow(unused_imports)]
-use colorsys::{prelude::*, Hsl, Rgb};
+use colorsys::{Hsl, Rgb, prelude::*};
 
 #[test]
 fn for_docs() {
-  use colorsys::{Rgb, Hsl};
+  use colorsys::{Hsl, Rgb};
 
   let rbga_tuple = (57.3, 12.7, 53.0, 0.33);
   let rgba = Rgb::from(&rbga_tuple);
@@ -26,25 +26,17 @@ fn for_docs() {
 
   let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
 
-  let rgb2 = Rgb::from(
-    Into::<[f32; 4]>::into(Rgb::from(
-      Into::<[u16; 3]>::into(
-        Rgb::from(
-          Into::<(i32, i32, i32)>::into(
-            Rgb::from(
-              Into::<[i64; 3]>::into(&rgb1)
-            )
-          )
-        )
-      )
-    ))
-  );
+  let rgb2 = Rgb::from(Into::<[f32; 4]>::into(Rgb::from(
+    Into::<[u16; 3]>::into(Rgb::from(Into::<(i32, i32, i32)>::into(
+      Rgb::from(Into::<[i64; 3]>::into(&rgb1)),
+    ))),
+  )));
 
   assert_eq!(rgb1, rgb2);
   //
   // Ratio
   //
-  use colorsys::{RgbRatio, ApproxEq};
+  use colorsys::{ApproxEq, RgbRatio};
   let blue = Rgb::from([34, 111, 235]);
 
   let ratio: [f32; 4] = blue.as_ratio().into();

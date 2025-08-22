@@ -10,6 +10,7 @@ mod tuple_to_string;
 
 pub mod approx;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Hs {
   #[allow(dead_code)]
   Hsv,
@@ -24,11 +25,7 @@ pub(crate) fn f64_abs(n: f64) -> f64 {
 
 #[cfg(not(feature = "std"))]
 pub(crate) fn f64_abs(n: f64) -> f64 {
-  if n < 0.0 {
-    -n
-  } else {
-    n
-  }
+  if n < 0.0 { -n } else { n }
 }
 
 #[cfg(feature = "std")]
@@ -43,11 +40,7 @@ pub(crate) fn f64_round(n: f64) -> f64 {
   if f.is_nan() || f == 0.0 {
     n
   } else if n > 0.0 {
-    if f < 0.5 {
-      n - f
-    } else {
-      n - f + 1.0
-    }
+    if f < 0.5 { n - f } else { n - f + 1.0 }
   } else if -f < 0.5 {
     n - f
   } else {

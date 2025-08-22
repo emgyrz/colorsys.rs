@@ -1,6 +1,6 @@
-use crate::{ColorTransform, SaturationInSpace};
 use crate::consts::{ALL_MIN, HUE_MAX};
 use crate::normalize::bound_hue;
+use crate::{ColorTransform, SaturationInSpace};
 
 use super::Hsl;
 

@@ -1,7 +1,7 @@
+use crate::common::{f64_abs, f64_round};
+use crate::{ColorTupleA, normalize::round_ratio};
 #[cfg(not(feature = "std"))]
 use alloc::string::String;
-use crate::{normalize::round_ratio, ColorTupleA};
-use crate::common::{f64_abs, f64_round};
 
 pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
   use core::fmt::Write;
@@ -16,18 +16,15 @@ pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
 
   let is_hsl = prefix == "hsl";
   let mut result = String::new();
-  [x, y, z]
-    .iter()
-    .enumerate()
-    .for_each(|(ind, u)| {
-      let _ = write!(result, "{}", f64_round(**u));
-      if is_hsl && (ind == 1 || ind == 2) {
-        result.push('%');
-      }
-      if ind != 2 {
-        result.push(',');
-      }
-    });
+  [x, y, z].iter().enumerate().for_each(|(ind, u)| {
+    let _ = write!(result, "{}", f64_round(**u));
+    if is_hsl && (ind == 1 || ind == 2) {
+      result.push('%');
+    }
+    if ind != 2 {
+      result.push(',');
+    }
+  });
 
   if a != "1" {
     start.push('a');
@@ -37,4 +34,3 @@ pub fn tuple_to_string(tuple: &ColorTupleA, prefix: &str) -> String {
 
   format!("{}({})", start, result)
 }
-

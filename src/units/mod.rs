@@ -3,13 +3,13 @@ use core::ops::{Add, Index, Sub};
 pub(crate) use alpha::Alpha;
 pub(crate) use unit::Unit;
 
-use crate::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 use crate::common::approx::approx;
+use crate::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 
-mod unit;
 mod alpha;
 mod into;
 pub mod iter;
+mod unit;
 
 pub trait GetColorUnits {
   fn get_units(&self) -> &Units;
@@ -18,6 +18,7 @@ pub trait GetColorUnits {
 
 
 #[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Units {
   pub(crate) len: usize,
   pub(crate) list: [Unit; 4],
@@ -75,7 +76,9 @@ impl Units {
 
 
   pub(crate) fn new_ratios(values: &[f64]) -> Units {
-    if values.len() > 4 { panic!("length of units values is more than 4") }
+    if values.len() > 4 {
+      panic!("length of units values is more than 4")
+    }
     let mut ul: [Unit; 4] = Default::default();
     for (ind, v) in values.iter().enumerate() {
       ul[ind].set(*v);

@@ -4,8 +4,8 @@ use alloc::string::String;
 use alloc::vec::Vec;
 
 use super::Hs;
-use crate::err::{make_parse_err, ParseError};
-use crate::{consts, ColorTuple};
+use crate::err::{ParseError, make_parse_err};
+use crate::{ColorTuple, consts};
 
 use consts::{ALL_MIN, HUE_MAX, PERCENT_MAX, RATIO_MAX};
 

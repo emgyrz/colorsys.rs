@@ -1,10 +1,10 @@
-use crate::{Cmyk, Rgb};
 use crate::cmyk::CmykRatio;
 use crate::consts::{RATIO_MAX, RGB_UNIT_MAX};
+use crate::{Cmyk, Rgb};
 
 pub(crate) fn rgb_to_cmyk(rgb: &Rgb) -> Cmyk {
   let rgb_r = rgb.units.as_ratio();
-  let [ r, g, b ]: [f64; 3] = (&rgb_r).into();
+  let [r, g, b]: [f64; 3] = (&rgb_r).into();
   let k = RATIO_MAX - rgb_r.max().0;
   let x = RATIO_MAX - k;
 
@@ -16,7 +16,7 @@ pub(crate) fn rgb_to_cmyk(rgb: &Rgb) -> Cmyk {
 }
 
 pub(crate) fn cmyk_to_rgb(cmyk: &Cmyk) -> Rgb {
-  let [ c, m, y, k ]: [f64; 4] = cmyk.units.as_ratio().into();
+  let [c, m, y, k]: [f64; 4] = cmyk.units.as_ratio().into();
   let x = RGB_UNIT_MAX * (1.0 - k);
 
   Rgb::new((1.0 - c) * x, (1.0 - m) * x, (1.0 - y) * x, cmyk.units.alpha.get())
@@ -25,8 +25,8 @@ pub(crate) fn cmyk_to_rgb(cmyk: &Cmyk) -> Rgb {
 #[allow(clippy::float_cmp)]
 #[cfg(test)]
 mod test {
-  use crate::{Cmyk, Rgb};
   use crate::converters::{cmyk_to_rgb, rgb_to_cmyk};
+  use crate::{Cmyk, Rgb};
 
   #[test]
   fn cmyk_to_rbg_test() {

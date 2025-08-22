@@ -1,6 +1,4 @@
-use crate::{
-  ColorAlpha, converters::*, ratio_converters::ratio_to_hsla,
-};
+use crate::{ColorAlpha, converters::*, ratio_converters::ratio_to_hsla};
 
 use super::{Hsl, HslRatio, Rgb};
 

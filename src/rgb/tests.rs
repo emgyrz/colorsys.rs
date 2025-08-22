@@ -1,5 +1,5 @@
-use crate::{ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb};
 use crate::common::f64_round;
+use crate::{ColorTransform, ColorTuple, ColorTupleA, ParseError, Rgb};
 
 fn round(n: f64) -> u32 {
   f64_round(n) as u32
@@ -89,4 +89,3 @@ fn rgb_from() {
 
   assert_eq!(rgb1, rgb2);
 }
-

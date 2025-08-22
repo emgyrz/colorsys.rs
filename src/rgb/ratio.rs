@@ -24,6 +24,7 @@ use crate::units::{GetColorUnits, Units};
 /// ```
 ///
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RgbRatio {
   pub(crate) units: Units,
 }
@@ -35,16 +36,28 @@ impl RgbRatio {
     RgbRatio { units }
   }
 
-  pub fn r(&self) -> f64 { self.units[0] }
-  pub fn g(&self) -> f64 { self.units[1] }
-  pub fn b(&self) -> f64 { self.units[2] }
-  pub fn a(&self) -> f64 { self.units.alpha.get_f64() }
+  pub fn r(&self) -> f64 {
+    self.units[0]
+  }
+  pub fn g(&self) -> f64 {
+    self.units[1]
+  }
+  pub fn b(&self) -> f64 {
+    self.units[2]
+  }
+  pub fn a(&self) -> f64 {
+    self.units.alpha.get_f64()
+  }
 
-  pub(crate) fn from_units(u: Units) -> Self { RgbRatio { units: u } }
+  pub(crate) fn from_units(u: Units) -> Self {
+    RgbRatio { units: u }
+  }
 }
 
 impl AsRef<RgbRatio> for RgbRatio {
-  fn as_ref(&self) -> &RgbRatio { self }
+  fn as_ref(&self) -> &RgbRatio {
+    self
+  }
 }
 
 

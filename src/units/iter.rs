@@ -28,7 +28,9 @@ impl ColorUnitsIter {
 impl core::iter::Iterator for ColorUnitsIter {
   type Item = f64;
   fn next(&mut self) -> Option<Self::Item> {
-    if self.ind == self.len { return None; }
+    if self.ind == self.len {
+      return None;
+    }
     let v = self.values[self.ind];
     self.ind += 1;
     Some(v)
