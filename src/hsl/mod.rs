@@ -23,6 +23,7 @@ mod transform;
 /// * saturation: 0.0 - 100.0
 /// * alpha: 0.0 - 1.0
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Hsl {
   pub(crate) units: Units,
 }

@@ -24,6 +24,7 @@ use crate::units::{GetColorUnits, Units};
 /// ```
 ///
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct RgbRatio {
   pub(crate) units: Units,
 }

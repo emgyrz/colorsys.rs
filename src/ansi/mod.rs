@@ -24,6 +24,7 @@ use crate::Rgb;
 ///
 /// ```
 #[derive(Debug, Copy, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Ansi256(pub(crate) u8);
 
 impl Ansi256 {

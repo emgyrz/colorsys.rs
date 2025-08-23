@@ -3,6 +3,7 @@ use core::fmt;
 use alloc::string::String;
 
 #[derive(Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ParseError {
   pub message: String,
 }

@@ -5,6 +5,7 @@ use crate::consts::RATIO_MAX;
 use crate::{ApproxEq, DEFAULT_APPROX_EQ_PRECISION};
 
 #[derive(Clone, PartialEq, Debug, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub(crate) struct Alpha {
   value: Option<Unit>,
 }

@@ -2,6 +2,7 @@ use crate::ColorTuple;
 
 use super::Rgb;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GrayScaleMethod {
   Average,
   AverageProminent,

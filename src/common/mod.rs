@@ -10,6 +10,7 @@ mod tuple_to_string;
 
 pub mod approx;
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Hs {
   #[allow(dead_code)]
   Hsv,

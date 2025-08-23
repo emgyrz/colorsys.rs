@@ -193,6 +193,7 @@ pub type ColorTuple = (f64, f64, f64);
 /// For example `($hue,$saturation,$lightness,$alpha)`
 pub type ColorTupleA = (f64, f64, f64, f64);
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SaturationInSpace {
   Hsl(f64),
   Hsv(f64),
