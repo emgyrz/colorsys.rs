@@ -1,6 +1,7 @@
 use super::Units;
 
 #[doc(hidden)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ColorUnitsIter {
   ind: usize,
   values: [f64; 5],

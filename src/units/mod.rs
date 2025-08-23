@@ -18,6 +18,7 @@ pub trait GetColorUnits {
 
 
 #[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Units {
   pub(crate) len: usize,
   pub(crate) list: [Unit; 4],

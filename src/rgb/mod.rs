@@ -68,6 +68,7 @@ mod transform;
 /// ```
 ///
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Rgb {
   pub(crate) units: Units,
 }

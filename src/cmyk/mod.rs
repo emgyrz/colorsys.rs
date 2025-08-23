@@ -33,6 +33,7 @@ mod from;
 ///
 /// ```
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Cmyk {
   pub(crate) units: Units,
 }

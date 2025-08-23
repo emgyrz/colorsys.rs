@@ -1,6 +1,7 @@
 use crate::units::Units;
 
 #[derive(Debug, PartialEq, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CmykRatio {
   pub(crate) units: Units,
 }

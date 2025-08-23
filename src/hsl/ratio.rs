@@ -23,6 +23,7 @@ use crate::units::{Units, GetColorUnits};
 /// ```
 ///
 #[derive(Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HslRatio {
   pub(super) units: Units,
 }
