@@ -59,6 +59,17 @@ fn from_str_tst() {
 }
 
 #[test]
+fn to_hex_tst() {
+  let rgba = Rgb::new(57.3, 12.7, 53.0, Some(0.33));
+  assert_eq!("#390d35", rgba.to_hex_string());
+  assert_eq!("#390d3554", rgba.to_hexa_string());
+
+  let rgba2 = Rgb::new(67.0, 253.0, 101.0, Some(0.85));
+  assert_eq!("#43fd65", rgba2.to_hex_string());
+  assert_eq!("#43fd65d9", rgba2.to_hexa_string());
+}
+
+#[test]
 fn rgb_iter() {
   let rgb1 = Rgb::from_hex_str("37ea4c").unwrap();
   let rgb2 = Rgb::from_hex_str("ffcc00").unwrap();

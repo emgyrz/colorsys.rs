@@ -109,6 +109,10 @@ impl Rgb {
     converters::rgb_to_hex(&self.into())
   }
 
+  pub fn to_hexa_string(&self) -> String {
+    converters::rgb_to_hexa(&self.into())
+  }
+
   pub fn red(&self) -> f64 { self.units[0] }
   pub fn green(&self) -> f64 {
     self.units[1]
