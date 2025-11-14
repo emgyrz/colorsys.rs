@@ -97,8 +97,12 @@ impl Rgb {
   }
 
   pub fn from_hex_str(s: &str) -> Result<Rgb, ParseError> {
-    let tuple = converters::hex_to_rgb(s)?;
-    Ok(Rgb::from(&tuple))
+    let (tuple, alpha) = converters::hex_to_rgb(s)?;
+    let mut rgb = Rgb::from(&tuple);
+    if let Some(a) = alpha {
+      rgb.set_alpha(a);
+    }
+    Ok(rgb)
   }
 
   pub fn to_hex_string(&self) -> String {
